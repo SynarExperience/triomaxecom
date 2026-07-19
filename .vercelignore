@@ -1,0 +1,8 @@
+# Nada aqui é usado no build — só peso no upload do deploy.
+assets-src
+Triomax
+docs
+scripts
+.DS_Store
+**/.DS_Store
+tsconfig.tsbuildinfo

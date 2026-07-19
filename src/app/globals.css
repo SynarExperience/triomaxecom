@@ -1,0 +1,166 @@
+:root {
+  --paper: #ffffff;
+  --ink: #000000;
+  --ink-soft: #111111;
+  --muted: #8a8a8a;
+  --line: #e8e8e8;
+  --line-strong: #d9d9d9;
+  --surface: #f7f7f7;
+  --surface-2: #f2f2f0;
+  --dark-block: #191919;
+  --accent: #000000;
+
+  /* Dourado tirado do gradiente da logo (#926b2b → #f6df81). Dois tons porque
+     um só não serve aos dois fundos: o escuro cumpre AA sobre branco (4,82:1) e
+     o claro sobre o bloco escuro (8,07:1). O gradiente reproduz o metal da
+     marca e é só para preenchimento — nunca para texto. */
+  --gold: #926b2b;
+  --gold-light: #caad5b;
+  --gold-line: #b29046;
+  /* Faixa clara do gradiente (#b29046 → #f6df81): preserva o brilho metálico e
+     garante 6,97:1 com texto preto até no ponto mais escuro. */
+  --gold-metal: linear-gradient(100deg, #b29046, #ead177 30%, #f6df81 50%, #ead177 70%, #b29046);
+  /* Únicas cores fora do preto e branco: são funcionais, não decorativas.
+     O verde do Pix acompanha o padrão do mercado; usamos #16a34a no lugar do
+     #22c55e de referência porque este último tem só 2,3:1 sobre o branco. Em
+     negrito ≥18,66px o #16a34a atinge 3,30:1 e cumpre o mínimo da WCAG.
+     O verde escuro é para fundo com texto branco (5,02:1). */
+  --price-pix: #16a34a;
+  --price-pix-dark: #15803d;
+  --price-off: #8a8a8a;
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+/*
+ * As pilhas de fonte moram aqui, e não em `:root`, porque o next/font declara
+ * --font-neulis / --font-urbanist / --font-poppins no <body> via className. Um
+ * var() que aponta para uma variável inexistente no elemento onde é resolvido
+ * invalida a propriedade inteira, e o valor vazio é herdado por toda a página —
+ * era o que jogava o site inteiro na fonte serifada padrão do navegador.
+ */
+body {
+  /* Neulis Neue fica restrita aos títulos (h1–h4). --font-display vale para a UI
+     em caixa alta — pills, botões, fita, kickers —, onde os pesos 550/600 são
+     necessários e a Neulis só tem o 400. */
+  --font-heading: var(--font-neulis), var(--font-urbanist), var(--font-poppins), Arial, sans-serif;
+  --font-display: var(--font-urbanist), var(--font-poppins), Arial, sans-serif;
+  --font-sans: var(--font-poppins), Arial, sans-serif;
+  --font-header: var(--font-jost), "Jost", Arial, sans-serif;
+
+  overflow-x: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  /* A Neulis tem só o peso 400: sem isto o navegador falsifica o negrito. */
+  font-synthesis-weight: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ---------- shared store primitives ---------- */
+
+.container {
+  width: min(100%, 1300px);
+  margin-inline: auto;
+  padding-inline: 15px;
+}
+
+/*
+ * As fotos de produto vêm de estúdio com fundo quase branco (o mais escuro é
+ * rgb(249,248,249)), o que desenha um retângulo visível sobre o card branco.
+ * O ganho de 3% leva esse fundo a 255 sem alterar a percepção das cores da peça.
+ */
+.productPhoto {
+  filter: brightness(1.03);
+}
+
+/* ---------- scroll reveal ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.revealIn {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

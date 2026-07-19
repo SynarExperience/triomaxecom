@@ -1,0 +1,635 @@
+/* ============ shared page scaffolding ============ */
+
+.page {
+  min-height: 60vh;
+  padding-block: 36px 84px;
+  background: var(--paper);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 26px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  list-style: none;
+}
+
+.breadcrumb li {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.breadcrumb li:not(:last-child)::after {
+  color: var(--line-strong);
+  content: "/";
+}
+
+.breadcrumb a {
+  transition: color 180ms ease;
+}
+
+.breadcrumb a:hover {
+  color: var(--ink);
+}
+
+.breadcrumb [aria-current] {
+  color: var(--ink);
+}
+
+/* ============ listing ============ */
+
+.listingHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.listingHead h1 {
+  margin: 0;
+  font-size: clamp(26px, 2.8vw, 38px);
+  font-weight: 550;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.listingCount {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.sortControl {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sortControl select {
+  min-height: 44px;
+  padding: 0 38px 0 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--paper) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 15px center;
+  color: var(--ink);
+  cursor: pointer;
+  appearance: none;
+  transition: border-color 200ms ease;
+}
+
+.sortControl select:hover,
+.sortControl select:focus {
+  border-color: var(--ink);
+  outline: 0;
+}
+
+.listingLayout {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: 34px;
+  align-items: start;
+}
+
+.filters {
+  position: sticky;
+  top: 174px;
+  display: grid;
+  gap: 12px;
+}
+
+.filterGroup {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+}
+
+.filterGroup summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 50px;
+  padding: 13px 16px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+  transition: opacity 180ms ease;
+}
+
+.filterGroup summary::-webkit-details-marker {
+  display: none;
+}
+
+.filterGroup summary:hover {
+  opacity: 0.6;
+}
+
+.filterGroup summary svg {
+  width: 15px;
+  height: 15px;
+  color: var(--ink);
+  transition: transform 240ms var(--ease-out);
+}
+
+.filterGroup[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.filterOptions {
+  display: grid;
+  gap: 4px;
+  padding: 2px 10px 12px;
+}
+
+.filterOption {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 40px;
+  padding: 8px 8px;
+  border-radius: 2px;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+
+.filterOption:hover {
+  background: var(--surface);
+}
+
+.filterOption input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+.filterOption span:last-child {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+/* ============ product detail ============ */
+
+.pdpLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 46px;
+  align-items: start;
+}
+
+.pdpMedia {
+  position: sticky;
+  top: 174px;
+  display: grid;
+  overflow: hidden;
+  aspect-ratio: 0.94;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+  place-items: center;
+  isolation: isolate;
+}
+
+.pdpMedia img {
+  width: 84%;
+  height: 84%;
+  object-fit: contain;
+  transition: transform 700ms var(--ease-out), opacity 300ms ease;
+}
+
+.pdpMedia:hover img {
+  transform: scale(1.04);
+}
+
+.pdpBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 7px 13px;
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pdpCategory {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.pdpTitle {
+  margin: 0 0 12px;
+  font-size: clamp(24px, 2.6vw, 34px);
+  font-weight: 550;
+  letter-spacing: 0.02em;
+  line-height: 1.12;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.pdpRating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.pdpRating svg {
+  width: 15px;
+  height: 15px;
+  color: var(--ink);
+}
+
+.pdpShort {
+  margin: 0 0 22px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.priceBox {
+  margin-bottom: 22px;
+  padding: 20px 22px;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: var(--paper);
+}
+
+/* Mesma hierarquia dos cards: Pix em destaque, preço normal abaixo. */
+.pricePix {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--price-pix);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.pricePix svg {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+}
+
+.priceMain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.priceMain strong {
+  font-size: 19px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.priceMain s {
+  color: var(--price-off);
+  font-size: 16px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.priceInstallments {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 8px 0 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.priceInstallments svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  color: var(--muted);
+}
+
+/* Quantidade em cima, botão de compra sozinho embaixo em largura total — a
+   ação principal não divide a linha com um controle secundário. */
+.buyRow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.qty {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--paper);
+}
+
+.qty button {
+  display: grid;
+  width: 46px;
+  height: 52px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 19px;
+  cursor: pointer;
+  place-items: center;
+  transition: background 180ms ease;
+}
+
+.qty button:hover {
+  background: var(--surface);
+}
+
+.qty span {
+  min-width: 34px;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mesmo tratamento do botão "Comprar" dos cards: a ação de compra é a mesma
+   nos dois lugares e precisa ser reconhecida como tal. */
+.buyButton {
+  display: inline-flex;
+  width: 100%;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 240ms ease;
+}
+
+.buyButton svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Este botão reusa .buttonGold, que virou dourado. Os dois `:hover` têm a mesma
+   especificidade, então a classe é repetida para vencer sem depender da ordem
+   das folhas de estilo — a ação de compra continua preta. */
+.buyButton.buyButton:hover {
+  border-color: transparent;
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 0.84;
+}
+
+.trustList {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 26px;
+  padding: 0;
+  list-style: none;
+}
+
+.trustList li {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}
+
+.trustList svg {
+  width: 17px;
+  height: 17px;
+  color: var(--ink);
+}
+
+.shippingBox {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.shippingBox input {
+  min-width: 0;
+  flex: 1;
+  height: 50px;
+  padding-inline: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  outline: 0;
+  transition: border-color 200ms ease;
+}
+
+.shippingBox input::placeholder {
+  color: var(--muted);
+}
+
+.shippingBox input:focus {
+  border-color: var(--ink);
+}
+
+.shippingBox button {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.shippingBox button:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.accordions {
+  display: grid;
+  gap: 12px;
+}
+
+.accordion {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+}
+
+.accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 54px;
+  padding: 15px 18px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+  transition: opacity 180ms ease;
+}
+
+.accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion summary:hover {
+  opacity: 0.6;
+}
+
+.accordion summary svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--ink);
+  transition: transform 240ms var(--ease-out);
+}
+
+.accordion[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.accordionBody {
+  padding: 0 18px 18px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.accordionBody p {
+  margin: 0 0 12px;
+}
+
+.accordionBody p:last-child {
+  margin-bottom: 0;
+}
+
+.specTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.specTable th,
+.specTable td {
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.specTable th {
+  width: 44%;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.specTable tr:last-child th,
+.specTable tr:last-child td {
+  border-bottom: 0;
+}
+
+.related {
+  margin-top: 72px;
+}
+
+/* ============ responsive ============ */
+
+@media (max-width: 1120px) {
+  .listingLayout {
+    grid-template-columns: 216px minmax(0, 1fr);
+    gap: 22px;
+  }
+}
+
+@media (max-width: 860px) {
+  .listingLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pdpLayout {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .pdpMedia {
+    position: static;
+  }
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding-block: 22px 60px;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .priceMain strong {
+    font-size: 26px;
+  }
+
+  .related {
+    margin-top: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdpMedia img,
+  .filterGroup summary svg,
+  .accordion summary svg,
+  .qty button,
+  .sortControl select,
+  .breadcrumb a {
+    transition: none;
+  }
+}

@@ -1,0 +1,993 @@
+/* ============ shared section scaffolding ============ */
+
+.section {
+  padding-block: 78px;
+  background: var(--paper);
+}
+
+.sectionAlt {
+  background: var(--surface);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.sectionKicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.sectionKicker::before {
+  width: 26px;
+  height: 1px;
+  background: var(--gold-line);
+  content: "";
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: 550;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.sectionLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding-bottom: 6px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 550;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--ink);
+  transition: opacity 200ms ease, gap 200ms ease;
+}
+
+.sectionLink:hover {
+  opacity: 0.6;
+  gap: 13px;
+}
+
+.sectionLink svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ============ benefits bar ============ */
+
+.benefits {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding-block: 30px;
+}
+
+.benefit {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 14px;
+}
+
+.benefitIcon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  place-items: center;
+}
+
+.benefitIcon svg {
+  width: 21px;
+  height: 21px;
+}
+
+/*
+ * As classes abaixo são explícitas de propósito: um seletor de elemento como
+ * `.benefit span` teria especificidade maior que `.benefitIcon` e sobrescreveria
+ * o `display: grid` do círculo, quebrando a centralização do ícone.
+ */
+.benefitText {
+  display: block;
+}
+
+.benefitText strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* `balance` distribui as linhas por igual em vez de deixar uma palavra sozinha
+   na última — a frase do frete quebrava separando "R$" de "299". */
+.benefitText span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+/* ============ product grid & card ============ */
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 26px 22px;
+}
+
+.productGrid > :global(.reveal) {
+  display: grid;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  transition: transform 320ms var(--ease-out), border-color 320ms ease,
+    box-shadow 320ms ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-card);
+}
+
+.cardMedia {
+  position: relative;
+  display: grid;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--paper);
+  place-items: center;
+}
+
+.cardMedia img {
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
+  transition: transform 600ms var(--ease-out);
+}
+
+.card:hover .cardMedia img {
+  transform: scale(1.04);
+}
+
+.cardBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Selo de desconto: verde escuro para o texto branco alcançar 5:1. */
+.cardDiscount {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--price-pix-dark);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 14px 6px 4px;
+}
+
+.cardName {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+/* O preço no Pix é o destaque principal do bloco, como na referência. */
+.cardPix {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: auto;
+  color: var(--price-pix);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardPix svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+.cardPriceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.cardPrice {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardCompare {
+  color: var(--price-off);
+  font-size: 13px;
+  font-weight: 400;
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardInstallments {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 5px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardInstallments svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  color: var(--muted);
+}
+
+.cardAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  min-height: 48px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: opacity 240ms ease;
+}
+
+.cardAction svg {
+  width: 16px;
+  height: 16px;
+}
+
+.card:hover .cardAction {
+  opacity: 0.84;
+}
+
+/* ============ category showcase ============ */
+
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.categoryCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+  transition: border-color 320ms ease, transform 340ms var(--ease-out);
+}
+
+.categoryCard:hover {
+  transform: translateY(-5px);
+  border-color: var(--ink);
+}
+
+.categoryCardMedia {
+  display: grid;
+  aspect-ratio: 1;
+  overflow: hidden;
+  place-items: center;
+}
+
+.categoryCardMedia img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  transition: transform 600ms var(--ease-out);
+}
+
+.categoryCard:hover .categoryCardMedia img {
+  transform: scale(1.06);
+}
+
+.categoryCardBody {
+  padding: 18px 20px 22px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.categoryCard h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.categoryCard p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.categoryCardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.categoryCardCta svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 240ms var(--ease-out);
+}
+
+.categoryCard:hover .categoryCardCta svg {
+  transform: translateX(4px);
+}
+
+/* ============ promo banner ============ */
+
+.promo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.promoInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: 30px;
+  padding: 58px 56px;
+}
+
+.promoTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 0 0 16px;
+  padding: 7px 14px;
+  border: 1px solid var(--gold-line);
+  border-radius: 0;
+  color: var(--gold-light);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.promoTag svg {
+  width: 14px;
+  height: 14px;
+}
+
+.promo h2 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 550;
+  letter-spacing: 0.01em;
+  line-height: 1.08;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.promo p {
+  margin: 0 0 26px;
+  max-width: 480px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.promoActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.buttonGold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 28px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: var(--gold-metal);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 220ms ease, border-color 220ms ease, color 220ms ease,
+    transform 220ms var(--ease-out);
+}
+
+.buttonGold:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-line);
+  background: transparent;
+  color: var(--gold-light);
+}
+
+.buttonGold svg {
+  width: 16px;
+  height: 16px;
+}
+
+.buttonGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 550;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 220ms ease, background 220ms ease, transform 220ms var(--ease-out);
+}
+
+.buttonGhost:hover {
+  border-color: var(--paper);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.promoFigure {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.promoFigure img {
+  width: min(100%, 340px);
+  filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.45));
+  transition: transform 600ms var(--ease-out);
+}
+
+.promo:hover .promoFigure img {
+  transform: translateY(-6px) rotate(-1.2deg);
+}
+
+.promoGlow {
+  position: absolute;
+  inset: 12% 6%;
+  z-index: 0;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, rgba(234, 209, 119, 0.18), transparent 70%);
+}
+
+.promoFigure img {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============ product rail ============ */
+
+.rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(272px, 296px);
+  gap: 20px;
+  overflow-x: auto;
+  padding: 4px 4px 22px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+
+.rail > * {
+  scroll-snap-align: start;
+}
+
+.rail::-webkit-scrollbar {
+  height: 5px;
+}
+
+.rail::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.rail::-webkit-scrollbar-track {
+  background: var(--line);
+}
+
+/* ============ instagram ============ */
+
+.instaGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.instaTile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+  isolation: isolate;
+}
+
+.instaTile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms var(--ease-out);
+}
+
+.instaTile:hover img {
+  transform: scale(1.07);
+}
+
+.instaTileOverlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  opacity: 0;
+  place-items: center;
+  transition: opacity 260ms ease;
+}
+
+.instaTile:hover .instaTileOverlay {
+  opacity: 1;
+}
+
+.instaTileOverlay svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* ============ footer ============ */
+
+.footer {
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.newsletter {
+  background: var(--dark-block);
+  color: var(--paper);
+}
+
+.newsletterInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  padding-block: 48px;
+}
+
+.newsletter h2 {
+  margin: 0 0 8px;
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 550;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.newsletter p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 10px;
+}
+
+.newsletterForm input {
+  min-width: 0;
+  flex: 1;
+  height: 52px;
+  padding-inline: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  outline: 0;
+  transition: border-color 200ms ease;
+}
+
+.newsletterForm input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.newsletterForm input:focus {
+  border-color: #fff;
+}
+
+.newsletterForm .buttonGold:hover {
+  border-color: var(--gold-line);
+  background: transparent;
+  color: var(--gold-light);
+}
+
+.footerColumns {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr 1.1fr;
+  gap: 34px;
+  padding-block: 56px;
+}
+
+.footerBrand img {
+  width: auto;
+  height: 68px;
+}
+
+.footerBrand p {
+  max-width: 300px;
+  margin: 16px 0 20px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+.footerSocial {
+  display: flex;
+  gap: 10px;
+}
+
+.footerSocial a {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--ink);
+  place-items: center;
+  transition: border-color 220ms ease, background 220ms ease, color 220ms ease, transform 220ms var(--ease-out);
+}
+
+.footerSocial a:hover {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  transform: translateY(-2px);
+}
+
+.footerSocial svg {
+  width: 19px;
+  height: 19px;
+}
+
+.footerCol h3 {
+  margin: 6px 0 18px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.footerCol ul {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footerCol a {
+  color: var(--muted);
+  font-size: 13.5px;
+  transition: color 180ms ease;
+}
+
+.footerCol a:hover {
+  color: var(--ink);
+}
+
+.footerContact li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.footerContact svg {
+  width: 16px;
+  height: 16px;
+  color: var(--ink);
+}
+
+.footerBottom {
+  border-top: 1px solid var(--line);
+}
+
+.footerBottomInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-block: 22px;
+}
+
+.footerBottom p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.footerSeals {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+.footerSeals span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.footerSeals svg {
+  width: 16px;
+  height: 16px;
+  color: var(--ink);
+}
+
+/* ============ responsive ============ */
+
+@media (max-width: 1120px) {
+  .productGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .benefitsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .instaGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .footerColumns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 28px;
+  }
+
+}
+
+/*
+ * Abaixo de 640px cada vantagem ocupa a linha inteira. Em duas colunas sobravam
+ * 175px por item no celular, o que quebrava a frase do frete em quatro linhas e
+ * separava "R$" de "299". Em coluna única o texto cabe em uma ou duas linhas e o
+ * ícone volta a ficar alinhado ao seu próprio rótulo.
+ */
+@media (max-width: 640px) {
+  .benefitsGrid {
+    grid-template-columns: 1fr;
+    gap: 2px;
+    padding-block: 22px;
+  }
+
+  .benefit {
+    gap: 13px;
+    padding: 9px 2px;
+  }
+
+  .benefitIcon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .benefitIcon svg {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding-block: 54px;
+  }
+
+  .sectionHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+
+  .productGrid,
+  .categoryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 13px;
+  }
+
+  .cardBody {
+    padding: 12px 2px 4px;
+  }
+
+  .cardName {
+    font-size: 12.5px;
+  }
+
+  .cardPrice {
+    font-size: 15px;
+  }
+
+  .categoryCardBody {
+    padding: 13px 14px 16px;
+  }
+
+  .categoryCard h3 {
+    font-size: 13.5px;
+  }
+
+  .promoInner {
+    grid-template-columns: 1fr;
+    padding: 34px 24px;
+  }
+
+  .promoFigure {
+    order: -1;
+  }
+
+  .promoFigure img {
+    width: min(66%, 250px);
+  }
+
+  .instaGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .newsletterInner {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-block: 38px;
+  }
+
+  .newsletterForm {
+    flex-direction: column;
+  }
+
+  .footerColumns {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    padding-block: 40px;
+  }
+
+  .rail {
+    grid-auto-columns: minmax(210px, 230px);
+    gap: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .cardMedia,
+  .cardMedia img,
+  .cardAction,
+  .cardAction svg,
+  .categoryCard,
+  .categoryCardMedia img,
+  .categoryCardCta svg,
+  .buttonGold,
+  .buttonGhost,
+  .promoFigure img,
+  .instaTile img,
+  .instaTileOverlay,
+  .footerSocial a,
+  .sectionLink {
+    transition: none;
+  }
+}

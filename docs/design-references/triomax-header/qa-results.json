@@ -1,0 +1,86 @@
+[
+  {
+    "name": "desktop",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "header": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 157
+    },
+    "marquee": {
+      "x": 0,
+      "y": 157,
+      "width": 1440,
+      "height": 38
+    },
+    "topbarVisible": true,
+    "desktopNavVisible": true,
+    "drawerOpened": false,
+    "scrolledHeader": {
+      "x": 0,
+      "y": -39,
+      "width": 1440,
+      "height": 157
+    }
+  },
+  {
+    "name": "tablet",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "header": {
+      "x": 0,
+      "y": 0,
+      "width": 768,
+      "height": 151
+    },
+    "marquee": {
+      "x": 0,
+      "y": 151,
+      "width": 768,
+      "height": 38
+    },
+    "topbarVisible": true,
+    "desktopNavVisible": true,
+    "drawerOpened": false,
+    "scrolledHeader": {
+      "x": 0,
+      "y": -39,
+      "width": 768,
+      "height": 151
+    }
+  },
+  {
+    "name": "mobile",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "header": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 56
+    },
+    "marquee": {
+      "x": 0,
+      "y": 56,
+      "width": 390,
+      "height": 38
+    },
+    "topbarVisible": false,
+    "desktopNavVisible": false,
+    "drawerOpened": true,
+    "scrolledHeader": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 56
+    }
+  }
+]

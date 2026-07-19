@@ -1,0 +1,32 @@
+[
+  {
+    "viewport": {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    "hrefs": [
+      "/produtos",
+      "/produtos"
+    ],
+    "imageWidths": [
+      390,
+      390
+    ]
+  },
+  {
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    "hrefs": [
+      "/produtos",
+      "/produtos"
+    ],
+    "imageWidths": [
+      390,
+      390
+    ]
+  }
+]

@@ -1,0 +1,169 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import styles from "./HeaderHero.module.css";
+
+/* A arte de desktop é 1440x480 e a de celular é 1:1 — não é a mesma imagem
+   redimensionada, é outro enquadramento. O <picture> abaixo deixa o navegador
+   baixar só a versão que vai usar. */
+const MOBILE_MEDIA = "(max-width: 767px)";
+
+const banners = [
+  {
+    src: "/banners/banner-01.webp",
+    mobileSrc: "/banners/mobile/banner-01.webp",
+    alt: "Banner Triomax: pilhas de carretéis de filamento coloridos — confiança e entrega rápida, garanta agora",
+    label: "Ver banner de ofertas",
+  },
+  {
+    src: "/banners/banner-02.webp",
+    mobileSrc: "/banners/mobile/banner-02.webp",
+    alt: "Banner Triomax: carretéis de filamento vermelho, verde, azul e amarelo empilhados sobre fundo laranja — PLA e PETG sem pedido mínimo",
+    label: "Ver banner de PLA e PETG sem pedido mínimo",
+  },
+  {
+    src: "/banners/banner-03.webp",
+    mobileSrc: "/banners/mobile/banner-03.webp",
+    alt: "Banner Triomax: impressora 3D em operação — filamentos e equipamentos com desconto exclusivo",
+    label: "Ver banner de filamentos e equipamentos",
+  },
+];
+
+/* 0 = vídeo; 1..n = banners */
+const slideCount = banners.length + 1;
+const BANNER_DURATION = 6000;
+
+/*
+ * O vídeo tem duas versões, como os banners: 16:9 no desktop e 1:1 no celular.
+ * Diferente das imagens, aqui não dá para usar `<source media>` — os
+ * navegadores removeram o suporte a media query dentro de `<video>`, e o
+ * elemento simplesmente pega o primeiro `<source>` da lista. Por isso a escolha
+ * é feita em JS.
+ */
+const videoSources = {
+  desktop: { src: "/banners/hero-filaments.mp4", poster: "/banners/hero-poster.webp" },
+  mobile: { src: "/banners/mobile/hero-filaments.mp4", poster: "/banners/mobile/hero-poster.webp" },
+};
+
+export function HeroSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [slide, setSlide] = useState(0);
+  /*
+   * Começa nulo de propósito: no HTML do servidor não há como saber a largura
+   * da tela, e escolher errado faria o celular baixar os 4K do desktop antes de
+   * corrigir. Sem `src` o `<video>` não baixa nada e o poster já pinta o hero;
+   * o efeito abaixo resolve a versão certa no primeiro frame do cliente.
+   */
+  const [source, setSource] = useState<{ src: string; poster: string } | null>(null);
+
+  const next = useCallback(() => setSlide((current) => (current + 1) % slideCount), []);
+
+  useEffect(() => {
+    const query = window.matchMedia(MOBILE_MEDIA);
+    const pick = () => setSource(query.matches ? videoSources.mobile : videoSources.desktop);
+    pick();
+    // Cobre rotação de tela e redimensionamento de janela atravessando o breakpoint.
+    query.addEventListener("change", pick);
+    return () => query.removeEventListener("change", pick);
+  }, []);
+
+  useEffect(() => {
+    if (slide !== 0) {
+      const timer = setTimeout(next, BANNER_DURATION);
+      return () => clearTimeout(timer);
+    }
+
+    // O play precisa acontecer aqui, e não junto com o clique/timer: só depois
+    // deste render o slide do vídeo deixa de ser `display: none`, e alguns
+    // navegadores recusam reproduzir um elemento que ainda não está renderizado.
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    video.play().catch(() => {
+      /* autoplay bloqueado — o timer abaixo mantém o carrossel girando */
+    });
+
+    // Rede de segurança: se o vídeo não tocar (autoplay bloqueado, decodificação
+    // falha, aba em segundo plano), `onEnded` nunca dispara e o carrossel ficaria
+    // parado no primeiro frame. Este timer garante que ele sempre avança.
+    const limit = Number.isFinite(video.duration) ? video.duration * 1000 : BANNER_DURATION;
+    const fallback = setTimeout(next, limit + 1500);
+    return () => clearTimeout(fallback);
+    // `source` entra nas dependências porque no primeiro render ele ainda é
+    // nulo: sem isso o play() rodaria uma única vez num <video> sem src e o
+    // primeiro slide ficaria parado no poster até o carrossel dar a volta.
+  }, [slide, next, source]);
+
+  return (
+    <section aria-label="Destaques Triomax" className={styles.hero}>
+      <div
+        aria-hidden={slide !== 0}
+        className={`${styles.heroSlide} ${slide === 0 ? styles.heroSlideActive : ""}`}
+      >
+        <video
+          aria-label="Filamentos coloridos ao redor da marca Triomax"
+          autoPlay
+          className={styles.heroVideo}
+          muted
+          onEnded={next}
+          playsInline
+          /* O poster é o primeiro frame do próprio vídeo: o hero pinta
+             imediatamente e o MP4 entra por cima quando termina de baixar, sem
+             o retângulo preto que aparecia enquanto o vídeo carregava. */
+          poster={source?.poster ?? videoSources.desktop.poster}
+          preload="auto"
+          ref={videoRef}
+          /* `key` força o React a recriar o elemento na troca de versão, em vez
+             de só editar o src — sem isso o Chrome mantém o buffer do vídeo
+             antigo e o primeiro frame após a virada sai do arquivo errado. */
+          key={source?.src ?? "pending"}
+        >
+          {source ? <source src={source.src} type="video/mp4" /> : null}
+        </video>
+      </div>
+
+      {banners.map((banner, index) => {
+        const active = slide === index + 1;
+        return (
+          <a
+            aria-hidden={!active}
+            className={`${styles.heroSlide} ${styles.heroBannerSlide} ${
+              active ? styles.heroSlideActive : ""
+            }`}
+            href="/produtos"
+            key={banner.src}
+            tabIndex={active ? 0 : -1}
+          >
+            <picture>
+              <source media={MOBILE_MEDIA} srcSet={banner.mobileSrc} width={390} height={390} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt={banner.alt}
+                className={styles.heroBannerImage}
+                height={480}
+                /* todos os slides aparecem nos primeiros ~20s; em `lazy` eles só
+                   baixariam ao ficarem visíveis, piscando em branco na troca */
+                loading="eager"
+                src={banner.src}
+                width={1440}
+              />
+            </picture>
+          </a>
+        );
+      })}
+
+      <div aria-label="Trocar destaque" className={styles.heroDots} role="group">
+        {Array.from({ length: slideCount }, (_, index) => (
+          <button
+            aria-label={index === 0 ? "Ver vídeo" : banners[index - 1].label}
+            aria-pressed={slide === index}
+            className={slide === index ? styles.heroDotActive : ""}
+            key={index}
+            onClick={() => setSlide(index)}
+            type="button"
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
