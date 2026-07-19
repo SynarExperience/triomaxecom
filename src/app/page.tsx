@@ -1,5 +1,5 @@
+import { BenefitsBar } from "@/components/BenefitsBar";
 import {
-  BenefitsBar,
   CategoryShowcase,
   FeaturedProducts,
   InstagramSection,

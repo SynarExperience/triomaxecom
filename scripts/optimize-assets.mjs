@@ -32,21 +32,41 @@ function backup(file) {
   cpSync(file, target);
 }
 
+/*
+ * Larguras de saída por pasta. Os banners vêm de masters 4K (upscale de IA sobre
+ * a arte original, que tinha 1440x480 e 390x390) e geram várias larguras para o
+ * `srcset` escolher: assim um monitor 1x baixa 224 KB e só um Retina baixa os
+ * 569 KB de 4K real. Sem isso, ou todo mundo carrega 4K, ou ninguém aproveita.
+ *
+ * `null` = mantém a resolução do master. É o caso das fotos de produto, cujo
+ * 1122 px já cobre com folga os 538 px de exibição em tela 2x.
+ */
+const widthRules = [
+  { match: /banners\/mobile\/banner-/, widths: [780, 1170] }, // hero mobile, 390 CSS em telas 2x e 3x
+  { match: /banners\/banner-/, widths: [1920, 2560, 3840] }, // hero desktop, exibido a 100vw
+  { match: /banners\/categories\//, widths: [780] }, // tiles de categoria, 390 CSS em tela 2x
+];
+
+function widthsFor(source) {
+  const key = relative(BACKUP, source);
+  return widthRules.find((rule) => rule.match.test(key))?.widths ?? [null];
+}
+
 async function toWebp(source, { width, quality }) {
   // A conversão sempre parte do original em `assets-src/`, nunca de um WebP já
   // gerado — reencodar lossy em cima de lossy acumula perda a cada execução.
-  const out = join(PUBLIC, relative(BACKUP, source)).replace(/\.(png|jpe?g)$/i, ".webp");
-  const original = size(source);
+  const base = join(PUBLIC, relative(BACKUP, source)).replace(/\.(png|jpe?g)$/i, "");
+  // Uma largura só mantém o nome limpo; várias ganham sufixo para o srcset.
+  const out = width && widthsFor(source).length > 1 ? `${base}-${width}.webp` : `${base}.webp`;
+  // Uma pasta nova em `assets-src/` não existe ainda em `public/`.
+  mkdirSync(dirname(out), { recursive: true });
 
   let pipeline = sharp(source);
   if (width) pipeline = pipeline.resize({ width, withoutEnlargement: true });
   await pipeline.webp({ quality, effort: 6 }).toFile(out);
 
-  before += original;
   after += size(out);
-  console.log(
-    `  ${relative(BACKUP, source).padEnd(38)} ${kb(original).padStart(8)} -> ${kb(size(out)).padStart(8)}`,
-  );
+  console.log(`  ${relative(PUBLIC, out).padEnd(42)} ${kb(size(out)).padStart(8)}`);
 }
 
 function walk(dir) {
@@ -64,15 +84,23 @@ for (const file of walk(PUBLIC).filter((f) => /\.(png|jpe?g)$/i.test(f))) {
   rmSync(file);
 }
 
-for (const source of walk(BACKUP).filter((f) => /\.(png|jpe?g)$/i.test(f))) {
-  /*
-   * Qualidade 95, e não os 82 que parecem suficientes num teste rápido: estas
-   * são fotos de embalagem, com texto impresso miúdo e as ranhuras finas das
-   * peças. É exatamente o tipo de detalhe que o WebP lossy borra primeiro — a
-   * 82 o texto do rótulo já saía ilegível. A resolução (1122 px de fonte para
-   * 538 px de exibição em tela 2x) não precisa mexer.
-   */
-  await toWebp(source, { quality: 95 });
+const sources = walk(BACKUP)
+  .filter((f) => /\.(png|jpe?g)$/i.test(f))
+  // `*-original-*` são as artes antes do upscale e `*-aposentado*` são artes que
+  // saíram do site — ficam guardadas como histórico, mas não vão para `public/`.
+  .filter((f) => !/-original-\d+\.|-aposentado\./.test(f));
+
+for (const source of sources) {
+  before += size(source);
+  for (const width of widthsFor(source)) {
+    /*
+     * Qualidade 95, e não os 82 que parecem suficientes num teste rápido: estas
+     * são fotos de embalagem, com texto impresso miúdo e as ranhuras finas das
+     * peças. É exatamente o tipo de detalhe que o WebP lossy borra primeiro — a
+     * 82 o texto do rótulo já saía ilegível.
+     */
+    await toWebp(source, { width, quality: 95 });
+  }
 }
 
 /*

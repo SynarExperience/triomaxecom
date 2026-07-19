@@ -1,57 +1,12 @@
 import { categoryCards, featuredProducts, products } from "@/data/catalog";
 import {
   ArrowRightIcon,
-  CardIcon,
   FlameIcon,
   InstagramIcon,
-  PixIcon,
-  ShieldIcon,
-  TruckIcon,
 } from "./icons";
 import { ProductCard } from "./ProductCard";
 import { Reveal } from "./Reveal";
 import styles from "./store.module.css";
-
-const benefits = [
-  {
-    icon: <TruckIcon />,
-    title: "Frete grátis",
-    text: "Nas compras acima de R$ 299 para todo o Brasil",
-  },
-  {
-    icon: <CardIcon />,
-    title: "Até 12x sem juros",
-    text: "Parcele no cartão em até 12 vezes",
-  },
-  {
-    icon: <PixIcon />,
-    title: "10% off no Pix",
-    text: "Desconto aplicado direto no carrinho",
-  },
-  {
-    icon: <ShieldIcon />,
-    title: "Compra protegida",
-    text: "Site seguro e envio em até 24h úteis",
-  },
-];
-
-export function BenefitsBar() {
-  return (
-    <section aria-label="Vantagens da loja" className={styles.benefits}>
-      <div className={`container ${styles.benefitsGrid}`}>
-        {benefits.map((benefit, index) => (
-          <Reveal className={styles.benefit} delay={index * 70} key={benefit.title}>
-            <span className={styles.benefitIcon}>{benefit.icon}</span>
-            <span className={styles.benefitText}>
-              <strong>{benefit.title}</strong>
-              <span>{benefit.text}</span>
-            </span>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 export function FeaturedProducts() {
   return (
@@ -116,42 +71,40 @@ export function CategoryShowcase() {
   );
 }
 
+/*
+ * O bloco inteiro é a arte, de ponta a ponta da tela — mesmo tratamento do hero.
+ * Fica fora de `.container` de propósito: assim a largura total vem do próprio
+ * fluxo do documento, sem `100vw`, que em desktop conta a barra de rolagem junto
+ * e criaria rolagem horizontal.
+ *
+ * O `alt` carrega a oferta porque ela só existe dentro do pixel: sem ele, quem
+ * usa leitor de tela e o próprio Google não teriam como saber o que o banner
+ * anuncia.
+ */
 export function PromoBanner() {
   return (
-    <section className={styles.section}>
-      <div className="container">
-        <Reveal>
-          <div className={styles.promo}>
-            <div className={styles.promoInner}>
-              <div>
-                <p className={styles.promoTag}>
-                  <FlameIcon />
-                  Semana Triomax
-                </p>
-                <h2>Leve 3 carretéis, pague 2</h2>
-                <p>
-                  Combine as cores que quiser em qualquer linha. O desconto entra sozinho no
-                  carrinho — válido enquanto durar o estoque.
-                </p>
-                <div className={styles.promoActions}>
-                  <a className={styles.buttonGold} href="/produtos">
-                    Montar meu kit
-                    <ArrowRightIcon />
-                  </a>
-                  <a className={styles.buttonGhost} href="/produtos">
-                    Ver catálogo
-                  </a>
-                </div>
-              </div>
-              <div className={styles.promoFigure}>
-                <span className={styles.promoGlow} aria-hidden="true" />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt="Carretel de filamento Triomax preto" className="productPhoto" loading="lazy" src="/products/filamento-preto.webp" />
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </div>
+    <section className={styles.promoSection}>
+      <Reveal>
+        <a className={styles.promoImageLink} href="/produtos">
+          <picture>
+            <source
+              media="(max-width: 767px)"
+              srcSet="/promo/frete-gratis-mobile.webp"
+              width={360}
+              height={722}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="Frete grátis acima de 15 unidades — filamento Masterprint branco e peças impressas em 3D"
+              className={styles.promoImage}
+              height={543}
+              loading="lazy"
+              src="/promo/frete-gratis-desktop.webp"
+              width={1270}
+            />
+          </picture>
+        </a>
+      </Reveal>
     </section>
   );
 }
@@ -184,13 +137,36 @@ export function PrintersRail() {
   );
 }
 
-const instagramTiles = [
-  { image: "/products/filamento-azul.webp", label: "PLA Premium azul" },
-  { image: "/products/filamento-vermelho.webp", label: "Vaso impresso em vermelho" },
-  { image: "/products/filamento-preto.webp", label: "PLA Matte preto" },
-  { image: "/products/filamento-amarelo.webp", label: "TPU Flex amarelo" },
-  { image: "/products/filamento-verde.webp", label: "PETG verde" },
-  { image: "/products/filamento-branco.webp", label: "PLA Engenharia branco" },
+/*
+ * Fica isolado aqui porque aparece em três lugares (kicker, botão "Seguir
+ * perfil" e o link de cada post) — sem isso, mudar o perfil viraria caça a
+ * strings soltas pelo arquivo.
+ */
+const INSTAGRAM_HANDLE = "triomaxx_";
+const INSTAGRAM_PROFILE = `https://instagram.com/${INSTAGRAM_HANDLE}`;
+
+type InstagramPost = {
+  /** Código do post no Instagram; nomeia o arquivo e monta o link. */
+  code: string;
+  /** Descreve a imagem para quem usa leitor de tela. */
+  alt: string;
+};
+
+/*
+ * Posts reais do perfil. As imagens vieram das meta tags Open Graph de cada
+ * post, na página de incorporação oficial. A og:image não serve aqui: ela vem
+ * recortada em quadrado, cortando topo e base de fotos publicadas em 3:4.
+ * Ficam salvas em /public/instagram, servidas do nosso domínio — a CDN do
+ * Instagram assina as URLs com validade curta, então apontar direto para lá
+ * deixaria a grade quebrada em poucos dias.
+ */
+const instagramPosts: InstagramPost[] = [
+  { code: "DW1w2awmkL0", alt: "Porta-guardanapos impresso em 3D no formato de folha de Costela de Adão" },
+  { code: "DW15D3cmkJk", alt: "Réplica impressa em 3D da taça da Copa do Mundo" },
+  { code: "DW2HANxmv7D", alt: "Expositor decorativo impresso em 3D com a palavra HOME" },
+  { code: "DW1vI7pmiBj", alt: "Escultura minimalista Duos, com dois rostos em união" },
+  { code: "DW1rPqhGhnS", alt: "Suporte de joias impresso em 3D no formato de mão" },
+  { code: "DW1pH4cFll9", alt: "Busto branco de lobo impresso em 3D" },
 ];
 
 export function InstagramSection() {
@@ -199,12 +175,12 @@ export function InstagramSection() {
       <div className="container">
         <Reveal className={styles.sectionHead}>
           <div>
-            <p className={styles.sectionKicker}>@triomax3d</p>
+            <p className={styles.sectionKicker}>@{INSTAGRAM_HANDLE}</p>
             <h2 className={styles.sectionTitle}>No Instagram</h2>
           </div>
           <a
             className={styles.sectionLink}
-            href="https://instagram.com"
+            href={INSTAGRAM_PROFILE}
             rel="noreferrer"
             target="_blank"
           >
@@ -213,17 +189,17 @@ export function InstagramSection() {
           </a>
         </Reveal>
         <div className={styles.instaGrid}>
-          {instagramTiles.map((tile, index) => (
-            <Reveal delay={index * 60} key={tile.label}>
+          {instagramPosts.map((post, index) => (
+            <Reveal delay={index * 60} key={post.code}>
               <a
-                aria-label={`${tile.label} — abrir Instagram`}
+                aria-label={`${post.alt} — abrir no Instagram`}
                 className={styles.instaTile}
-                href="https://instagram.com"
+                href={`https://www.instagram.com/p/${post.code}/`}
                 rel="noreferrer"
                 target="_blank"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt={tile.label} className="productPhoto" loading="lazy" src={tile.image} />
+                <img alt={post.alt} loading="lazy" src={`/instagram/${post.code}.webp`} />
                 <span className={styles.instaTileOverlay} aria-hidden="true">
                   <InstagramIcon />
                 </span>

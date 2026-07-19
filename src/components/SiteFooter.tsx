@@ -59,7 +59,7 @@ export function SiteFooter() {
             Brasil.
           </p>
           <div className={styles.footerSocial}>
-            <a aria-label="Instagram da Triomax" href="https://instagram.com" rel="noreferrer" target="_blank">
+            <a aria-label="Instagram da Triomax" href="https://instagram.com/triomaxx_" rel="noreferrer" target="_blank">
               <InstagramIcon />
             </a>
             <a aria-label="WhatsApp da Triomax" href="https://wa.me/555132768583" rel="noreferrer" target="_blank">

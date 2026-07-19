@@ -111,6 +111,18 @@
   height: 21px;
 }
 
+/* Destaque atribuído: verde é a cor do Pix em todo o site, dourado marca o
+   gancho comercial. Aplicado ao círculo em qualquer largura. */
+.benefitPix .benefitIcon {
+  border-color: var(--price-pix);
+  color: var(--price-pix);
+}
+
+.benefitGold .benefitIcon {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
 /*
  * As classes abaixo são explícitas de propósito: um seletor de elemento como
  * `.benefit span` teria especificidade maior que `.benefitIcon` e sobrescreveria
@@ -244,22 +256,47 @@
 }
 
 /* O preço no Pix é o destaque principal do bloco, como na referência. */
+/*
+ * O ícone fica fora do fluxo do texto e ancorado no topo: com `align-items:
+ * center` ele escorregava para o meio quando a linha quebrava em dois, que era
+ * o efeito de "texto quebrado" nos cards estreitos.
+ */
 .cardPix {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 7px;
   margin-top: auto;
   color: var(--price-pix);
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 
+.cardPixText {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 6px;
+}
+
+.cardPixText strong {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.cardPixLabel {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+/* Mesma largura do ícone das parcelas: é o que faz "R$ 80,91" e "12 x de"
+   começarem na mesma coluna. A margem centra o ícone na primeira linha. */
 .cardPix svg {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   flex: 0 0 auto;
+  margin-top: 2px;
 }
 
 .cardPriceRow {
@@ -294,8 +331,8 @@
 }
 
 .cardInstallments svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   flex: 0 0 auto;
   color: var(--muted);
 }
@@ -421,6 +458,48 @@
   border: 1px solid var(--ink);
   background: var(--ink);
   color: var(--paper);
+}
+
+/*
+ * O card promo virou uma arte só, clicável. `display: block` no link e no <img>
+ * evita a faixa de alguns pixels que o alinhamento de baseline do inline deixa
+ * embaixo da imagem, que apareceria como uma linha da borda destoando.
+ */
+/*
+ * Sem `padding-block` — a arte encosta nas seções de cima e de baixo. O respiro
+ * de 78px que as outras seções usam viraria justamente a faixa branca que o
+ * bloco full-bleed existe para eliminar.
+ */
+.promoSection {
+  background: var(--paper);
+}
+
+.promoImageLink {
+  display: block;
+  overflow: hidden;
+  /* Sem borda nem cantos arredondados: num bloco que vai de ponta a ponta, os
+     dois viram uma linha solta cortando a arte. */
+}
+
+/* Um bloco que ocupa a tela toda não tem para onde subir no hover sem descolar
+   das seções vizinhas — o realce fica no brilho, não no deslocamento. */
+.promoImageLink:hover .promoImage {
+  filter: brightness(1.04);
+}
+
+.promoImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: filter 400ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promoImageLink,
+  .promoImageLink:hover {
+    transform: none;
+    transition: none;
+  }
 }
 
 .promoInner {
@@ -605,13 +684,16 @@
   gap: 12px;
 }
 
+/* 4:5 é a proporção padrão do Instagram — a do feed e da grade de perfil. Os
+   arquivos são gerados nessa mesma proporção, então o navegador não recorta
+   nada na exibição: o que aparece no tile é exatamente o arquivo. */
 .instaTile {
   position: relative;
   display: block;
   overflow: hidden;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 5;
   border: 1px solid var(--line);
-  border-radius: 2px;
+  border-radius: 8px;
   background: var(--paper);
   isolation: isolate;
 }
@@ -871,26 +953,76 @@
  * separava "R$" de "299". Em coluna única o texto cabe em uma ou duas linhas e o
  * ícone volta a ficar alinhado ao seu próprio rótulo.
  */
+/*
+ * No celular a faixa vira carrossel arrastável: cada vantagem ocupa quase a
+ * largura toda e o item seguinte fica espiando na borda, sinalizando que há
+ * mais para o lado. O arrasto é a rolagem nativa do contêiner — nada de JS para
+ * o gesto, só para o avanço automático. Como cada card aparece sozinho, ganha
+ * moldura, tamanho maior e o título na cor do próprio destaque.
+ */
 @media (max-width: 640px) {
   .benefitsGrid {
-    grid-template-columns: 1fr;
-    gap: 2px;
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: 82%;
+    gap: 12px;
+    overflow-x: auto;
     padding-block: 22px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 15px;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .benefitsGrid::-webkit-scrollbar {
+    display: none;
   }
 
   .benefit {
-    gap: 13px;
-    padding: 9px 2px;
+    gap: 14px;
+    padding: 18px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+    scroll-snap-align: center;
+  }
+
+  /*
+   * A animação de entrada é desligada no carrossel: os dois últimos cards nascem
+   * fora da tela e só apareceriam ao serem arrastados, mostrando um retângulo
+   * vazio no meio do gesto. O seletor com dois níveis vence a `.reveal` global
+   * sem depender da ordem em que as folhas de estilo carregam.
+   */
+  .benefitsGrid > .benefit {
+    opacity: 1;
+    transform: none;
   }
 
   .benefitIcon {
-    width: 42px;
-    height: 42px;
+    width: 52px;
+    height: 52px;
   }
 
   .benefitIcon svg {
-    width: 19px;
-    height: 19px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .benefitText strong {
+    font-size: 14.5px;
+  }
+
+  .benefitText span {
+    margin-top: 4px;
+    font-size: 13.5px;
+  }
+
+  .benefitPix .benefitText strong {
+    color: var(--price-pix);
+  }
+
+  .benefitGold .benefitText strong {
+    color: var(--gold);
   }
 }
 
@@ -906,7 +1038,17 @@
     margin-bottom: 26px;
   }
 
-  .productGrid,
+  /*
+   * Uma coluna de 80vw no celular. Em duas colunas o card ficava com 174px e o
+   * bloco de preço não cabia em uma linha; com 80vw sobra largura de sobra e o
+   * texto para de quebrar sem precisar encolher a fonte.
+   */
+  .productGrid {
+    grid-template-columns: min(80vw, 420px);
+    justify-content: center;
+    gap: 20px;
+  }
+
   .categoryGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px 13px;

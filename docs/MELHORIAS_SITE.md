@@ -45,7 +45,7 @@ Estado da implementação: `typecheck`, build de produção e QA automatizado co
 | --- | --- | --- | --- |
 | P0 | Carrinho, checkout e pagamento funcionando | Muito alto | Alto |
 | P0 | Busca, filtros, ordenação e cálculo de frete reais | Muito alto | Médio |
-| P0 | Corrigir inconsistência Triomax × Masterprint | Muito alto | Baixo |
+| P1 | Explicar a relação Masterprint + Triomax | Médio | Baixo |
 | P0 | Políticas, contatos, promoções e avaliações verdadeiras | Alto | Médio |
 | P1 | Melhorar página do produto e CTA de compra | Muito alto | Médio |
 | P1 | Simplificar catálogo no celular | Alto | Médio |
@@ -76,14 +76,15 @@ Evidências:
 
 Essa é a principal barreira para publicar o site como loja.
 
-## 2. Resolver a inconsistência de marca
+## 2. Explicar a relação entre fabricante e revendedora
 
-O texto apresenta os produtos como Triomax, mas as embalagens nas imagens mostram claramente “Masterprint”. Isso pode gerar dúvida sobre fabricante, garantia e procedência.
+A Masterprint é a fabricante dos filamentos e a Triomax é a revendedora. Portanto, a marca Masterprint nas embalagens está correta e as imagens não precisam ser substituídas por esse motivo.
 
-É necessário decidir:
+Para tornar essa relação clara na página:
 
-- Se a Triomax é a fabricante, substituir as imagens.
-- Se a Triomax é revendedora, usar “Filamento Masterprint” nos títulos e explicar a relação comercial.
+- Identificar Masterprint como marca/fabricante na ficha do produto.
+- Identificar Triomax como revendedora e canal de atendimento.
+- Explicar de forma objetiva quem atende garantia, troca e suporte.
 
 Exemplos:
 
@@ -91,6 +92,8 @@ Exemplos:
 - [`filamento-vermelho.webp`](../public/products/filamento-vermelho.webp)
 
 ## 3. Melhorar a conversão da página do produto
+
+Auditoria aprofundada, blueprint da nova experiência, conteúdo necessário e backlog: [`AUDITORIA_PAGINA_PRODUTO.md`](AUDITORIA_PAGINA_PRODUTO.md).
 
 A página está visualmente organizada, mas precisa de:
 
@@ -319,7 +322,7 @@ Além do `typecheck` e do build, o projeto deve ganhar:
 
 ### Etapa 2 — Confiança e consistência
 
-1. Resolver Triomax × Masterprint.
+1. Explicar Masterprint como fabricante e Triomax como revendedora.
 2. Substituir dados ilustrativos.
 3. Criar páginas institucionais e políticas.
 4. Validar promoções, garantias e avaliações.

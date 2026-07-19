@@ -21,9 +21,14 @@ export function ProductCard({ product }: { product: Product }) {
       <div className={styles.cardBody}>
         <h3 className={styles.cardName}>{product.name}</h3>
 
+        {/* Valor e sufixo em elementos separados: num card estreito "com Pix"
+            desce sozinho como rótulo, em vez de partir o número no meio. */}
         <span className={styles.cardPix}>
           <PixIcon />
-          {formatBRL(pixPrice(product.price))} com Pix
+          <span className={styles.cardPixText}>
+            <strong>{formatBRL(pixPrice(product.price))}</strong>
+            <span className={styles.cardPixLabel}>com Pix</span>
+          </span>
         </span>
 
         <span className={styles.cardPriceRow}>

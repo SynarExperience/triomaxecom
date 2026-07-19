@@ -297,9 +297,16 @@
   font-variant-numeric: tabular-nums;
 }
 
-.pricePix svg {
-  width: 24px;
-  height: 24px;
+/*
+ * As três linhas do bloco (Pix, preço, parcelas) formam uma coluna só: os
+ * ícones têm a mesma largura e vivem numa calha de 20px + 9px de gap. O preço
+ * não tem ícone, então recebe o recuo equivalente — sem isso cada linha
+ * começava num x diferente, com 33px de desvio entre elas.
+ */
+.pricePix svg,
+.priceInstallments svg {
+  width: 20px;
+  height: 20px;
   flex: 0 0 auto;
 }
 
@@ -309,6 +316,7 @@
   align-items: baseline;
   gap: 10px;
   margin-top: 8px;
+  padding-left: 29px;
 }
 
 .priceMain strong {
@@ -336,9 +344,6 @@
 }
 
 .priceInstallments svg {
-  width: 17px;
-  height: 17px;
-  flex: 0 0 auto;
   color: var(--muted);
 }
 
