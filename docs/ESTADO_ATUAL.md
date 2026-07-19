@@ -184,6 +184,11 @@ Evidências ficam em `docs/design-references/` e resultados estruturados em arqu
 
 ## Versionamento
 
+- Repositório privado: [luizmessiaass/triomaxecom](https://github.com/luizmessiaass/triomaxecom).
+- Branch padrão: `main`.
+- A branch local acompanha `origin/main`.
+- Pushes para `main` disparam automaticamente um deploy de produção na Vercel.
+
 O repositório deve incluir:
 
 - Código em `src/`.
@@ -213,6 +218,7 @@ Devem ficar fora do Git:
 - Root directory: `.`.
 - Produção: [triomax.vercel.app](https://triomax.vercel.app).
 - Último deploy inspecionado: status `Ready`.
+- Integração GitHub: `luizmessiaass/triomaxecom`, branch `main`.
 
 ## Próximas prioridades
 

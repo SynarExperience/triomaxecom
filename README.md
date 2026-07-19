@@ -4,6 +4,8 @@ Storefront responsiva da Triomax para filamentos de impressão 3D, construída c
 
 Produção: [triomax.vercel.app](https://triomax.vercel.app)
 
+Repositório: [github.com/luizmessiaass/triomaxecom](https://github.com/luizmessiaass/triomaxecom) — privado.
+
 ## Estado atual
 
 O projeto entrega a experiência visual completa de uma loja:
@@ -86,5 +88,6 @@ O diretório está vinculado ao projeto Vercel `luizmessiaass-projects/triomaxec
 - Produção: [triomax.vercel.app](https://triomax.vercel.app)
 - Framework: Next.js
 - Build: `npm run build`
+- Git: `luizmessiaass/triomaxecom`, branch de produção `main`
 
 Arquivos locais sensíveis ou gerados — `.env.local`, `.vercel/`, `.next/`, `node_modules/` e configurações pessoais — não entram no Git.
