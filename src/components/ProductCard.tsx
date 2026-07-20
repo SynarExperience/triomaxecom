@@ -1,16 +1,23 @@
+"use client";
+
 import { formatBRL, installment, pixPrice, type Product } from "@/data/catalog";
+import { useCart } from "./CartProvider";
 import { BagIcon, CardIcon, PixIcon } from "./icons";
 import styles from "./store.module.css";
 
 const INSTALLMENTS = 12;
 
 export function ProductCard({ product }: { product: Product }) {
+  const { addItem } = useCart();
   const discount = product.compareAt
     ? Math.round((1 - product.price / product.compareAt) * 100)
     : 0;
 
   return (
-    <a className={styles.card} href={`/produto/${product.slug}`}>
+    /* O card inteiro leva à PDP por um link "esticado" sobre o nome do produto,
+       o que deixa o botão "Comprar" ser um <button> de verdade — botão dentro de
+       <a> é HTML inválido e roubaria o clique de adicionar à sacola. */
+    <article className={styles.card}>
       <div className={styles.cardMedia}>
         {product.badge ? <span className={styles.cardBadge}>{product.badge}</span> : null}
         {discount > 0 ? <span className={styles.cardDiscount}>{discount}% off</span> : null}
@@ -19,7 +26,11 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className={styles.cardBody}>
-        <h3 className={styles.cardName}>{product.name}</h3>
+        <h3 className={styles.cardName}>
+          <a className={styles.cardNameLink} href={`/produto/${product.slug}`}>
+            {product.name}
+          </a>
+        </h3>
 
         {/* Valor e sufixo em elementos separados: num card estreito "com Pix"
             desce sozinho como rótulo, em vez de partir o número no meio. */}
@@ -43,11 +54,16 @@ export function ProductCard({ product }: { product: Product }) {
           {INSTALLMENTS} x de {formatBRL(installment(product.price, INSTALLMENTS))}
         </span>
 
-        <span className={styles.cardAction}>
+        <button
+          aria-label={`Adicionar ${product.name} à sacola`}
+          className={styles.cardAction}
+          onClick={() => addItem(product)}
+          type="button"
+        >
           <BagIcon />
           Comprar
-        </span>
+        </button>
       </div>
-    </a>
+    </article>
   );
 }

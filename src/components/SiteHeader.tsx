@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useCart } from "./CartProvider";
 import {
   AccountIcon,
   BagIcon,
@@ -72,9 +73,15 @@ function SearchDialog({ onClose }: { onClose: () => void }) {
   );
 }
 
+const bagLabel = (count: number) => {
+  if (count === 0) return "Sacola, nenhum item";
+  return count === 1 ? "Sacola, 1 item" : `Sacola, ${count} itens`;
+};
+
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { count, openCart } = useCart();
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -161,10 +168,15 @@ export function SiteHeader() {
               <a aria-label="Minha conta" className={styles.headerIconButton} href="#conta">
                 <AccountIcon />
               </a>
-              <a aria-label="Sacola, nenhum item" className={`${styles.headerIconButton} ${styles.bagLink}`} href="#sacola">
+              <button
+                aria-label={bagLabel(count)}
+                className={`${styles.headerIconButton} ${styles.bagLink}`}
+                onClick={openCart}
+                type="button"
+              >
                 <BagIcon />
-                <span aria-hidden="true">0</span>
-              </a>
+                <span aria-hidden="true">{count}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -203,10 +215,18 @@ export function SiteHeader() {
             >
               <SearchIcon />
             </button>
-            <a aria-label="Sacola, nenhum item" className={`${styles.mobileIconButton} ${styles.mobileBag}`} href="#sacola">
+            <button
+              aria-label={bagLabel(count)}
+              className={`${styles.mobileIconButton} ${styles.mobileBag}`}
+              onClick={() => {
+                setMenuOpen(false);
+                openCart();
+              }}
+              type="button"
+            >
               <BagIcon />
-              <span aria-hidden="true">0</span>
-            </a>
+              <span aria-hidden="true">{count}</span>
+            </button>
           </div>
           {menuOpen ? (
             <nav aria-label="Categorias de produtos no celular" className={styles.mobileDrawer} id="mobile-category-drawer">

@@ -337,7 +337,21 @@
   color: var(--muted);
 }
 
+/* Link "esticado": o pseudo-elemento cobre o card inteiro (`.card` é
+   `position: relative`), então clicar em qualquer área neutra abre a PDP. */
+.cardNameLink::after {
+  position: absolute;
+  content: "";
+  inset: 0;
+}
+
 .cardAction {
+  /* Acima do link esticado — sem isto o clique de comprar viraria navegação. */
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  border: 0;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;

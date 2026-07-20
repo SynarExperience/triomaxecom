@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Jost, Poppins, Urbanist } from "next/font/google";
 import localFont from "next/font/local";
+import { CartDrawer } from "@/components/CartDrawer";
+import { CartProvider } from "@/components/CartProvider";
 import "./globals.css";
 
 /* Peso único (400). Títulos em pesos maiores usam `font-synthesis: none`
@@ -43,7 +45,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="pt-BR">
       <body className={`${poppins.variable} ${urbanist.variable} ${neulis.variable} ${jost.variable}`}>
-        {children}
+        <CartProvider>
+          {children}
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

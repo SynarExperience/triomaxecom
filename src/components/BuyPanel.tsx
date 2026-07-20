@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import type { Product } from "@/data/catalog";
+import { useCart } from "./CartProvider";
 import { BagIcon, SearchIcon } from "./icons";
 import pageStyles from "./pages.module.css";
 import storeStyles from "./store.module.css";
@@ -15,6 +16,7 @@ type ProductViewProps = {
 
 export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) {
   const [quantity, setQuantity] = useState(1);
+  const { addItem } = useCart();
 
   return (
     <div className={pageStyles.pdpLayout}>
@@ -47,7 +49,7 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
           </div>
           <button
             className={pageStyles.buyButton}
-            onClick={() => undefined}
+            onClick={() => addItem(product, quantity)}
             type="button"
           >
             <BagIcon />
