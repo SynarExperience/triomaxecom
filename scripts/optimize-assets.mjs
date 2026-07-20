@@ -44,7 +44,11 @@ function backup(file) {
 const widthRules = [
   { match: /banners\/mobile\/banner-/, widths: [780, 1170] }, // hero mobile, 390 CSS em telas 2x e 3x
   { match: /banners\/banner-/, widths: [1920, 2560, 3840] }, // hero desktop, exibido a 100vw
-  { match: /banners\/categories\//, widths: [780] }, // tiles de categoria, 390 CSS em tela 2x
+  // Tiles de categoria: renderizam a 485 CSS, ou seja 970 px em tela 2x. Os 780
+  // que havia antes vinham de uma medição errada e deixavam o tile ampliado.
+  { match: /banners\/categories\//, widths: [512, 1024] },
+  { match: /promo\/frete-gratis-mobile/, widths: [780, 1170] }, // promo mobile, 1:1
+  { match: /promo\/frete-gratis-desktop/, widths: [1440, 1920, 2560, 3840] }, // promo full-bleed, 3:1
 ];
 
 function widthsFor(source) {

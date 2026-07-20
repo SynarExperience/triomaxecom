@@ -51,7 +51,18 @@ export function CategoryShowcase() {
                 <span className={styles.categoryCardMedia}>
                   {category.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img alt="" aria-hidden="true" className="productPhoto" loading="lazy" src={category.image} />
+                    <img
+                      alt=""
+                      aria-hidden="true"
+                      className="productPhoto"
+                      loading="lazy"
+                      /* O tile renderiza a 485 CSS no desktop, o que pede 970 px
+                         em tela 2x — daí a versão de 1024. `sizes` descreve a
+                         grade: duas colunas no desktop, uma no celular. */
+                      sizes="(max-width: 767px) 50vw, 485px"
+                      src={`${category.image}-512.webp`}
+                      srcSet={`${category.image}-512.webp 512w, ${category.image}-1024.webp 1024w`}
+                    />
                   ) : null}
                 </span>
                 <span className={styles.categoryCardBody}>
@@ -89,18 +100,23 @@ export function PromoBanner() {
           <picture>
             <source
               media="(max-width: 767px)"
-              srcSet="/promo/frete-gratis-mobile.webp"
-              width={360}
-              height={722}
+              sizes="100vw"
+              srcSet="/promo/frete-gratis-mobile-780.webp 780w, /promo/frete-gratis-mobile-1170.webp 1170w"
+              width={1170}
+              height={1170}
             />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               alt="Frete grátis acima de 15 unidades — filamento Masterprint branco e peças impressas em 3D"
               className={styles.promoImage}
-              height={543}
+              height={1280}
               loading="lazy"
-              src="/promo/frete-gratis-desktop.webp"
-              width={1270}
+              /* `sizes="100vw"` porque o bloco vai de ponta a ponta: o navegador
+                 cruza a largura da janela com o DPR e baixa uma versão só. */
+              sizes="100vw"
+              src="/promo/frete-gratis-desktop-1920.webp"
+              srcSet="/promo/frete-gratis-desktop-1440.webp 1440w, /promo/frete-gratis-desktop-1920.webp 1920w, /promo/frete-gratis-desktop-2560.webp 2560w, /promo/frete-gratis-desktop-3840.webp 3840w"
+              width={3840}
             />
           </picture>
         </a>
