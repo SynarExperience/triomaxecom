@@ -306,7 +306,9 @@
   margin-top: 5px;
 }
 
+/* Dourado igual ao do PDP — no voolt3d esta linha é a cor de marca deles. */
 .cardPrice {
+  color: var(--gold);
   font-size: 14px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -345,21 +347,34 @@
   inset: 0;
 }
 
-.cardAction {
+/*
+ * Bloco de compra no formato do card do voolt3d: pílula "Comprar" ocupando a
+ * linha e o atalho de carrinho ao lado, ambos no dourado `--gold` do "Ofertas"
+ * (no original é o roxo de marca deles). Medidas tiradas do getComputedStyle:
+ * raio 30 px, 43 px de altura, rótulo de 14 px em caixa alta.
+ */
+.cardActions {
   /* Acima do link esticado — sem isto o clique de comprar viraria navegação. */
   position: relative;
   z-index: 2;
-  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cardAction {
+  flex: 1;
+  min-width: 0;
   border: 0;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top: 16px;
-  min-height: 48px;
-  border-radius: 8px;
-  background: var(--ink);
+  min-height: 43px;
+  border-radius: 30px;
+  background: var(--gold);
   color: var(--paper);
   font-family: var(--font-display);
   font-size: 12.5px;
@@ -374,8 +389,62 @@
   height: 16px;
 }
 
-.card:hover .cardAction {
+.cardActionIcon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 43px;
+  min-height: 43px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--gold);
+  color: var(--paper);
+  cursor: pointer;
+  place-items: center;
+  transition: opacity 240ms ease;
+}
+
+.cardActionIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.card:hover .cardAction,
+.card:hover .cardActionIcon {
   opacity: 0.84;
+}
+
+/*
+ * Pílula de atacado, igual à do PDP. O verde do WhatsApp não vira dourado: ele
+ * identifica o canal, não a marca.
+ */
+.cardWholesale {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid #25d366;
+  border-radius: 30px;
+  background: var(--paper);
+  color: #3bc983;
+  font-size: 13px;
+  line-height: 16px;
+  text-decoration: none;
+  transition: background 240ms ease;
+}
+
+.cardWholesale:hover {
+  background: #f2fbf6;
+}
+
+.cardWholesale svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
 }
 
 /* ============ category showcase ============ */
@@ -461,6 +530,67 @@
 
 .categoryCard:hover .categoryCardCta svg {
   transform: translateX(4px);
+}
+
+/* ============ faixa de categorias ============ */
+
+/*
+ * Layout copiado da home do voolt3d.com.br: seis tiles quadrados com o nome
+ * centralizado embaixo, sem cabeçalho de seção. As medidas vêm do
+ * getComputedStyle deles — tile de 211 px com 8 px de respiro, o que deixa a
+ * imagem em 195. Nosso `.container` entrega 1270 px de conteúdo contra os
+ * 1268 px da faixa original, então a grade de seis colunas cai no mesmo lugar.
+ */
+.categoryStrip {
+  padding-block: 30px;
+  background: var(--paper);
+}
+
+.categoryStripTrack {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.categoryStripItem {
+  display: block;
+  padding: 8px;
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+}
+
+/*
+ * Sem `overflow: hidden` de propósito: no original o wrapper é `overflow:
+ * visible`, então o zoom do hover transborda para dentro dos 8 px de respiro em
+ * vez de ser recortado na borda. Cortar aqui mudaria o efeito.
+ */
+.categoryStripItem img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  object-fit: cover;
+  transition: transform 300ms ease;
+}
+
+.categoryStripItem:hover img {
+  transform: scale(1.05);
+}
+
+/*
+ * `nowrap` porque no original o rótulo transborda a largura do tile em vez de
+ * quebrar — dá para ver em "Cores Sólidas" e "Duo Color Shadow" no celular.
+ * Deixar quebrar somava uma segunda linha à altura da faixa inteira (a linha da
+ * grade acompanha o item mais alto), abrindo 20 px de vão embaixo dos rótulos
+ * curtos.
+ */
+.categoryStripLabel {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: normal;
+  white-space: nowrap;
 }
 
 /* ============ promo banner ============ */
@@ -1045,6 +1175,29 @@
     padding-block: 54px;
   }
 
+  /*
+   * No celular a faixa original vira carrossel: os tiles mantêm 134 px e o
+   * resto sai da tela, mostrando ~2,7 e sinalizando que há mais para o lado.
+   * Um scroller com scroll-snap entrega o mesmo comportamento sem carregar a
+   * biblioteca de slider que eles usam.
+   */
+  .categoryStripTrack {
+    grid-auto-flow: column;
+    grid-auto-columns: 134px;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .categoryStripTrack::-webkit-scrollbar {
+    display: none;
+  }
+
+  .categoryStripItem {
+    scroll-snap-align: start;
+  }
+
   .sectionHead {
     flex-direction: column;
     align-items: flex-start;
@@ -1137,6 +1290,7 @@
   .categoryCard,
   .categoryCardMedia img,
   .categoryCardCta svg,
+  .categoryStripItem img,
   .buttonGold,
   .buttonGhost,
   .promoFigure img,

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ProductView } from "@/components/BuyPanel";
-import { AnnouncementMarquee } from "@/components/Marquee";
-import { ProductCard } from "@/components/ProductCard";
-import { Reveal } from "@/components/Reveal";
-import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
+import { ProductView } from "@/components/site/BuyPanel";
+import { AnnouncementMarquee } from "@/components/site/Marquee";
+import { ProductCard } from "@/components/site/ProductCard";
+import { Reveal } from "@/components/site/Reveal";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import {
   CardIcon,
   CheckIcon,
@@ -14,9 +14,9 @@ import {
   ShieldIcon,
   StarIcon,
   TruckIcon,
-} from "@/components/icons";
-import pageStyles from "@/components/pages.module.css";
-import storeStyles from "@/components/store.module.css";
+} from "@/components/site/icons";
+import pageStyles from "@/components/site/pages.module.css";
+import storeStyles from "@/components/site/store.module.css";
 import {
   formatBRL,
   getProduct,

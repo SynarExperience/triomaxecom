@@ -319,8 +319,14 @@
   padding-left: 29px;
 }
 
+/*
+ * O preço à vista sai em dourado, o mesmo `--gold` do "Ofertas" no menu. No
+ * voolt3d essa linha é roxa — a cor de marca deles — então aqui ela assume a
+ * nossa em vez de importar a deles.
+ */
 .priceMain strong {
-  font-size: 19px;
+  color: var(--gold);
+  font-size: 20px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -394,16 +400,28 @@
 
 /* Mesmo tratamento do botão "Comprar" dos cards: a ação de compra é a mesma
    nos dois lugares e precisa ser reconhecida como tal. */
+/*
+ * Linha de ação no formato do voolt3d: a pílula principal ocupa o espaço que
+ * sobra e o atalho de carrinho fica ao lado, quadrado e do mesmo tom.
+ */
+.buyActions {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
 .buyButton {
   display: inline-flex;
-  width: 100%;
+  flex: 1;
   min-height: 56px;
   align-items: center;
   justify-content: center;
   gap: 10px;
   border: 0;
-  border-radius: 8px;
-  background: var(--ink);
+  /* Pílula: no original o raio passa da metade da altura e arredonda de ponta
+     a ponta. `999px` entrega isso sem depender da altura final. */
+  border-radius: 999px;
+  background: var(--gold);
   color: var(--paper);
   font-family: var(--font-display);
   font-size: 13px;
@@ -417,6 +435,61 @@
 .buyButton svg {
   width: 17px;
   height: 17px;
+}
+
+.buyIconButton {
+  display: grid;
+  width: 64px;
+  min-height: 56px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--gold);
+  color: var(--paper);
+  cursor: pointer;
+  place-items: center;
+  transition: opacity 240ms ease;
+}
+
+.buyIconButton svg {
+  width: 22px;
+  height: 22px;
+}
+
+.buyButton:hover,
+.buyIconButton:hover {
+  opacity: 0.88;
+}
+
+/*
+ * Pílula de atacado copiada do voolt3d: fundo branco, contorno e ícone no verde
+ * do WhatsApp. É a única cor que não vira dourada — ela sinaliza o canal, não a
+ * marca, e é o que faz o botão ser lido como "fala com a gente no WhatsApp".
+ */
+.wholesaleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  margin-bottom: 14px;
+  padding: 12px 10px;
+  border: 1px solid #25d366;
+  border-radius: 30px;
+  background: var(--paper);
+  color: #3bc983;
+  font-size: 14px;
+  line-height: 18px;
+  text-decoration: none;
+  transition: background 240ms ease;
+}
+
+.wholesaleButton:hover {
+  background: #f2fbf6;
+}
+
+.wholesaleButton svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* Este botão reusa .buttonGold, que virou dourado. Os dois `:hover` têm a mesma

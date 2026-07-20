@@ -83,6 +83,56 @@ export function CategoryShowcase() {
 }
 
 /*
+ * Faixa de tiles logo abaixo da barra de benefícios. O layout nasceu como cópia
+ * da home do voolt3d.com.br, mas a arte agora é nossa — os tiles anteriores
+ * traziam o logo Voolt3D nos carretéis e serviam só para comparar layout.
+ */
+type StripTile = {
+  /** Nomeia o par de arquivos em /banners/category-strip. */
+  slug: string;
+  label: string;
+};
+
+const stripTiles: StripTile[] = [
+  { slug: "pla", label: "PLA" },
+  { slug: "petg", label: "PETG" },
+  { slug: "tpu", label: "TPU" },
+  { slug: "impressoras", label: "Impressoras" },
+  { slug: "pecas", label: "Peças" },
+  { slug: "kits", label: "Kits" },
+];
+
+export function CategoryStrip() {
+  return (
+    <section className={styles.categoryStrip}>
+      <div className="container">
+        <div className={styles.categoryStripTrack}>
+          {stripTiles.map((tile) => (
+            <a className={styles.categoryStripItem} href="/produtos" key={tile.slug}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                /* O rótulo logo abaixo já nomeia o tile; repetir no alt faria o
+                   leitor de tela anunciar a categoria duas vezes seguidas. */
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                /* Renderiza a ~196 CSS no desktop e 118 no celular. O master tem
+                   390 px: 118 @3x sobra, e 196 @2x fica 2 px curto — meio por
+                   cento, que não aparece. Subir a arte só por isso não paga. */
+                sizes="(max-width: 767px) 118px, 195px"
+                src={`/banners/category-strip/${tile.slug}-256.webp`}
+                srcSet={`/banners/category-strip/${tile.slug}-256.webp 256w, /banners/category-strip/${tile.slug}-390.webp 390w`}
+              />
+              <span className={styles.categoryStripLabel}>{tile.label}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/*
  * O bloco inteiro é a arte, de ponta a ponta da tela — mesmo tratamento do hero.
  * Fica fora de `.container` de propósito: assim a largura total vem do próprio
  * fluxo do documento, sem `100vw`, que em desktop conta a barra de rolagem junto

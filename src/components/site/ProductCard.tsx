@@ -2,10 +2,13 @@
 
 import { formatBRL, installment, pixPrice, type Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
-import { BagIcon, CardIcon, PixIcon } from "./icons";
+import { BagIcon, CardIcon, PixIcon, WhatsAppIcon } from "./icons";
 import styles from "./store.module.css";
 
 const INSTALLMENTS = 12;
+
+/* Mesmo número do rodapé, da sacola e do PDP. */
+const WHATSAPP_NUMBER = "555132768583";
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
@@ -54,15 +57,39 @@ export function ProductCard({ product }: { product: Product }) {
           {INSTALLMENTS} x de {formatBRL(installment(product.price, INSTALLMENTS))}
         </span>
 
-        <button
-          aria-label={`Adicionar ${product.name} à sacola`}
-          className={styles.cardAction}
-          onClick={() => addItem(product)}
-          type="button"
+        {/* Os dois botões fazem a mesma coisa, como no card do voolt3d. O de
+            ícone sai do fluxo de leitura por ser repetição do que está ao lado. */}
+        <div className={styles.cardActions}>
+          <button
+            aria-label={`Adicionar ${product.name} à sacola`}
+            className={styles.cardAction}
+            onClick={() => addItem(product)}
+            type="button"
+          >
+            Comprar
+          </button>
+          <button
+            aria-hidden="true"
+            className={styles.cardActionIcon}
+            onClick={() => addItem(product)}
+            tabIndex={-1}
+            type="button"
+          >
+            <BagIcon />
+          </button>
+        </div>
+
+        <a
+          className={styles.cardWholesale}
+          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+            `Olá! Gostaria de comprar ${product.name} por atacado.`,
+          )}`}
+          rel="noreferrer"
+          target="_blank"
         >
-          <BagIcon />
-          Comprar
-        </button>
+          <WhatsAppIcon />
+          Compre por atacado
+        </a>
       </div>
     </article>
   );

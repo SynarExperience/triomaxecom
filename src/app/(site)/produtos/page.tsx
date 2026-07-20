@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { AnnouncementMarquee } from "@/components/Marquee";
-import { ProductCard } from "@/components/ProductCard";
-import { Reveal } from "@/components/Reveal";
-import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
-import { ChevronDownIcon } from "@/components/icons";
-import pageStyles from "@/components/pages.module.css";
-import storeStyles from "@/components/store.module.css";
+import { AnnouncementMarquee } from "@/components/site/Marquee";
+import { ProductCard } from "@/components/site/ProductCard";
+import { Reveal } from "@/components/site/Reveal";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
+import { ChevronDownIcon } from "@/components/site/icons";
+import pageStyles from "@/components/site/pages.module.css";
+import storeStyles from "@/components/site/store.module.css";
 import { products } from "@/data/catalog";
 
 export const metadata: Metadata = {

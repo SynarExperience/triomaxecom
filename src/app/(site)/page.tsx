@@ -1,15 +1,16 @@
-import { BenefitsBar } from "@/components/BenefitsBar";
+import { BenefitsBar } from "@/components/site/BenefitsBar";
 import {
   CategoryShowcase,
+  CategoryStrip,
   FeaturedProducts,
   InstagramSection,
   PrintersRail,
   PromoBanner,
-} from "@/components/HomeSections";
-import { HeroSection } from "@/components/HeroSection";
-import { AnnouncementMarquee } from "@/components/Marquee";
-import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
+} from "@/components/site/HomeSections";
+import { HeroSection } from "@/components/site/HeroSection";
+import { AnnouncementMarquee } from "@/components/site/Marquee";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       <main>
         <HeroSection />
         <BenefitsBar />
+        <CategoryStrip />
         <FeaturedProducts />
         <CategoryShowcase />
         <PromoBanner />

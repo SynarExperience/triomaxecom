@@ -47,6 +47,13 @@ const widthRules = [
   // Tiles de categoria: renderizam a 485 CSS, ou seja 970 px em tela 2x. Os 780
   // que havia antes vinham de uma medição errada e deixavam o tile ampliado.
   { match: /banners\/categories\//, widths: [512, 1024] },
+  /*
+   * Faixa de categorias do topo: renderiza a 195 CSS no desktop e 118 no
+   * celular. O master tem 390 px, que cobre 195 @2x na medida exata e 118 @3x
+   * com folga — por isso a maior saída é o próprio 390, e não um 512 que o
+   * `withoutEnlargement` devolveria com 390 px e nome errado.
+   */
+  { match: /banners\/category-strip\//, widths: [256, 390] },
   { match: /promo\/frete-gratis-mobile/, widths: [780, 1170] }, // promo mobile, 1:1
   { match: /promo\/frete-gratis-desktop/, widths: [1440, 1920, 2560, 3840] }, // promo full-bleed, 3:1
 ];

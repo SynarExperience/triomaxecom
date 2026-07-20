@@ -3,9 +3,12 @@
 import { useState, type ReactNode } from "react";
 import type { Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
-import { BagIcon, SearchIcon } from "./icons";
+import { BagIcon, SearchIcon, WhatsAppIcon } from "./icons";
 import pageStyles from "./pages.module.css";
 import storeStyles from "./store.module.css";
+
+/* Mesmo número do rodapé e da sacola — o atacado cai no mesmo atendimento. */
+const WHATSAPP_NUMBER = "555132768583";
 
 type ProductViewProps = {
   product: Product;
@@ -47,15 +50,43 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
               +
             </button>
           </div>
-          <button
-            className={pageStyles.buyButton}
-            onClick={() => addItem(product, quantity)}
-            type="button"
-          >
-            <BagIcon />
-            Adicionar à sacola
-          </button>
+          {/*
+            Os dois botões disparam a mesma ação — é assim no voolt3d, onde o
+            atalho de carrinho ao lado do "Comprar" repete a inclusão do item.
+            O ícone fica escondido do leitor de tela justamente por ser
+            repetição; quem navega por voz já tem o botão rotulado ao lado.
+          */}
+          <div className={pageStyles.buyActions}>
+            <button
+              className={pageStyles.buyButton}
+              onClick={() => addItem(product, quantity)}
+              type="button"
+            >
+              Comprar
+            </button>
+            <button
+              aria-hidden="true"
+              className={pageStyles.buyIconButton}
+              onClick={() => addItem(product, quantity)}
+              tabIndex={-1}
+              type="button"
+            >
+              <BagIcon />
+            </button>
+          </div>
         </div>
+
+        <a
+          className={pageStyles.wholesaleButton}
+          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+            `Olá! Gostaria de comprar ${product.name} por atacado.`,
+          )}`}
+          rel="noreferrer"
+          target="_blank"
+        >
+          <WhatsAppIcon />
+          Compre por atacado
+        </a>
 
         <form
           aria-label="Calcular frete"
