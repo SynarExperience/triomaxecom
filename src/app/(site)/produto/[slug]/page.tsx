@@ -10,6 +10,7 @@ import {
   BoxIcon,
   CardIcon,
   ChevronDownIcon,
+  PixIcon,
   RefreshIcon,
   StarIcon,
   TruckIcon,
@@ -77,7 +78,10 @@ export default async function ProductPage({ params }: PageProps) {
           <strong>{formatBRL(product.price)}</strong>
           {discount > 0 ? <span className={pageStyles.priceOff}>{discount}% OFF</span> : null}
         </div>
-        <p className={pageStyles.pricePix}>{formatBRL(pixPrice(product.price))} com Pix</p>
+        <p className={pageStyles.pricePix}>
+          {formatBRL(pixPrice(product.price))} com Pix
+          <PixIcon />
+        </p>
         <p className={pageStyles.pricePixNote}>
           <strong>{pixDiscount}% de desconto</strong> pagando com Pix
         </p>
