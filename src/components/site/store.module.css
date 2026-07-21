@@ -716,11 +716,17 @@
 }
 
 @media (max-width: 767px) {
-  /* Mantém o mesmo arranjo do desktop (2 à esquerda + 1 alto à direita), só
-     com gap menor. Como a estrutura não muda, as proporções continuam iguais
-     às do desktop — uma arte por banner serve nos dois tamanhos. */
+  /* Mantém o arranjo do desktop (2 à esquerda + 1 alto à direita), com gap
+     menor. No celular as células largas ficam curtas demais, então soltamos a
+     proporção de 21:9 para 16:9 — os dois banners esquerdos crescem em altura e,
+     como o banner alto abrange as duas linhas, ele acompanha o aumento. */
   .featureGrid {
     gap: 10px;
+  }
+
+  .featureWideTop,
+  .featureWideBottom {
+    aspect-ratio: 16 / 9;
   }
 }
 
