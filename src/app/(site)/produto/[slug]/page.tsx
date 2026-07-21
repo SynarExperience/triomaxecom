@@ -7,11 +7,10 @@ import { Reveal } from "@/components/site/Reveal";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import {
+  BoxIcon,
   CardIcon,
-  CheckIcon,
   ChevronDownIcon,
-  PixIcon,
-  ShieldIcon,
+  RefreshIcon,
   StarIcon,
   TruckIcon,
 } from "@/components/site/icons";
@@ -49,6 +48,13 @@ export default async function ProductPage({ params }: PageProps) {
 
   const related = relatedProducts(slug);
 
+  // Desconto do preço cheio (só existe quando há `compareAt`) e o do Pix, que
+  // sai do próprio `pixPrice` (10%) — os dois números vêm dos dados, nunca fixos.
+  const discount = product.compareAt
+    ? Math.round((1 - product.price / product.compareAt) * 100)
+    : 0;
+  const pixDiscount = Math.round((1 - pixPrice(product.price) / product.price) * 100);
+
   const infoTop = (
     <>
       <p className={pageStyles.pdpCategory}>{product.line}</p>
@@ -64,36 +70,55 @@ export default async function ProductPage({ params }: PageProps) {
       <p className={pageStyles.pdpShort}>{product.short}</p>
 
       <div className={pageStyles.priceBox}>
-        <p className={pageStyles.pricePix}>
-          <PixIcon />
-          {formatBRL(pixPrice(product.price))} com Pix
-        </p>
+        {product.compareAt ? (
+          <s className={pageStyles.priceCompare}>{formatBRL(product.compareAt)}</s>
+        ) : null}
         <div className={pageStyles.priceMain}>
-          {product.compareAt ? <s>{formatBRL(product.compareAt)}</s> : null}
           <strong>{formatBRL(product.price)}</strong>
+          {discount > 0 ? <span className={pageStyles.priceOff}>{discount}% OFF</span> : null}
         </div>
-        <p className={pageStyles.priceInstallments}>
-          <CardIcon />
-          12 x de {formatBRL(installment(product.price))} sem juros
+        <p className={pageStyles.pricePix}>{formatBRL(pixPrice(product.price))} com Pix</p>
+        <p className={pageStyles.pricePixNote}>
+          <strong>{pixDiscount}% de desconto</strong> pagando com Pix
         </p>
+        {/* Detalhes de pagamento recolhidos, como o "Ver mais detalhes" da
+            referência — nativo em <details>, abre sem JS. */}
+        <details className={pageStyles.priceDetails}>
+          <summary>
+            <CardIcon />
+            Ver mais detalhes
+          </summary>
+          <p className={pageStyles.priceInstallments}>
+            12 x de {formatBRL(installment(product.price))} sem juros
+          </p>
+        </details>
       </div>
     </>
   );
 
   const infoBottom = (
     <>
-      <ul className={pageStyles.trustList}>
+      <ul className={pageStyles.assuranceList}>
         <li>
           <TruckIcon />
-          Frete grátis acima de R$ 299 · envio em até 24h úteis
+          <span>
+            <strong>Envio</strong>
+            Frete grátis acima de R$ 299 · em até 24h úteis
+          </span>
         </li>
         <li>
-          <ShieldIcon />
-          Compra 100% protegida com garantia de fábrica
+          <BoxIcon />
+          <span>
+            <strong>Rastreamento</strong>
+            Acompanhe seu pedido a cada etapa
+          </span>
         </li>
         <li>
-          <CheckIcon />
-          Troca fácil em até 7 dias após o recebimento
+          <RefreshIcon />
+          <span>
+            <strong>Compra garantida</strong>
+            Trocas e devoluções em até 7 dias
+          </span>
         </li>
       </ul>
 

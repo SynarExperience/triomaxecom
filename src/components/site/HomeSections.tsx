@@ -1,4 +1,4 @@
-import { categoryCards, featuredProducts, products } from "@/data/catalog";
+import { featuredProducts, products } from "@/data/catalog";
 import {
   ArrowRightIcon,
   FlameIcon,
@@ -22,7 +22,7 @@ export function FeaturedProducts() {
             <ArrowRightIcon />
           </a>
         </Reveal>
-        <div className={styles.productGrid}>
+        <div className={`${styles.productGrid} ${styles.featuredScroller}`}>
           {featuredProducts.slice(0, 4).map((product, index) => (
             <Reveal delay={index * 80} key={product.slug}>
               <ProductCard product={product} />
@@ -34,49 +34,63 @@ export function FeaturedProducts() {
   );
 }
 
-export function CategoryShowcase() {
+/*
+ * Grid de destaques no lugar dos tiles de categoria:
+ *   ┌──────────────┬────────┐
+ *   │  Sobre nós   │        │
+ *   ├──────────────┤ aberto │   (a terceira célula é um placeholder até a
+ *   │ Frete grátis │        │    arte definitiva — as medidas saem no admin
+ *   └──────────────┴────────┘    e no comentário abaixo)
+ *
+ * As duas células da esquerda têm proporção 21/9; a da direita herda a altura
+ * das duas somadas. Frete usa `object-fit: cover`, então a arte 3:1 atual é
+ * cortada no preview — a arte final deve vir no tamanho reportado.
+ */
+export function FeatureGrid() {
   return (
-    <section className={`${styles.section} ${styles.sectionAlt}`} id="categorias">
+    <section className={`${styles.section} ${styles.sectionAlt}`} id="destaques">
       <div className="container">
-        <Reveal className={styles.sectionHead}>
-          <div>
-            <p className={styles.sectionKicker}>Navegue por material</p>
-            <h2 className={styles.sectionTitle}>Escolha sua linha</h2>
+        <Reveal>
+          <div className={styles.featureGrid}>
+            {/* Sobre nós */}
+            <a className={`${styles.featureCell} ${styles.featureWideTop}`} href="/sobre">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="Sobre nós — equipe Triomax"
+                loading="lazy"
+                sizes="(max-width: 767px) 100vw, 832px"
+                src="/banners/destaque-sobre-1664.webp"
+                srcSet="/banners/destaque-sobre-780.webp 780w, /banners/destaque-sobre-1664.webp 1664w"
+              />
+            </a>
+
+            {/* Frete grátis */}
+            <a className={`${styles.featureCell} ${styles.featureWideBottom}`} href="/produtos">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="Frete grátis acima de 15 unidades"
+                loading="lazy"
+                sizes="(max-width: 767px) 100vw, 832px"
+                src="/banners/destaque-frete-1664.webp"
+                srcSet="/banners/destaque-frete-780.webp 780w, /banners/destaque-frete-1664.webp 1664w"
+              />
+            </a>
+
+            {/* Impressoras com desconto (banner alto). A arte é 543×1270 (0,43:1),
+                mais estreita que a célula (~0,57:1), então object-fit corta topo
+                e base — ver se agrada antes do upscale. */}
+            <a className={`${styles.featureCell} ${styles.featureTall}`} href="/produtos">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="Impressoras 3D com desconto"
+                loading="lazy"
+                sizes="(max-width: 767px) 33vw, 416px"
+                src="/banners/destaque-impressoras-832.webp"
+                srcSet="/banners/destaque-impressoras-480.webp 480w, /banners/destaque-impressoras-832.webp 832w"
+              />
+            </a>
           </div>
         </Reveal>
-        <div className={styles.categoryGrid}>
-          {categoryCards.map((category, index) => (
-            <Reveal delay={index * 90} key={category.title}>
-              <a className={styles.categoryCard} href={category.href}>
-                <span className={styles.categoryCardMedia}>
-                  {category.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      alt=""
-                      aria-hidden="true"
-                      className="productPhoto"
-                      loading="lazy"
-                      /* O tile renderiza a 485 CSS no desktop, o que pede 970 px
-                         em tela 2x — daí a versão de 1024. `sizes` descreve a
-                         grade: duas colunas no desktop, uma no celular. */
-                      sizes="(max-width: 767px) 50vw, 485px"
-                      src={`${category.image}-512.webp`}
-                      srcSet={`${category.image}-512.webp 512w, ${category.image}-1024.webp 1024w`}
-                    />
-                  ) : null}
-                </span>
-                <span className={styles.categoryCardBody}>
-                  <h3>{category.title}</h3>
-                  <p>{category.subtitle}</p>
-                  <span className={styles.categoryCardCta}>
-                    Explorar
-                    <ArrowRightIcon />
-                  </span>
-                </span>
-              </a>
-            </Reveal>
-          ))}
-        </div>
       </div>
     </section>
   );

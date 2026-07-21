@@ -10,12 +10,12 @@ import {
 import { Reveal } from "./Reveal";
 import styles from "./store.module.css";
 
-const institutional = [
-  "Quem somos",
-  "Política de privacidade",
-  "Trocas e devoluções",
-  "Prazos e entregas",
-  "Termos de uso",
+const institutional: { label: string; href: string }[] = [
+  { label: "Quem somos", href: "/sobre" },
+  { label: "Política de privacidade", href: "#" },
+  { label: "Trocas e devoluções", href: "#" },
+  { label: "Prazos e entregas", href: "#" },
+  { label: "Termos de uso", href: "#" },
 ];
 
 const categories = ["PLA", "PETG"];
@@ -72,8 +72,8 @@ export function SiteFooter() {
           <h3>Institucional</h3>
           <ul>
             {institutional.map((item) => (
-              <li key={item}>
-                <a href="#">{item}</a>
+              <li key={item.label}>
+                <a href={item.href}>{item.label}</a>
               </li>
             ))}
           </ul>

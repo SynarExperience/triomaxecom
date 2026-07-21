@@ -1,11 +1,10 @@
 import { BenefitsBar } from "@/components/site/BenefitsBar";
 import {
-  CategoryShowcase,
   CategoryStrip,
   FeaturedProducts,
+  FeatureGrid,
   InstagramSection,
   PrintersRail,
-  PromoBanner,
 } from "@/components/site/HomeSections";
 import { HeroSection } from "@/components/site/HeroSection";
 import { AnnouncementMarquee } from "@/components/site/Marquee";
@@ -22,8 +21,7 @@ export default function Home() {
         <BenefitsBar />
         <CategoryStrip />
         <FeaturedProducts />
-        <CategoryShowcase />
-        <PromoBanner />
+        <FeatureGrid />
         <PrintersRail />
         <InstagramSection />
       </main>

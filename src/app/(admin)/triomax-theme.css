@@ -1,0 +1,42 @@
+/**
+ * Tema Triomax sobre o Nimbus.
+ *
+ * O Nimbus expõe tudo como custom properties (`--nimbus-colors-*`), então
+ * remarcar é redefinir a escala `primary` — não precisa tocar em componente.
+ * O azul padrão (#0059d5) vira o dourado da marca, o mesmo `--gold` do
+ * globals.css da vitrine.
+ *
+ * Contraste conferido (WCAG AA exige 4.5:1 para texto normal):
+ *   #926b2b com texto branco ....... 4.82:1  (fundo de botão primário)
+ *   #926b2b sobre branco ........... 4.82:1  (links em tabela)
+ *   #7a5923 com texto branco ....... 6.40:1  (hover)
+ *   #63481c com texto branco ....... 8.49:1  (pressed)
+ *   #5c431b sobre #faf6ec .......... 8.56:1  (texto sobre superfície clara)
+ *
+ * O dourado claro da marca (#caad5b, 2.18:1 sobre branco) fica só em
+ * preenchimento e borda — nunca em texto, como manda o comentário do
+ * globals.css.
+ */
+
+:root {
+  /* Escala primária — dourado Triomax */
+  --nimbus-colors-primary-surface: #faf6ec;
+  --nimbus-colors-primary-surfaceHighlight: #e3cd97;
+  --nimbus-colors-primary-interactive: #926b2b;
+  --nimbus-colors-primary-interactiveHover: #7a5923;
+  --nimbus-colors-primary-interactivePressed: #63481c;
+  --nimbus-colors-primary-textLow: #5c431b;
+  --nimbus-colors-primary-textHigh: #2e2110;
+}
+
+/*
+ * Status permanecem nas cores funcionais do Nimbus (verde/amarelo/vermelho).
+ * São sinal, não decoração: pintar "Recusado" de dourado tiraria a leitura
+ * imediata da lista de vendas, que é o ponto daquela coluna.
+ */
+
+/* O item ativo da sidebar usa a superfície dourada em vez do azul claro. */
+.nimbus--menu-button[aria-current="page"],
+.nimbus--menu-button[data-active="true"] {
+  background-color: var(--nimbus-colors-primary-surface);
+}
