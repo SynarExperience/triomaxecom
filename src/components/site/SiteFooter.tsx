@@ -158,7 +158,7 @@ export function SiteFooter() {
           <span className={styles.madeWith}>
             criado por <strong>Synar Experience</strong>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Synar Experience" height={42} src="/brand/synar.svg" width={63} />
+            <img alt="Synar Experience" height={32} src="/brand/synar.svg" width={48} />
           </span>
         </div>
       </div>
