@@ -3,9 +3,8 @@
 import { useState, type ReactNode } from "react";
 import type { Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
-import { BagIcon, SearchIcon, WhatsAppIcon } from "./icons";
+import { BagIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
 import pageStyles from "./pages.module.css";
-import storeStyles from "./store.module.css";
 
 /* Mesmo número do rodapé e da sacola — o atacado cai no mesmo atendimento. */
 const WHATSAPP_NUMBER = "555132768583";
@@ -32,6 +31,8 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
       <div>
         {infoTop}
 
+        {/* Stepper e botão dividem a linha, como na referência: quantidade à
+            esquerda, ação de compra ocupando o resto. */}
         <div className={pageStyles.buyRow}>
           <div aria-label="Quantidade" className={pageStyles.qty}>
             <button
@@ -50,30 +51,14 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
               +
             </button>
           </div>
-          {/*
-            Os dois botões disparam a mesma ação — é assim no voolt3d, onde o
-            atalho de carrinho ao lado do "Comprar" repete a inclusão do item.
-            O ícone fica escondido do leitor de tela justamente por ser
-            repetição; quem navega por voz já tem o botão rotulado ao lado.
-          */}
-          <div className={pageStyles.buyActions}>
-            <button
-              className={pageStyles.buyButton}
-              onClick={() => addItem(product, quantity)}
-              type="button"
-            >
-              Comprar
-            </button>
-            <button
-              aria-hidden="true"
-              className={pageStyles.buyIconButton}
-              onClick={() => addItem(product, quantity)}
-              tabIndex={-1}
-              type="button"
-            >
-              <BagIcon />
-            </button>
-          </div>
+          <button
+            className={pageStyles.buyButton}
+            onClick={() => addItem(product, quantity)}
+            type="button"
+          >
+            <BagIcon />
+            Adicionar à sacola
+          </button>
         </div>
 
         <a
@@ -88,29 +73,46 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
           Compre por atacado
         </a>
 
-        <form
-          aria-label="Calcular frete"
-          className={pageStyles.shippingBox}
-          onSubmit={(event) => event.preventDefault()}
-        >
-          <label
-            htmlFor="cep"
-            style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)" }}
+        {/* "Meios de envio" retrátil, como na referência — aberto por padrão. */}
+        <details className={pageStyles.shippingBox} open>
+          <summary className={pageStyles.shippingSummary}>
+            <TruckIcon />
+            Meios de envio
+            <ChevronDownIcon />
+          </summary>
+          <form
+            aria-label="Calcular frete"
+            className={pageStyles.shippingBody}
+            onSubmit={(event) => event.preventDefault()}
           >
-            CEP
-          </label>
-          <input
-            autoComplete="postal-code"
-            id="cep"
-            inputMode="numeric"
-            name="cep"
-            placeholder="Calcular frete — digite seu CEP"
-          />
-          <button className={storeStyles.buttonGhost} type="submit">
-            <SearchIcon />
-            Calcular
-          </button>
-        </form>
+            <label
+              htmlFor="cep"
+              style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)" }}
+            >
+              CEP
+            </label>
+            <div className={pageStyles.shippingRow}>
+              <input
+                autoComplete="postal-code"
+                id="cep"
+                inputMode="numeric"
+                name="cep"
+                placeholder="Seu CEP"
+              />
+              <button className={pageStyles.shippingCalc} type="submit">
+                Calcular
+              </button>
+            </div>
+            <a
+              className={pageStyles.shippingHelp}
+              href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Não sei meu CEP
+            </a>
+          </form>
+        </details>
 
         {infoBottom}
       </div>

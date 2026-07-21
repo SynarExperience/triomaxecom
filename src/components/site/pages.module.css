@@ -434,38 +434,21 @@
   line-height: 1.6;
 }
 
+/*
+ * Bloco de preço sem moldura, como na referência: é só texto empilhado. A
+ * hierarquia vem do tamanho — "de" riscado, preço grande, Pix, nota do Pix.
+ */
 .priceBox {
   margin-bottom: 22px;
-  padding: 20px 22px;
-  border: 1px solid var(--ink);
-  border-radius: 2px;
-  background: var(--paper);
 }
 
-/* Mesma hierarquia dos cards: Pix em destaque, preço normal abaixo. */
-.pricePix {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin: 0;
-  color: var(--price-pix);
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+.priceCompare {
+  display: block;
+  color: var(--price-off);
+  font-size: 17px;
+  font-weight: 400;
+  text-decoration: line-through;
   font-variant-numeric: tabular-nums;
-}
-
-/*
- * As três linhas do bloco (Pix, preço, parcelas) formam uma coluna só: os
- * ícones têm a mesma largura e vivem numa calha de 20px + 9px de gap. O preço
- * não tem ícone, então recebe o recuo equivalente — sem isso cada linha
- * começava num x diferente, com 33px de desvio entre elas.
- */
-.pricePix svg,
-.priceInstallments svg {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 auto;
 }
 
 .priceMain {
@@ -473,49 +456,95 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 10px;
-  margin-top: 8px;
-  padding-left: 29px;
+  margin-top: 2px;
 }
 
-/*
- * O preço à vista sai em dourado, o mesmo `--gold` do "Ofertas" no menu. No
- * voolt3d essa linha é roxa — a cor de marca deles — então aqui ela assume a
- * nossa em vez de importar a deles.
- */
+/* Preto e grande, o valor dominante do bloco — igual à referência. */
 .priceMain strong {
-  color: var(--gold);
-  font-size: 20px;
+  color: var(--ink);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+/* "% OFF" no verde do Pix, o mesmo usado no site inteiro para economia. */
+.priceOff {
+  color: var(--price-pix);
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.pricePix {
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: 18px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.priceMain s {
-  color: var(--price-off);
-  font-size: 16px;
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
-}
-
-.priceInstallments {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin: 8px 0 0;
+/* "X% de desconto" em verde e negrito; o resto da frase em tom neutro. */
+.pricePixNote {
+  margin: 4px 0 0;
   color: var(--ink-soft);
-  font-size: 15px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
+  font-size: 14px;
 }
 
-.priceInstallments svg {
+.pricePixNote strong {
+  color: var(--price-pix);
+  font-weight: 700;
+}
+
+/* "Ver mais detalhes": gatilho discreto com ícone de pagamento e seta. */
+.priceDetails {
+  margin-top: 12px;
+}
+
+.priceDetails summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.priceDetails summary::-webkit-details-marker {
+  display: none;
+}
+
+.priceDetails summary svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
   color: var(--muted);
 }
 
-/* Quantidade em cima, botão de compra sozinho embaixo em largura total — a
-   ação principal não divide a linha com um controle secundário. */
+.priceDetails summary::after {
+  content: "›";
+  color: var(--muted);
+  font-size: 16px;
+  transition: transform 200ms ease;
+}
+
+.priceDetails[open] summary::after {
+  transform: rotate(90deg);
+}
+
+.priceInstallments {
+  margin: 10px 0 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stepper e botão na mesma linha, como na referência: a altura dos dois é
+   igualada por `align-items: stretch`. */
 .buyRow {
   display: flex;
-  flex-direction: column;
   align-items: stretch;
   gap: 12px;
   margin-bottom: 14px;
@@ -523,18 +552,17 @@
 
 .qty {
   display: inline-flex;
-  align-self: flex-start;
   align-items: center;
   overflow: hidden;
   border: 1px solid var(--line-strong);
-  border-radius: 2px;
+  border-radius: 999px;
   background: var(--paper);
 }
 
 .qty button {
   display: grid;
   width: 46px;
-  height: 52px;
+  height: 56px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -556,18 +584,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Mesmo tratamento do botão "Comprar" dos cards: a ação de compra é a mesma
-   nos dois lugares e precisa ser reconhecida como tal. */
-/*
- * Linha de ação no formato do voolt3d: a pílula principal ocupa o espaço que
- * sobra e o atalho de carrinho fica ao lado, quadrado e do mesmo tom.
- */
-.buyActions {
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
-}
-
+/* Ação de compra: pílula dourada ocupando a largura ao lado do stepper, mesmo
+   gesto do botão "Comprar" dos cards. */
 .buyButton {
   display: inline-flex;
   flex: 1;
@@ -576,8 +594,7 @@
   justify-content: center;
   gap: 10px;
   border: 0;
-  /* Pílula: no original o raio passa da metade da altura e arredonda de ponta
-     a ponta. `999px` entrega isso sem depender da altura final. */
+  /* Pílula: o raio passa da metade da altura e arredonda de ponta a ponta. */
   border-radius: 999px;
   background: var(--gold);
   color: var(--paper);
@@ -595,26 +612,7 @@
   height: 17px;
 }
 
-.buyIconButton {
-  display: grid;
-  width: 64px;
-  min-height: 56px;
-  border: 0;
-  border-radius: 18px;
-  background: var(--gold);
-  color: var(--paper);
-  cursor: pointer;
-  place-items: center;
-  transition: opacity 240ms ease;
-}
-
-.buyIconButton svg {
-  width: 22px;
-  height: 22px;
-}
-
-.buyButton:hover,
-.buyIconButton:hover {
+.buyButton:hover {
   opacity: 0.88;
 }
 
@@ -650,51 +648,102 @@
   height: 18px;
 }
 
-/* Este botão reusa .buttonGold, que virou dourado. Os dois `:hover` têm a mesma
-   especificidade, então a classe é repetida para vencer sem depender da ordem
-   das folhas de estilo — a ação de compra continua preta. */
-.buyButton.buyButton:hover {
-  border-color: transparent;
-  background: var(--ink);
-  color: var(--paper);
-  opacity: 0.84;
-}
-
-.trustList {
+/* Envio · Rastreamento · Compra garantida — ícone à esquerda, título forte e
+   uma linha de apoio, como as três garantias da referência. */
+.assuranceList {
   display: grid;
-  gap: 10px;
+  gap: 16px;
   margin: 22px 0 26px;
   padding: 0;
   list-style: none;
 }
 
-.trustList li {
+.assuranceList li {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 13px;
   color: var(--ink-soft);
-  font-size: 13.5px;
 }
 
-.trustList svg {
-  width: 17px;
-  height: 17px;
+.assuranceList svg {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
   color: var(--ink);
 }
 
-.shippingBox {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 26px;
+.assuranceList strong {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.shippingBox input {
+.assuranceList span {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+/* "Meios de envio": caixa clara retrátil, título + seta que gira ao abrir. */
+.shippingBox {
+  margin-bottom: 26px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.shippingSummary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+}
+
+.shippingSummary::-webkit-details-marker {
+  display: none;
+}
+
+.shippingSummary > svg:first-child {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.shippingSummary > svg:last-child {
+  width: 18px;
+  height: 18px;
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 200ms ease;
+}
+
+.shippingBox[open] .shippingSummary > svg:last-child {
+  transform: rotate(180deg);
+}
+
+.shippingBody {
+  padding: 0 18px 18px;
+}
+
+.shippingRow {
+  display: flex;
+  gap: 10px;
+}
+
+.shippingBody input {
   min-width: 0;
   flex: 1;
   height: 50px;
   padding-inline: 18px;
   border: 1px solid var(--line-strong);
-  border-radius: 2px;
+  border-radius: 999px;
   background: var(--paper);
   color: var(--ink);
   font-size: 14px;
@@ -702,22 +751,41 @@
   transition: border-color 200ms ease;
 }
 
-.shippingBox input::placeholder {
+.shippingBody input::placeholder {
   color: var(--muted);
 }
 
-.shippingBox input:focus {
+.shippingBody input:focus {
   border-color: var(--ink);
 }
 
-.shippingBox button {
-  border-color: var(--ink);
-  color: var(--ink);
-}
-
-.shippingBox button:hover {
+/* Botão CALCULAR preto, como na referência. */
+.shippingCalc {
+  flex: 0 0 auto;
+  padding-inline: 26px;
+  border: 0;
+  border-radius: 999px;
   background: var(--ink);
   color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+
+.shippingCalc:hover {
+  opacity: 0.85;
+}
+
+.shippingHelp {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  text-decoration: underline;
 }
 
 .accordions {
