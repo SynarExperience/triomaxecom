@@ -17,24 +17,19 @@ import {
 } from "@/components/site/icons";
 import pageStyles from "@/components/site/pages.module.css";
 import storeStyles from "@/components/site/store.module.css";
-import {
-  formatBRL,
-  getProduct,
-  installment,
-  pixPrice,
-  products,
-  relatedProducts,
-} from "@/data/catalog";
+import { formatBRL, installment, pixPrice } from "@/data/catalog";
+import { buscarProduto, listarProdutos, produtosRelacionados } from "@/lib/produtos";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const products = await listarProdutos();
   return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await buscarProduto(slug);
   if (!product) return { title: "Produto não encontrado | Triomax" };
   return {
     title: `${product.name} | Triomax`,
@@ -44,10 +39,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await buscarProduto(slug);
   if (!product) notFound();
 
-  const related = relatedProducts(slug);
+  const related = await produtosRelacionados(slug);
 
   // Desconto do preço cheio (só existe quando há `compareAt`) e o do Pix, que
   // sai do próprio `pixPrice` (10%) — os dois números vêm dos dados, nunca fixos.

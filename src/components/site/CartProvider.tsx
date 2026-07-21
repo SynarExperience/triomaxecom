@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getProduct, pixPrice, type Product } from "@/data/catalog";
+import { pixPrice, type Product } from "@/data/catalog";
 
 const STORAGE_KEY = "triomax:sacola";
 const MAX_QUANTITY = 9;
@@ -38,7 +38,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 const clamp = (quantity: number) =>
   Math.min(MAX_QUANTITY, Math.max(1, Math.trunc(quantity)));
 
-function readStorage(): StoredItem[] {
+function readStorage(existe: (slug: string) => boolean): StoredItem[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
@@ -53,14 +53,22 @@ function readStorage(): StoredItem[] {
           typeof (item as StoredItem).slug === "string" &&
           Number.isFinite((item as StoredItem).quantity),
       )
-      .filter((item) => getProduct(item.slug))
+      .filter((item) => existe(item.slug))
       .map((item) => ({ slug: item.slug, quantity: clamp(item.quantity) }));
   } catch {
     return [];
   }
 }
 
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({
+  catalogo,
+  children,
+}: {
+  /** Catálogo vindo do servidor. Substitui o antigo array estático: o preço
+      exibido na sacola é sempre o do banco, nunca o que estava no localStorage. */
+  catalogo: Product[];
+  children: ReactNode;
+}) {
   const [items, setItems] = useState<StoredItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   /* O primeiro render precisa bater com o HTML do servidor (sacola vazia).
@@ -68,10 +76,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
      que vale gravar de volta, senão o estado inicial vazio apaga a sacola. */
   const [hydrated, setHydrated] = useState(false);
 
+  const porSlug = useMemo(
+    () => new Map(catalogo.map((produto) => [produto.slug, produto])),
+    [catalogo],
+  );
+
   useEffect(() => {
-    setItems(readStorage());
+    setItems(readStorage((slug) => porSlug.has(slug)));
     setHydrated(true);
-  }, []);
+  }, [porSlug]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -115,7 +128,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const lines = items.flatMap<CartLine>((item) => {
-      const product = getProduct(item.slug);
+      const product = porSlug.get(item.slug);
       if (!product) return [];
       return [{ product, quantity: item.quantity, total: product.price * item.quantity }];
     });
@@ -134,7 +147,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       openCart,
       closeCart,
     };
-  }, [addItem, closeCart, isOpen, items, openCart, removeItem, setQuantity]);
+  }, [addItem, closeCart, isOpen, items, openCart, porSlug, removeItem, setQuantity]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

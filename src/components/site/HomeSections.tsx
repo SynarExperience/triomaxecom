@@ -1,4 +1,4 @@
-import { featuredProducts, products } from "@/data/catalog";
+import { listarProdutos } from "@/lib/produtos";
 import {
   ArrowRightIcon,
   FlameIcon,
@@ -8,7 +8,9 @@ import { ProductCard } from "./ProductCard";
 import { Reveal } from "./Reveal";
 import styles from "./store.module.css";
 
-export function FeaturedProducts() {
+export async function FeaturedProducts() {
+  const featuredProducts = await listarProdutos();
+
   return (
     <section className={styles.section} id="colecao">
       <div className="container">
@@ -189,7 +191,9 @@ export function PromoBanner() {
   );
 }
 
-export function PrintersRail() {
+export async function PrintersRail() {
+  const products = await listarProdutos();
+
   return (
     <section className={`${styles.section} ${styles.sectionAlt}`}>
       <div className="container">

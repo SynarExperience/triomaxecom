@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { ChevronDownIcon } from "@/components/site/icons";
 import pageStyles from "@/components/site/pages.module.css";
 import storeStyles from "@/components/site/store.module.css";
-import { products } from "@/data/catalog";
+import { listarProdutos } from "@/lib/produtos";
 
 export const metadata: Metadata = {
   title: "Todos os produtos | Triomax",
@@ -42,7 +42,9 @@ const filterGroups: { title: string; options: [string, number][] }[] = [
   },
 ];
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await listarProdutos();
+
   return (
     <>
       <SiteHeader />
