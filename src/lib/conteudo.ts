@@ -18,11 +18,40 @@ export type Banner = {
   posicao: "hero" | "promo";
   titulo: string;
   subtitulo: string;
+  /**
+   * Nome do arquivo sem largura nem extensão (ex.: `banner-pla-petg`). É daqui
+   * que o hero monta o srcset das cinco resoluções — guardar um caminho único
+   * serviria o master 4K para o celular.
+   */
+  nomeBase: string;
+  /** Caminho fixo; sobra do modelo antigo e não é usado pelo hero. */
   imagem: string;
   /** Arte alternativa para telas estreitas; vazia quando não há recorte próprio. */
   imagemMobile: string;
   alt: string;
+  /** aria-label do botão que leva ao slide. */
+  rotulo: string;
   link: string;
+};
+
+/** Um nível de profundidade: subitens vêm agrupados dentro do pai. */
+export type ItemMenu = {
+  id: string;
+  rotulo: string;
+  destino: string;
+  /** Item que salta da barra (o "Ofertas" dourado). Vem do banco em vez de ser
+      deduzido do rótulo, senão renomear o item apagaria o destaque. */
+  destaque: boolean;
+  subitens: ItemMenu[];
+};
+
+/** Coluna de `produtos` de onde as opções do filtro saem. */
+export type CampoFiltro = "linha" | "cor" | "preco";
+
+export type Filtro = {
+  id: string;
+  nome: string;
+  campo: CampoFiltro;
 };
 
 export type Pagina = {
@@ -43,10 +72,26 @@ type LinhaBanner = {
   posicao: string;
   titulo: string | null;
   subtitulo: string | null;
-  imagem: string;
+  nome_base: string | null;
+  imagem: string | null;
   imagem_mobile: string | null;
   alt: string | null;
+  rotulo: string | null;
   link: string | null;
+};
+
+type LinhaItemMenu = {
+  destaque?: boolean | null;
+  id: string;
+  pai_id: string | null;
+  rotulo: string;
+  destino: string;
+};
+
+type LinhaFiltro = {
+  id: string;
+  nome: string;
+  campo: string;
 };
 
 type LinhaCard = {
@@ -69,9 +114,11 @@ function paraBanner(l: LinhaBanner): Banner {
     posicao: l.posicao as Banner["posicao"],
     titulo: l.titulo ?? "",
     subtitulo: l.subtitulo ?? "",
-    imagem: l.imagem,
+    nomeBase: l.nome_base ?? "",
+    imagem: l.imagem ?? "",
     imagemMobile: l.imagem_mobile ?? "",
     alt: l.alt ?? l.titulo ?? "",
+    rotulo: l.rotulo ?? l.alt ?? l.titulo ?? "",
     link: l.link ?? "/produtos",
   };
 }
@@ -109,7 +156,7 @@ export async function listarAvisos(): Promise<Aviso[]> {
 export async function listarBanners(posicao?: Banner["posicao"]): Promise<Banner[]> {
   let consulta = supabase
     .from("banners")
-    .select("id, posicao, titulo, subtitulo, imagem, imagem_mobile, alt, link")
+    .select("id, posicao, titulo, subtitulo, nome_base, imagem, imagem_mobile, alt, rotulo, link")
     .eq("ativo", true);
 
   if (posicao) consulta = consulta.eq("posicao", posicao);
@@ -129,6 +176,66 @@ export async function listarCardsCategoria(): Promise<CategoryCard[]> {
 
   if (error) throw new Error(`Falha ao carregar cards de categoria: ${error.message}`);
   return (data as LinhaCard[]).map(paraCard);
+}
+
+/** Itens ativos de um menu ('principal' | 'rodape'), na ordem do painel. */
+export async function listarMenu(chave: string): Promise<ItemMenu[]> {
+  const { data: menu, error: erroMenu } = await supabase
+    .from("menus")
+    .select("id")
+    .eq("chave", chave)
+    .maybeSingle();
+
+  if (erroMenu) throw new Error(`Falha ao carregar o menu ${chave}: ${erroMenu.message}`);
+  if (!menu) return [];
+
+  const { data, error } = await supabase
+    .from("itens_menu")
+    .select("id, pai_id, rotulo, destino, destaque")
+    .eq("menu_id", (menu as { id: string }).id)
+    .eq("ativo", true)
+    .order("ordem");
+
+  if (error) throw new Error(`Falha ao carregar os itens do menu ${chave}: ${error.message}`);
+
+  const linhas = data as LinhaItemMenu[];
+  const nos = new Map<string, ItemMenu>();
+  for (const l of linhas) {
+    nos.set(l.id, { id: l.id, rotulo: l.rotulo, destino: l.destino, destaque: l.destaque ?? false, subitens: [] });
+  }
+
+  const raiz: ItemMenu[] = [];
+  for (const l of linhas) {
+    const no = nos.get(l.id);
+    if (!no) continue;
+
+    const pai = l.pai_id ? nos.get(l.pai_id) : undefined;
+    /* Pai inativo (ou de outro menu) não vem na consulta: o filho sobe para a
+       raiz em vez de sumir do menu sem explicação. */
+    if (pai) pai.subitens.push(no);
+    else raiz.push(no);
+  }
+
+  return raiz;
+}
+
+/** Filtros ativos da listagem. As contagens são feitas na página, sobre os produtos. */
+export async function listarFiltros(): Promise<Filtro[]> {
+  const { data, error } = await supabase
+    .from("filtros")
+    .select("id, nome, campo")
+    .eq("ativo", true)
+    .order("ordem");
+
+  if (error) throw new Error(`Falha ao carregar filtros: ${error.message}`);
+
+  const conhecidos: CampoFiltro[] = ["linha", "cor", "preco"];
+  return (data as LinhaFiltro[])
+    // Campo que a vitrine não sabe contar viraria um grupo vazio na tela.
+    .filter((l): l is LinhaFiltro & { campo: CampoFiltro } =>
+      conhecidos.includes(l.campo as CampoFiltro),
+    )
+    .map((l) => ({ id: l.id, nome: l.nome, campo: l.campo }));
 }
 
 export async function buscarPagina(slug: string): Promise<Pagina | null> {

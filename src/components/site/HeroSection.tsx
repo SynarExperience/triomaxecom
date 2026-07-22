@@ -21,33 +21,46 @@ const desktopSrcSet = (name: string) =>
 const mobileSrcSet = (name: string) =>
   [780, 1170].map((w) => `/banners/mobile/${name}-${w}.webp ${w}w`).join(", ");
 
+export type BannerHero = {
+  /** Nome-base do arquivo; as larguras são montadas no srcset acima. */
+  name: string;
+  alt: string;
+  /** aria-label do botão de navegação do slide. */
+  label: string;
+  link: string;
+};
+
 /*
  * Os arquivos são nomeados pelo conteúdo, não pela posição: a ordem do
- * carrossel é a ordem deste array e mais nada. Reordenar vira mover uma entrada
- * daqui, sem renomear arquivo. Isso também evita o problema que motivou a
+ * carrossel é a ordem da lista e mais nada. Reordenar vira mover uma entrada no
+ * painel, sem renomear arquivo. Isso também evita o problema que motivou a
  * mudança — os estáticos são servidos com `max-age=86400`, então trocar o
  * conteúdo de um mesmo nome deixava o navegador exibindo a arte antiga por 24h.
+ *
+ * Esta lista é só a rede de segurança: sem banner vindo do banco o hero ficaria
+ * com o vídeo sozinho, então caímos no que a loja já exibia.
  */
-const banners = [
+const BANNERS_PADRAO: BannerHero[] = [
   {
     name: "banner-pla-petg",
     alt: "Banner Triomax: carretéis de filamento vermelho, verde, azul e amarelo empilhados sobre fundo laranja e amarelo — PLA e PETG sem pedido mínimo",
     label: "Ver banner de PLA e PETG sem pedido mínimo",
+    link: "/produtos",
   },
   {
     name: "banner-confianca",
     alt: "Banner Triomax: prateleira de estoque com carretéis de filamento coloridos empilhados — confiança e entrega rápida, garanta agora",
     label: "Ver banner de ofertas",
+    link: "/produtos",
   },
   {
     name: "banner-filamentos",
     alt: "Banner Triomax: impressora 3D imprimindo uma peça laranja, com carretéis ao redor — filamentos e equipamentos com desconto exclusivo",
     label: "Ver banner de filamentos e equipamentos",
+    link: "/produtos",
   },
 ];
 
-/* 0 = vídeo; 1..n = banners */
-const slideCount = banners.length + 1;
 const BANNER_DURATION = 6000;
 
 /*
@@ -62,7 +75,11 @@ const videoSources = {
   mobile: { src: "/banners/mobile/hero-filaments.mp4", poster: "/banners/mobile/hero-poster.webp" },
 };
 
-export function HeroSection() {
+export function HeroSection({ banners: doBanco }: { banners?: BannerHero[] }) {
+  const banners = doBanco?.length ? doBanco : BANNERS_PADRAO;
+  /* 0 = vídeo; 1..n = banners */
+  const slideCount = banners.length + 1;
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const [slide, setSlide] = useState(0);
   /*
@@ -73,7 +90,7 @@ export function HeroSection() {
    */
   const [source, setSource] = useState<{ src: string; poster: string } | null>(null);
 
-  const next = useCallback(() => setSlide((current) => (current + 1) % slideCount), []);
+  const next = useCallback(() => setSlide((current) => (current + 1) % slideCount), [slideCount]);
 
   /*
    * Arrastar para o lado troca de slide no celular. O gesto só conta como
@@ -188,7 +205,7 @@ export function HeroSection() {
             className={`${styles.heroSlide} ${styles.heroBannerSlide} ${
               active ? styles.heroSlideActive : ""
             }`}
-            href="/produtos"
+            href={banner.link}
             key={banner.name}
             tabIndex={active ? 0 : -1}
           >

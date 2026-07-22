@@ -7,14 +7,15 @@ import {
   WhatsAppIcon,
   YouTubeIcon,
 } from "./icons";
+import { listarMenu } from "@/lib/conteudo";
 import { PaymentBrands } from "./PaymentBrands";
 import { Reveal } from "./Reveal";
 import styles from "./store.module.css";
 
 const categories = ["PLA", "PETG", "Impressoras 3D", "Acessórios"];
 
-/* Os três de baixo apontam para `/pagina/[slug]`, cujo texto o painel edita.
-   O resto segue em "#" até existir página publicada com aquele slug. */
+/* Rede de segurança para a primeira coluna: menu 'rodape' vazio no banco
+   deixaria metade do bloco institucional em branco. */
 const institutionalA: { label: string; href: string }[] = [
   { label: "Quem somos", href: "/sobre" },
   { label: "Perguntas frequentes", href: "/pagina/perguntas-frequentes" },
@@ -22,6 +23,8 @@ const institutionalA: { label: string; href: string }[] = [
   { label: "Política de privacidade", href: "/pagina/politica-de-privacidade" },
 ];
 
+/* Segunda coluna: destinos que ainda não existem como página publicada, então
+   seguem em "#" e fora do banco. */
 const institutionalB: { label: string; href: string }[] = [
   { label: "Prazos e entregas", href: "#" },
   { label: "Como comprar", href: "#" },
@@ -29,7 +32,13 @@ const institutionalB: { label: string; href: string }[] = [
   { label: "Seja um revendedor", href: "#" },
 ];
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const menu = await listarMenu("rodape");
+  const institucional =
+    menu.length > 0
+      ? menu.map((item) => ({ label: item.rotulo, href: item.destino }))
+      : institutionalA;
+
   return (
     <footer className={styles.footer}>
       <div className={styles.newsletter}>
@@ -100,7 +109,7 @@ export function SiteFooter() {
           <h3>Institucional</h3>
           <div className={styles.footerColSplit}>
             <ul>
-              {institutionalA.map((item) => (
+              {institucional.map((item) => (
                 <li key={item.label}>
                   <a href={item.href}>{item.label}</a>
                 </li>
