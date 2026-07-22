@@ -6,7 +6,12 @@ export type ProductImage = {
 export type Product = {
   slug: string;
   name: string;
-  category: "Filamentos";
+  /**
+   * Coluna antiga `produtos.categoria`, texto solto e igual em todo o catálogo.
+   * Continua aqui porque a loja ainda a exibe em alguns lugares, mas quem
+   * organiza o catálogo agora é `categories` — a taxonomia de verdade.
+   */
+  category: string;
   line: string;
   color: string;
   colorHex: string;
@@ -24,6 +29,12 @@ export type Product = {
   short: string;
   description: string[];
   specs: [string, string][];
+  /**
+   * Slugs das categorias do produto. Um produto pode estar na categoria-mãe e
+   * na filha ao mesmo tempo, então isto é uma lista, não um valor.
+   * Vazia quando a taxonomia ainda não foi aplicada no banco.
+   */
+  categories: string[];
 };
 
 export const formatBRL = (value: number) =>

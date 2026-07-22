@@ -361,6 +361,84 @@
   cursor: pointer;
 }
 
+/* A opção é um link (o estado do filtro mora na URL), então a "caixinha" é
+   desenhada no CSS — um <input> de verdade aqui exigiria JavaScript para
+   navegar, e o filtro precisa funcionar sem ele. */
+.filterBox {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--paper);
+  font-size: 11px;
+  line-height: 1;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.filterOptionActive {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.filterOptionActive .filterBox {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.listingActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.filterClear {
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.filterClear:hover {
+  color: var(--ink);
+}
+
+.sortControl button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 200ms ease;
+}
+
+.sortControl button:hover {
+  border-color: var(--ink);
+}
+
+.listingEmpty {
+  /* Ocupa a grade inteira: numa coluna só, a mensagem ficaria espremida na
+     largura de um card. */
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 32px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.listingEmpty a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .filterOption span:last-child {
   margin-left: auto;
   color: var(--muted);

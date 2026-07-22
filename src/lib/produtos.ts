@@ -11,17 +11,24 @@ import type { Product } from "@/data/catalog";
 const COLUNAS =
   "slug, nome, categoria, linha, cor, cor_hex, selo, preco, preco_comparativo, imagem, resumo, descricao, especificacoes";
 
+/* As categorias vêm no mesmo embed da listagem porque é ela que filtra por
+   elas — buscar depois, produto a produto, seria uma consulta por card. */
+const COLUNAS_COM_CATEGORIAS = `${COLUNAS}, produtos_categorias(categorias(slug))`;
+
 /* A galeria só interessa à PDP: listagem e relacionados mostram uma foto só, e
    embutir `fotos_produto` ali seria trafegar dezenas de URLs sem uso. */
 const COLUNAS_COM_FOTOS = `${COLUNAS}, fotos_produto(url, alt, posicao)`;
 
 /**
- * Erros que o PostgREST devolve quando `fotos_produto` ainda não existe no
- * banco (migration 0007 não aplicada) — relacionamento ausente no schema cache
- * ou tabela inexistente. Só esses justificam repetir a consulta sem a galeria;
- * qualquer outra falha continua estourando.
+ * Erros que o PostgREST devolve quando a tabela embutida ainda não existe —
+ * relacionamento ausente no schema cache ou tabela inexistente. Vale para as
+ * duas migrações que a vitrine pode estar esperando: `fotos_produto` (0007) e
+ * `categorias`/`produtos_categorias` (0008).
+ *
+ * Só esses justificam repetir a consulta sem o embed. Qualquer outra falha
+ * continua estourando, senão um erro de verdade viraria "loja sem produto".
  */
-const ERROS_SEM_GALERIA = ["PGRST200", "PGRST205", "42P01"];
+const ERROS_SEM_TABELA = ["PGRST200", "PGRST205", "42P01"];
 
 type LinhaFoto = {
   url: string;
@@ -45,6 +52,8 @@ type LinhaProduto = {
   especificacoes: [string, string][] | null;
   /** Ausente nas consultas sem embed e nos produtos que ainda não têm galeria. */
   fotos_produto?: LinhaFoto[] | null;
+  /** Ausente nas consultas sem embed e nos produtos sem categoria. */
+  produtos_categorias?: { categorias: { slug: string } | null }[] | null;
 };
 
 function paraProduto(l: LinhaProduto): Product {
@@ -73,10 +82,32 @@ function paraProduto(l: LinhaProduto): Product {
     short: l.resumo ?? "",
     description: l.descricao ?? [],
     specs: l.especificacoes ?? [],
+    /* Só os slugs: a listagem compara com o da URL, e o nome de exibição ela
+       já tem por `listarCategorias()`. */
+    categories: (l.produtos_categorias ?? [])
+      .map((v) => v.categorias?.slug)
+      .filter((s): s is string => Boolean(s)),
   };
 }
 
 export async function listarProdutos(): Promise<Product[]> {
+  const comCategorias = await supabase
+    .from("produtos")
+    .select(COLUNAS_COM_CATEGORIAS)
+    .eq("ativo", true)
+    .order("linha")
+    .order("nome");
+
+  if (!comCategorias.error) {
+    return (comCategorias.data as unknown as LinhaProduto[]).map(paraProduto);
+  }
+
+  if (!ERROS_SEM_TABELA.includes(comCategorias.error.code)) {
+    throw new Error(`Falha ao carregar produtos: ${comCategorias.error.message}`);
+  }
+
+  /* Banco ainda sem a taxonomia (migração 0008): a listagem continua de pé,
+     só sem o filtro de categoria — mesma degradação da galeria. */
   const { data, error } = await supabase
     .from("produtos")
     .select(COLUNAS)
@@ -102,7 +133,7 @@ export async function buscarProduto(slug: string): Promise<Product | null> {
     return comGaleria.data ? paraProduto(comGaleria.data as unknown as LinhaProduto) : null;
   }
 
-  if (!ERROS_SEM_GALERIA.includes(comGaleria.error.code)) {
+  if (!ERROS_SEM_TABELA.includes(comGaleria.error.code)) {
     throw new Error(`Falha ao carregar o produto ${slug}: ${comGaleria.error.message}`);
   }
 

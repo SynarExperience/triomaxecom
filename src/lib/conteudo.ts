@@ -57,7 +57,7 @@ export type ItemMenu = {
 };
 
 /** Coluna de `produtos` de onde as opções do filtro saem. */
-export type CampoFiltro = "linha" | "cor" | "preco";
+export type CampoFiltro = "linha" | "cor" | "preco" | "categoria";
 
 export type Filtro = {
   id: string;
@@ -264,7 +264,7 @@ export async function listarFiltros(): Promise<Filtro[]> {
 
   if (error) throw new Error(`Falha ao carregar filtros: ${error.message}`);
 
-  const conhecidos: CampoFiltro[] = ["linha", "cor", "preco"];
+  const conhecidos: CampoFiltro[] = ["linha", "cor", "preco", "categoria"];
   return (data as LinhaFiltro[])
     // Campo que a vitrine não sabe contar viraria um grupo vazio na tela.
     .filter((l): l is LinhaFiltro & { campo: CampoFiltro } =>
