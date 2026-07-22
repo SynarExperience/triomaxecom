@@ -120,7 +120,11 @@ const stripTiles: StripTile[] = [
 
 export function CategoryStrip() {
   return (
-    <section className={styles.categoryStrip}>
+    <section
+      className={styles.categoryStrip}
+      /* Nomeia o bloco para o editor de layout do painel; ver PontePreviaEditor. */
+      data-bloco="categories"
+    >
       <div className="container">
         <div className={styles.categoryStripTrack}>
           {stripTiles.map((tile) => (

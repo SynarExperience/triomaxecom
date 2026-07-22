@@ -167,6 +167,8 @@ export function HeroSection({ banners: doBanco }: { banners?: BannerHero[] }) {
     <section
       aria-label="Destaques Triomax"
       className={styles.hero}
+      /* Nomeia o bloco para o editor de layout do painel; ver PontePreviaEditor. */
+      data-bloco="slider"
       onClickCapture={handleClickCapture}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
