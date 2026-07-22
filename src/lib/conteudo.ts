@@ -34,6 +34,17 @@ export type Banner = {
   link: string;
 };
 
+export type Beneficio = {
+  id: string;
+  titulo: string;
+  texto: string;
+  /**
+   * Chave do ícone (`frete`, `cartao`, `pix`, `protegido`), não o desenho: o SVG
+   * vive no componente e o painel só escolhe qual usar.
+   */
+  icone: string;
+};
+
 /** Um nível de profundidade: subitens vêm agrupados dentro do pai. */
 export type ItemMenu = {
   id: string;
@@ -78,6 +89,13 @@ type LinhaBanner = {
   alt: string | null;
   rotulo: string | null;
   link: string | null;
+};
+
+type LinhaBeneficio = {
+  id: string;
+  titulo: string;
+  texto: string;
+  icone: string | null;
 };
 
 type LinhaItemMenu = {
@@ -178,7 +196,24 @@ export async function listarCardsCategoria(): Promise<CategoryCard[]> {
   return (data as LinhaCard[]).map(paraCard);
 }
 
-/** Itens ativos de um menu ('principal' | 'rodape'), na ordem do painel. */
+/** Benefícios ativos da faixa abaixo do topo, na ordem do painel. */
+export async function listarBeneficios(): Promise<Beneficio[]> {
+  const { data, error } = await supabase
+    .from("beneficios")
+    .select("id, titulo, texto, icone")
+    .eq("ativo", true)
+    .order("ordem");
+
+  if (error) throw new Error(`Falha ao carregar benefícios: ${error.message}`);
+  return (data as LinhaBeneficio[]).map((l) => ({
+    id: l.id,
+    titulo: l.titulo,
+    texto: l.texto,
+    icone: l.icone ?? "",
+  }));
+}
+
+/** Itens ativos de um menu ('principal' | 'rodape' | 'rodape-secundario'), na ordem do painel. */
 export async function listarMenu(chave: string): Promise<ItemMenu[]> {
   const { data: menu, error: erroMenu } = await supabase
     .from("menus")

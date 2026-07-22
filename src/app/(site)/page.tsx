@@ -10,7 +10,7 @@ import { HeroSection } from "@/components/site/HeroSection";
 import { AnnouncementMarquee } from "@/components/site/Marquee";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { listarBanners } from "@/lib/conteudo";
+import { listarBanners, listarBeneficios } from "@/lib/conteudo";
 
 export default async function Home() {
   /* O hero é client (carrossel, arrasto, vídeo), então quem lê o banco é esta
@@ -25,13 +25,17 @@ export default async function Home() {
       link: banner.link,
     }));
 
+  /* A faixa de benefícios também é client (carrossel no celular), então o dado
+     vem daqui. */
+  const beneficios = await listarBeneficios();
+
   return (
     <>
       <SiteHeader />
       <AnnouncementMarquee />
       <main>
         <HeroSection banners={banners} />
-        <BenefitsBar />
+        <BenefitsBar beneficios={beneficios} />
         <CategoryStrip />
         <FeaturedProducts />
         <FeatureGrid />

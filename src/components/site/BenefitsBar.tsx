@@ -1,38 +1,59 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { CardIcon, PixIcon, ShieldIcon, TruckIcon } from "./icons";
+import { BoxIcon, CardIcon, PixIcon, ShieldIcon, TruckIcon } from "./icons";
+import type { Beneficio } from "@/lib/conteudo";
 import { Reveal } from "./Reveal";
 import styles from "./store.module.css";
+
+/*
+ * O painel escolhe a CHAVE do ícone; o desenho fica aqui. Chave desconhecida
+ * cai no ícone de caixa, para um benefício novo nunca aparecer sem símbolo.
+ */
+const icones = {
+  frete: TruckIcon,
+  cartao: CardIcon,
+  pix: PixIcon,
+  protegido: ShieldIcon,
+};
 
 /*
  * O destaque é atribuído, não decorativo: verde é a cor do Pix no site inteiro
  * (mesma dos preços nos cards) e o dourado marca o gancho comercial mais forte.
  * Os outros dois ficam neutros — quatro cores diferentes lado a lado no desktop
- * viram ruído.
+ * viram ruído. Segue a chave do ícone, e não o título, senão renomear o
+ * benefício no painel apagaria a cor.
  */
-const benefits = [
+const destaques = {
+  frete: styles.benefitGold,
+  pix: styles.benefitPix,
+};
+
+/* Rede de segurança: tabela `beneficios` vazia deixaria a faixa em branco. */
+const padrao: Beneficio[] = [
   {
-    icon: <TruckIcon />,
-    title: "Frete grátis",
-    text: "Nas compras acima de R$ 299 para todo o Brasil",
-    accent: styles.benefitGold,
+    id: "frete",
+    icone: "frete",
+    titulo: "Frete grátis",
+    texto: "Nas compras acima de R$ 299 para todo o Brasil",
   },
   {
-    icon: <CardIcon />,
-    title: "Até 12x sem juros",
-    text: "Parcele no cartão em até 12 vezes",
+    id: "cartao",
+    icone: "cartao",
+    titulo: "Até 12x sem juros",
+    texto: "Parcele no cartão em até 12 vezes",
   },
   {
-    icon: <PixIcon />,
-    title: "10% off no Pix",
-    text: "Desconto aplicado direto no carrinho",
-    accent: styles.benefitPix,
+    id: "pix",
+    icone: "pix",
+    titulo: "10% off no Pix",
+    texto: "Desconto aplicado direto no carrinho",
   },
   {
-    icon: <ShieldIcon />,
-    title: "Compra protegida",
-    text: "Site seguro e envio em até 24h úteis",
+    id: "protegido",
+    icone: "protegido",
+    titulo: "Compra protegida",
+    texto: "Site seguro e envio em até 24h úteis",
   },
 ];
 
@@ -40,7 +61,10 @@ const AUTO_ADVANCE = 3800;
 const RESUME_AFTER_TOUCH = 7000;
 const CAROUSEL_MEDIA = "(max-width: 640px)";
 
-export function BenefitsBar() {
+/* Recebe os benefícios por prop porque a faixa é client (carrossel automático no
+   celular) — quem lê o banco é a página, como já acontece com o hero. */
+export function BenefitsBar({ beneficios }: { beneficios?: Beneficio[] }) {
+  const lista = beneficios && beneficios.length > 0 ? beneficios : padrao;
   const trackRef = useRef<HTMLDivElement>(null);
 
   /*
@@ -94,19 +118,26 @@ export function BenefitsBar() {
   return (
     <section aria-label="Vantagens da loja" className={styles.benefits}>
       <div className={`container ${styles.benefitsGrid}`} ref={trackRef}>
-        {benefits.map((benefit, index) => (
-          <Reveal
-            className={`${styles.benefit} ${benefit.accent ?? ""}`}
-            delay={index * 70}
-            key={benefit.title}
-          >
-            <span className={styles.benefitIcon}>{benefit.icon}</span>
-            <span className={styles.benefitText}>
-              <strong>{benefit.title}</strong>
-              <span>{benefit.text}</span>
-            </span>
-          </Reveal>
-        ))}
+        {lista.map((beneficio, index) => {
+          const Icone = icones[beneficio.icone as keyof typeof icones] ?? BoxIcon;
+          const destaque = destaques[beneficio.icone as keyof typeof destaques];
+
+          return (
+            <Reveal
+              className={`${styles.benefit} ${destaque ?? ""}`}
+              delay={index * 70}
+              key={beneficio.id}
+            >
+              <span className={styles.benefitIcon}>
+                <Icone />
+              </span>
+              <span className={styles.benefitText}>
+                <strong>{beneficio.titulo}</strong>
+                <span>{beneficio.texto}</span>
+              </span>
+            </Reveal>
+          );
+        })}
       </div>
     </section>
   );

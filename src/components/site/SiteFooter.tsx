@@ -23,8 +23,8 @@ const institutionalA: { label: string; href: string }[] = [
   { label: "Política de privacidade", href: "/pagina/politica-de-privacidade" },
 ];
 
-/* Segunda coluna: destinos que ainda não existem como página publicada, então
-   seguem em "#" e fora do banco. */
+/* Mesma rede de segurança para a segunda coluna ('rodape-secundario'): os
+   destinos ainda não existem como página publicada e seguem em "#". */
 const institutionalB: { label: string; href: string }[] = [
   { label: "Prazos e entregas", href: "#" },
   { label: "Como comprar", href: "#" },
@@ -33,11 +33,20 @@ const institutionalB: { label: string; href: string }[] = [
 ];
 
 export async function SiteFooter() {
-  const menu = await listarMenu("rodape");
+  const [menu, menuSecundario] = await Promise.all([
+    listarMenu("rodape"),
+    listarMenu("rodape-secundario"),
+  ]);
+
   const institucional =
     menu.length > 0
       ? menu.map((item) => ({ label: item.rotulo, href: item.destino }))
       : institutionalA;
+
+  const institucionalSecundario =
+    menuSecundario.length > 0
+      ? menuSecundario.map((item) => ({ label: item.rotulo, href: item.destino }))
+      : institutionalB;
 
   return (
     <footer className={styles.footer}>
@@ -116,7 +125,7 @@ export async function SiteFooter() {
               ))}
             </ul>
             <ul>
-              {institutionalB.map((item) => (
+              {institucionalSecundario.map((item) => (
                 <li key={item.label}>
                   <a href={item.href}>{item.label}</a>
                 </li>
