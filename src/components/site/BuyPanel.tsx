@@ -16,17 +16,60 @@ type ProductViewProps = {
   infoBottom: ReactNode;
 };
 
+/**
+ * Galeria da PDP: foto grande + tira de miniaturas. Com uma foto só a tira não
+ * é renderizada e o bloco fica idêntico ao que existia antes da galeria.
+ */
+function ProductGallery({ product }: { product: Product }) {
+  const [ativa, setAtiva] = useState(0);
+  const fotos = product.images;
+  /* Índice fora da faixa (galeria encurtada entre renders) volta para a
+     principal em vez de deixar a moldura vazia. */
+  const foto = fotos[ativa] ?? fotos[0];
+
+  return (
+    <div className={pageStyles.pdpGallery}>
+      <figure className={pageStyles.pdpMedia}>
+        {product.badge ? <span className={pageStyles.pdpBadge}>{product.badge}</span> : null}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          alt={foto?.alt ?? product.name}
+          className="productPhoto"
+          /* Sem `lazy`: esta é a LCP da página. */
+          src={foto?.url ?? product.image}
+        />
+      </figure>
+
+      {fotos.length > 1 ? (
+        <div aria-label="Fotos do produto" className={pageStyles.pdpThumbs} role="group">
+          {fotos.map((f, indice) => (
+            <button
+              aria-label={`Ver foto ${indice + 1} de ${fotos.length}`}
+              aria-pressed={indice === ativa}
+              className={`${pageStyles.pdpThumb} ${indice === ativa ? pageStyles.pdpThumbActive : ""}`}
+              key={f.url}
+              onClick={() => setAtiva(indice)}
+              type="button"
+            >
+              {/* alt vazio: o rótulo acessível já está no botão, repeti-lo aqui
+                  faria o leitor de tela anunciar a mesma foto duas vezes. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img alt="" className="productPhoto" loading="lazy" src={f.url} />
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) {
   const [quantity, setQuantity] = useState(1);
   const { addItem } = useCart();
 
   return (
     <div className={pageStyles.pdpLayout}>
-      <figure className={pageStyles.pdpMedia} style={{ margin: 0 }}>
-        {product.badge ? <span className={pageStyles.pdpBadge}>{product.badge}</span> : null}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img alt={product.name} className="productPhoto" src={product.image} />
-      </figure>
+      <ProductGallery product={product} />
 
       <div>
         {infoTop}

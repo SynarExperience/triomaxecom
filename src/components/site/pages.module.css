@@ -376,10 +376,19 @@
   align-items: start;
 }
 
-.pdpMedia {
+/* O sticky subiu da foto para a galeria: assim a tira de miniaturas acompanha
+   a foto grande enquanto a coluna de compra rola. */
+.pdpGallery {
   position: sticky;
   top: 174px;
   display: grid;
+  gap: 10px;
+}
+
+.pdpMedia {
+  position: relative;
+  display: grid;
+  margin: 0;
   overflow: hidden;
   aspect-ratio: 0.94;
   border: 1px solid var(--line);
@@ -398,6 +407,54 @@
 
 .pdpMedia:hover img {
   transform: scale(1.04);
+}
+
+/* A rolagem é do próprio container: no celular seis miniaturas empurrariam a
+   largura da página se a tira quebrasse ou transbordasse. */
+.pdpThumbs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.pdpThumb {
+  display: grid;
+  flex: 0 0 auto;
+  width: 74px;
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+  cursor: pointer;
+  place-items: center;
+  transition: border-color 240ms var(--ease-out);
+}
+
+/* Contorno por dentro: a tira rola em X e cortaria o outline padrão, que é
+   desenhado 3px fora do botão. */
+.pdpThumb:focus-visible {
+  outline-offset: -3px;
+}
+
+.pdpThumb img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+}
+
+.pdpThumb:hover {
+  border-color: var(--ink-soft);
+}
+
+/* Estado ativo também no traço, não só no contraste: o foco pode estar noutro
+   lugar da página e a foto grande ainda precisa ter dona visível. */
+.pdpThumbActive {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
 }
 
 .pdpBadge {
@@ -938,7 +995,7 @@
     gap: 26px;
   }
 
-  .pdpMedia {
+  .pdpGallery {
     position: static;
   }
 }
@@ -956,6 +1013,10 @@
     font-size: 26px;
   }
 
+  .pdpThumb {
+    width: 62px;
+  }
+
   .related {
     margin-top: 48px;
   }
@@ -963,6 +1024,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pdpMedia img,
+  .pdpThumb,
   .filterGroup summary svg,
   .accordion summary svg,
   .qty button,

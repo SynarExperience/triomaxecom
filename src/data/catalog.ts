@@ -1,3 +1,8 @@
+export type ProductImage = {
+  url: string;
+  alt: string;
+};
+
 export type Product = {
   slug: string;
   name: string;
@@ -8,7 +13,14 @@ export type Product = {
   badge?: "Lançamento" | "Mais vendido" | "Oferta" | "Outlet";
   price: number;
   compareAt?: number;
+  /** Foto principal — a de menor posição na galeria. Usada em card e sacola. */
   image: string;
+  /**
+   * Galeria da PDP, já na ordem de exibição (a primeira é a principal). Nunca
+   * fica vazia enquanto houver `image`: quando não há galeria no banco ela cai
+   * para a foto única, então a PDP nunca precisa tratar os dois casos.
+   */
+  images: ProductImage[];
   short: string;
   description: string[];
   specs: [string, string][];

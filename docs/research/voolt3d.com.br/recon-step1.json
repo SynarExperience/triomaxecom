@@ -1,0 +1,38 @@
+{
+  "steps": [
+    "home ok"
+  ],
+  "home": {
+    "title": "Voolt3D",
+    "url": "https://voolt3d.com.br/",
+    "platform": {
+      "tiendanube": true,
+      "storeId": 5959122,
+      "cartUrl": null,
+      "theme": null
+    },
+    "cartLinks": [],
+    "productLinks": [
+      "https://voolt3d.com.br/produtos/",
+      "https://www.voolt3d.com.br/produtos/filamento-pla-dourado-v-silk-premium/",
+      "https://voolt3d.com.br/produtos/filamento-pla-verde-ardosia-stone-high-speed-premium-1kg/",
+      "https://wa.me/5511950399547?text=Ol%C3%A1!%20Eu%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre:%20Filamento%20PLA%20Verde%20Ard%C3%B3sia%20Stone%20High%20Speed%20Premium%20-%201Kg%20-%20https://voolt3d.com.br/produtos/filamento-pla-verde-ardosia-stone-high-speed-premium-1kg/",
+      "https://voolt3d.com.br/produtos/filamento-pla-vermelho-v-silk-high-speed-premium-1kg/",
+      "https://wa.me/5511950399547?text=Ol%C3%A1!%20Eu%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre:%20Filamento%20PLA%20Vermelho%20V-Silk%20High%20Speed%20Premium%20-%201Kg%20-%20https://voolt3d.com.br/produtos/filamento-pla-vermelho-v-silk-high-speed-premium-1kg/",
+      "https://voolt3d.com.br/produtos/filamento-pla-azul-sky-v-silk-premium/",
+      "https://wa.me/5511950399547?text=Ol%C3%A1!%20Eu%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre:%20Filamento%20PLA%20Azul%20Sky%20V-Silk%20High%20Speed%20Premium%20-%201Kg%20-%20https://voolt3d.com.br/produtos/filamento-pla-azul-sky-v-silk-premium/",
+      "https://voolt3d.com.br/produtos/filamento-pla-amarelo-velvet-premium/",
+      "https://wa.me/5511950399547?text=Ol%C3%A1!%20Eu%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre:%20Filamento%20PLA%20Amarelo%20Velvet%20High%20Speed%20Premium%20-%201Kg%20-%20https://voolt3d.com.br/produtos/filamento-pla-amarelo-velvet-premium/"
+    ],
+    "scripts": [
+      "https://acdn-us.mitiendanube.com/assets/stores/js/linkedstore-v2-cf25b6fb8cf336376a4d1a87a9c136c430.js?v=66903114",
+      "https://static.cashing.com.br/releases/nuvemshop/storefront/f81dcd12/orderbump.js",
+      "https://static.cashing.com.br/releases/nuvemshop/storefront/11cc2ef9/warnme.js",
+      "https://static.cashing.com.br/releases/nuvemshop/storefront/54688834/coupon.js",
+      "https://static.cashing.com.br/releases/nuvemshop/storefront/4b0e6cc8/evaluations.js",
+      "https://acdn-us.mitiendanube.com/stores/005/959/122/themes/flex/dart-external-no-dependencies-2020a4748d2e0fc983451e7972c49502.js",
+      "https://apps-scripts.tiendanube.com/cashing/cashingfront/7.js?versionId=iy4ZBPU8ocNwtev4RMk3N.LsrFIx_ans&store=5959122",
+      "https://cdn.ishorts.com.br/nuvemshop/bundle.js?v=2"
+    ]
+  }
+}

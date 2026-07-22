@@ -1,0 +1,2466 @@
+{
+  "10-checkout-contato": {
+    "url": "https://voolt3d.com.br/checkout/v3/start/2025779300/67020abcd708ca3441011f78b93672d15bda0602?from_store=1&country=BR",
+    "title": "Dados pessoais - Voolt3D",
+    "stepper": [
+      "Carrinho Entrega Pagamento",
+      "Carrinho Entrega Pagamento",
+      "Carrinho",
+      "Carrinho",
+      "Entrega"
+    ],
+    "headings": [
+      {
+        "text": "Dados de contato",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "type": "email",
+        "name": "contact.email",
+        "id": "contact.email",
+        "placeholder": " ",
+        "label": "E-mail",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "acceptedMarketing",
+        "id": "acceptedMarketing",
+        "placeholder": null,
+        "label": "Receber ofertas e novidades por e-mail",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.zipcode",
+        "id": "shippingAddress.zipcode",
+        "placeholder": " ",
+        "label": "CEP",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Carrinho",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "25px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Pagamento",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      }
+    ],
+    "shippingOptions": [
+      "Entrega"
+    ],
+    "summary": {
+      "tag": "div",
+      "classes": "summary d-block d-md-none fixed sticky",
+      "styles": {
+        "flexDirection": "row",
+        "width": "1440px",
+        "margin": "0px calc(50% - 720px)",
+        "position": "sticky",
+        "zIndex": "5",
+        "fontFamily": "Montserrat, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(21, 21, 21)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "border": "0px none rgb(21, 21, 21)",
+        "opacity": "1",
+        "transition": "all"
+      }
+    },
+    "bodyText": "Carrinho Entrega Pagamento Dados de contato E-mail Receber ofertas e novidades por e-mail Entrega CEP Não sei meu CEP CONTINUAR Filamento PLA Preto Velvet High Speed Premium - 1Kg × 1 -35% R$129,99 R$84,10 Subtotal R$84,10 Total R$84,10 Adicionar cupom de desconto"
+  },
+  "11-checkout-contato-preenchido": {
+    "url": "https://voolt3d.com.br/checkout/v3/start/2025779300/67020abcd708ca3441011f78b93672d15bda0602?from_store=1&country=BR",
+    "title": "Dados pessoais - Voolt3D",
+    "stepper": [
+      "Carrinho Entrega Pagamento",
+      "Carrinho Entrega Pagamento",
+      "Carrinho",
+      "Carrinho",
+      "Entrega"
+    ],
+    "headings": [
+      {
+        "text": "Dados de contato",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "type": "email",
+        "name": "contact.email",
+        "id": "contact.email",
+        "placeholder": " ",
+        "label": "E-mail",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(230, 230, 230)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "0.6",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "acceptedMarketing",
+        "id": "acceptedMarketing",
+        "placeholder": null,
+        "label": "Receber ofertas e novidades por e-mail",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.zipcode",
+        "id": "shippingAddress.zipcode",
+        "placeholder": " ",
+        "label": "CEP",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Carrinho",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "25px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Pagamento",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Alterar",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "41.8438px",
+          "height": "24px",
+          "padding": "5px 0px",
+          "position": "absolute",
+          "top": "12px",
+          "zIndex": "999",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "12px",
+          "fontWeight": "400",
+          "lineHeight": "12px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "100%",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil.",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "6px",
+          "width": "834px",
+          "height": "84px",
+          "padding": "18px",
+          "margin": "0px 0px 10px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "boxShadow": "rgba(50, 50, 50, 0.08) 0px 2px 4px 0px, rgba(50, 50, 50, 0.04) 0px 2px 2px 0px, rgba(50, 50, 50, 0.01) 0px 2px 6px 0px",
+          "opacity": "1",
+          "transition": "all"
+        }
+      }
+    ],
+    "shippingOptions": [
+      "Entrega"
+    ],
+    "summary": {
+      "tag": "div",
+      "classes": "summary d-block d-md-none fixed sticky",
+      "styles": {
+        "flexDirection": "row",
+        "width": "1440px",
+        "margin": "0px calc(50% - 720px)",
+        "position": "sticky",
+        "zIndex": "5",
+        "fontFamily": "Montserrat, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(21, 21, 21)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "border": "0px none rgb(21, 21, 21)",
+        "opacity": "1",
+        "transition": "all"
+      }
+    },
+    "bodyText": "Carrinho Entrega Pagamento Dados de contato E-mail Alterar Receber ofertas e novidades por e-mail Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil. Entrega CEP CONTINUAR Filamento PLA Preto Velvet High Speed Premium - 1Kg × 1 -35% R$129,99 R$84,10 Subtotal R$84,10 Total R$84,10 Adicionar cupom de desconto"
+  },
+  "20-checkout-frete": {
+    "url": "https://voolt3d.com.br/checkout/v3/start/2025779300/67020abcd708ca3441011f78b93672d15bda0602?from_store=1&country=BR",
+    "title": "Dados pessoais - Voolt3D",
+    "stepper": [
+      "Carrinho Entrega Pagamento",
+      "Carrinho Entrega Pagamento",
+      "Carrinho",
+      "Carrinho",
+      "Entrega"
+    ],
+    "headings": [
+      {
+        "text": "Dados de contato",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "type": "email",
+        "name": "contact.email",
+        "id": "contact.email",
+        "placeholder": " ",
+        "label": "E-mail",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(230, 230, 230)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "0.6",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "acceptedMarketing",
+        "id": "acceptedMarketing",
+        "placeholder": null,
+        "label": "Receber ofertas e novidades por e-mail",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "radio",
+        "name": null,
+        "id": "Econômico6a612747df81f",
+        "placeholder": null,
+        "label": "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 0px 5px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "radio",
+        "name": null,
+        "id": "Rápido6a612747df88c",
+        "placeholder": null,
+        "label": "R$14,55 Mandaê: Rápido Chega em 2 dias úteis",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 0px 5px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "radio",
+        "name": null,
+        "id": "allPost06a612747df89a",
+        "placeholder": null,
+        "label": "R$15,00 J3 Flex - Origem: Sao Bernardo Do Campo-SP Chega em 2 dias úteis",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 0px 5px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Carrinho",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "25px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Pagamento",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Alterar",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "41.8438px",
+          "height": "24px",
+          "padding": "5px 0px",
+          "position": "absolute",
+          "top": "12px",
+          "zIndex": "999",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "12px",
+          "fontWeight": "400",
+          "lineHeight": "12px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "100%",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil.",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "6px",
+          "width": "834px",
+          "height": "84px",
+          "padding": "18px",
+          "margin": "0px 0px 10px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "boxShadow": "rgba(50, 50, 50, 0.08) 0px 2px 4px 0px, rgba(50, 50, 50, 0.04) 0px 2px 2px 0px, rgba(50, 50, 50, 0.01) 0px 2px 6px 0px",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "CONTINUAR PARA PAGAMENTO",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "280px",
+          "height": "46.4062px",
+          "padding": "12px 18px",
+          "margin": "0px 0px 20px",
+          "position": "static",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "textTransform": "uppercase",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(75, 0, 153)",
+          "border": "0px none rgb(255, 255, 255)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "background 0.3s"
+        }
+      }
+    ],
+    "shippingOptions": [
+      "Entrega Alterar: 01310100",
+      "Envio em domicílio R$13,81 Mandaê: Econômico Chega em 3 dias úteis R$14,55 Mandaê: Rápido Chega em 2 dias úteis R$15,00 J3 Flex - Origem: Sao Bernardo Do Campo-",
+      "Envio em domicílio R$13,81 Mandaê: Econômico Chega em 3 dias úteis R$14,55 Mandaê: Rápido Chega em 2 dias úteis R$15,00 J3 Flex - Origem: Sao Bernardo Do Campo-",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis R$14,55 Mandaê: Rápido Chega em 2 dias úteis R$15,00 J3 Flex - Origem: Sao Bernardo Do Campo-SP Chega em 2 dias ",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81",
+      "Mandaê: Econômico",
+      "R$14,55 Mandaê: Rápido Chega em 2 dias úteis",
+      "R$14,55 Mandaê: Rápido Chega em 2 dias úteis"
+    ],
+    "summary": {
+      "tag": "div",
+      "classes": "summary d-block d-md-none fixed sticky",
+      "styles": {
+        "flexDirection": "row",
+        "width": "1440px",
+        "margin": "0px calc(50% - 720px)",
+        "position": "sticky",
+        "zIndex": "5",
+        "fontFamily": "Montserrat, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(21, 21, 21)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "border": "0px none rgb(21, 21, 21)",
+        "opacity": "1",
+        "transition": "all"
+      }
+    },
+    "bodyText": "Carrinho Entrega Pagamento Dados de contato E-mail Alterar Receber ofertas e novidades por e-mail Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil. Entrega Alterar: 01310100 Envio em domicílio R$13,81 Mandaê: Econômico Chega em 3 dias úteis R$14,55 Mandaê: Rápido Chega em 2 dias úteis R$15,00 J3 Flex - Origem: Sao Bernardo Do Campo-SP Chega em 2 dias úteis CONTINUAR PARA PAGAMENTO Filamento PLA Preto Velvet High Speed Premium - 1Kg × 1 -35% R$129,99 R$84,10 Subtotal R$84,10 Total R$84,10 Adicionar cupom de desconto"
+  },
+  "21-checkout-frete-escolhido": {
+    "url": "https://voolt3d.com.br/checkout/v3/start/2025779300/67020abcd708ca3441011f78b93672d15bda0602?from_store=1&country=BR",
+    "title": "Dados pessoais - Voolt3D",
+    "stepper": [
+      "Carrinho Entrega Pagamento",
+      "Carrinho Entrega Pagamento",
+      "Carrinho",
+      "Carrinho",
+      "Entrega"
+    ],
+    "headings": [
+      {
+        "text": "Dados de contato",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Dados para nota fiscal",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "type": "email",
+        "name": "contact.email",
+        "id": "contact.email",
+        "placeholder": " ",
+        "label": "E-mail",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(230, 230, 230)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "0.6",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "acceptedMarketing",
+        "id": "acceptedMarketing",
+        "placeholder": null,
+        "label": "Receber ofertas e novidades por e-mail",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "radio",
+        "name": null,
+        "id": "Econômico6a612747df81f",
+        "placeholder": null,
+        "label": "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 0px 5px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.first_name",
+        "id": "shippingAddress.first_name",
+        "placeholder": " ",
+        "label": "Nome",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.last_name",
+        "id": "shippingAddress.last_name",
+        "placeholder": " ",
+        "label": "Sobrenome",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "tel",
+        "name": "shippingAddress.phone",
+        "id": "shippingAddress.phone",
+        "placeholder": " ",
+        "label": "Telefone com DDD",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.number",
+        "id": "shippingAddress.number",
+        "placeholder": " ",
+        "label": "Número",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "341.656px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "shipping_numbercheckbox",
+        "id": "shipping_numbercheckbox",
+        "placeholder": null,
+        "label": "Sem número",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.floor",
+        "id": "shippingAddress.floor",
+        "placeholder": " ",
+        "label": "Apto, Bloco, Referência, etc. (opcional)",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "482.328px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "billingAddress.id_number",
+        "id": "billingAddress.id_number",
+        "placeholder": " ",
+        "label": "CPF ou CNPJ",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": null,
+        "id": "billingAddress.sameAddress",
+        "placeholder": null,
+        "label": "Usar as mesmas informações da entrega",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Carrinho",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "25px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Pagamento",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Alterar",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "41.8438px",
+          "height": "24px",
+          "padding": "5px 0px",
+          "position": "absolute",
+          "top": "12px",
+          "zIndex": "999",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "12px",
+          "fontWeight": "400",
+          "lineHeight": "12px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "100%",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil.",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "6px",
+          "width": "834px",
+          "height": "84px",
+          "padding": "18px",
+          "margin": "0px 0px 10px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "boxShadow": "rgba(50, 50, 50, 0.08) 0px 2px 4px 0px, rgba(50, 50, 50, 0.04) 0px 2px 2px 0px, rgba(50, 50, 50, 0.01) 0px 2px 6px 0px",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "CONTINUAR PARA PAGAMENTO",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "280px",
+          "height": "46.4062px",
+          "padding": "12px 18px",
+          "margin": "0px 0px 20px",
+          "position": "static",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "textTransform": "uppercase",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(75, 0, 153)",
+          "border": "0px none rgb(255, 255, 255)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "background 0.3s"
+        }
+      }
+    ],
+    "shippingOptions": [
+      "Entrega",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81",
+      "Mandaê: Econômico",
+      "Dados para entrega Nome Sobrenome Telefone com DDD Avenida Paulista CEP 01310100 - Bela Vista São Paulo - São Paulo Alterar Número Sem número Apto, Bloco, Refer",
+      "Custo de frete R$13,81"
+    ],
+    "summary": {
+      "tag": "div",
+      "classes": "summary d-block d-md-none fixed sticky",
+      "styles": {
+        "flexDirection": "row",
+        "width": "1440px",
+        "margin": "0px calc(50% - 720px)",
+        "position": "sticky",
+        "zIndex": "5",
+        "fontFamily": "Montserrat, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(21, 21, 21)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "border": "0px none rgb(21, 21, 21)",
+        "opacity": "1",
+        "transition": "all"
+      }
+    },
+    "bodyText": "Carrinho Entrega Pagamento Dados de contato E-mail Alterar Receber ofertas e novidades por e-mail Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil. Entrega R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções Dados para entrega Nome Sobrenome Telefone com DDD Avenida Paulista CEP 01310100 - Bela Vista São Paulo - São Paulo Alterar Número Sem número Apto, Bloco, Referência, etc. (opcional) Dados para nota fiscal CPF ou CNPJ Usar as mesmas informações da entrega CONTINUAR PARA PAGAMENTO Filamento PLA Preto Velvet High Speed Premium - 1Kg × 1 -35% R$129,99 R$84,10 Subtotal R$84,10 Custo de frete R$13,81 Total R$97,91 Adicionar cupom de desconto"
+  },
+  "30-checkout-endereco": {
+    "url": "https://voolt3d.com.br/checkout/v3/start/2025779300/67020abcd708ca3441011f78b93672d15bda0602?from_store=1&country=BR",
+    "title": "Dados pessoais - Voolt3D",
+    "stepper": [
+      "Carrinho Entrega Pagamento",
+      "Carrinho Entrega Pagamento",
+      "Carrinho",
+      "Carrinho",
+      "Entrega"
+    ],
+    "headings": [
+      {
+        "text": "Dados de contato",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Dados para nota fiscal",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "type": "email",
+        "name": "contact.email",
+        "id": "contact.email",
+        "placeholder": " ",
+        "label": "E-mail",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(230, 230, 230)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "0.6",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "acceptedMarketing",
+        "id": "acceptedMarketing",
+        "placeholder": null,
+        "label": "Receber ofertas e novidades por e-mail",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "radio",
+        "name": null,
+        "id": "Econômico6a612747df81f",
+        "placeholder": null,
+        "label": "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 0px 5px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.first_name",
+        "id": "shippingAddress.first_name",
+        "placeholder": " ",
+        "label": "Nome",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgb(193, 58, 58)",
+          "borderRadius": "3px 3px 0px 0px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.last_name",
+        "id": "shippingAddress.last_name",
+        "placeholder": " ",
+        "label": "Sobrenome",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgb(193, 58, 58)",
+          "borderRadius": "3px 3px 0px 0px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "tel",
+        "name": "shippingAddress.phone",
+        "id": "shippingAddress.phone",
+        "placeholder": " ",
+        "label": "Telefone com DDD",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgb(193, 58, 58)",
+          "borderRadius": "3px 3px 0px 0px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.number",
+        "id": "shippingAddress.number",
+        "placeholder": " ",
+        "label": "Número",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "341.656px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgb(193, 58, 58)",
+          "borderRadius": "3px 3px 0px 0px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "shipping_numbercheckbox",
+        "id": "shipping_numbercheckbox",
+        "placeholder": null,
+        "label": "Sem número",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.floor",
+        "id": "shippingAddress.floor",
+        "placeholder": " ",
+        "label": "Apto, Bloco, Referência, etc. (opcional)",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "482.328px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "billingAddress.id_number",
+        "id": "billingAddress.id_number",
+        "placeholder": " ",
+        "label": "CPF ou CNPJ",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgb(193, 58, 58)",
+          "borderRadius": "3px 3px 0px 0px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": null,
+        "id": "billingAddress.sameAddress",
+        "placeholder": null,
+        "label": "Usar as mesmas informações da entrega",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Carrinho",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "25px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Pagamento",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Alterar",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "41.8438px",
+          "height": "24px",
+          "padding": "5px 0px",
+          "position": "absolute",
+          "top": "12px",
+          "zIndex": "999",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "12px",
+          "fontWeight": "400",
+          "lineHeight": "12px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "100%",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil.",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "6px",
+          "width": "834px",
+          "height": "84px",
+          "padding": "18px",
+          "margin": "0px 0px 10px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "boxShadow": "rgba(50, 50, 50, 0.08) 0px 2px 4px 0px, rgba(50, 50, 50, 0.04) 0px 2px 2px 0px, rgba(50, 50, 50, 0.01) 0px 2px 6px 0px",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "CONTINUAR PARA PAGAMENTO",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "280px",
+          "height": "46.4062px",
+          "padding": "12px 18px",
+          "margin": "0px 0px 20px",
+          "position": "static",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "textTransform": "uppercase",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(75, 0, 153)",
+          "border": "0px none rgb(255, 255, 255)",
+          "borderRadius": "3px",
+          "opacity": "0.9",
+          "transition": "background 0.3s"
+        }
+      }
+    ],
+    "shippingOptions": [
+      "Entrega",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81",
+      "Mandaê: Econômico",
+      "Dados para entrega Nome Este campo deve ser preenchido Sobrenome Este campo deve ser preenchido Telefone com DDD Este campo deve ser preenchido Avenida Paulista",
+      "Custo de frete R$13,81"
+    ],
+    "summary": {
+      "tag": "div",
+      "classes": "summary d-block d-md-none fixed sticky",
+      "styles": {
+        "flexDirection": "row",
+        "width": "1440px",
+        "margin": "0px calc(50% - 720px)",
+        "position": "sticky",
+        "zIndex": "5",
+        "fontFamily": "Montserrat, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(21, 21, 21)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "border": "0px none rgb(21, 21, 21)",
+        "opacity": "1",
+        "transition": "all"
+      }
+    },
+    "bodyText": "Carrinho Entrega Pagamento Dados de contato E-mail Alterar Receber ofertas e novidades por e-mail Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil. Entrega R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções Dados para entrega Nome Este campo deve ser preenchido Sobrenome Este campo deve ser preenchido Telefone com DDD Este campo deve ser preenchido Avenida Paulista CEP 01310100 - Bela Vista São Paulo - São Paulo Alterar Número Sem número Este campo deve ser preenchido Apto, Bloco, Referência, etc. (opcional) Dados para nota fiscal CPF ou CNPJ Digite um número de CPF ou CNPJ válido Usar as mesmas informações da entrega CONTINUAR PARA PAGAMENTO Filamento PLA Preto Velvet High Speed Premium - 1Kg × 1 -35% R$129,99 R$84,10 Subtotal R$84,10 Custo de frete R$13,81 Total R$97,91 Adicionar cupom de desconto"
+  },
+  "31-checkout-endereco-preenchido": {
+    "url": "https://voolt3d.com.br/checkout/v3/start/2025779300/67020abcd708ca3441011f78b93672d15bda0602?from_store=1&country=BR",
+    "title": "Dados pessoais - Voolt3D",
+    "stepper": [
+      "Carrinho Entrega Pagamento",
+      "Carrinho Entrega Pagamento",
+      "Carrinho",
+      "Carrinho",
+      "Entrega"
+    ],
+    "headings": [
+      {
+        "text": "Dados de contato",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      },
+      {
+        "text": "Dados para nota fiscal",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "53px",
+          "padding": "12px 0px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "zIndex": "2",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "type": "email",
+        "name": "contact.email",
+        "id": "contact.email",
+        "placeholder": " ",
+        "label": "E-mail",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(230, 230, 230)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "0.6",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "acceptedMarketing",
+        "id": "acceptedMarketing",
+        "placeholder": null,
+        "label": "Receber ofertas e novidades por e-mail",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "radio",
+        "name": null,
+        "id": "Econômico6a612747df81f",
+        "placeholder": null,
+        "label": "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 0px 5px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.first_name",
+        "id": "shippingAddress.first_name",
+        "placeholder": " ",
+        "label": "Nome",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.last_name",
+        "id": "shippingAddress.last_name",
+        "placeholder": " ",
+        "label": "Sobrenome",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "tel",
+        "name": "shippingAddress.phone",
+        "id": "shippingAddress.phone",
+        "placeholder": " ",
+        "label": "Telefone com DDD",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.number",
+        "id": "shippingAddress.number",
+        "placeholder": " ",
+        "label": "Número",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "341.656px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": "shipping_numbercheckbox",
+        "id": "shipping_numbercheckbox",
+        "placeholder": null,
+        "label": "Sem número",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "type": "text",
+        "name": "shippingAddress.floor",
+        "id": "shippingAddress.floor",
+        "placeholder": " ",
+        "label": "Apto, Bloco, Referência, etc. (opcional)",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "482.328px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "text",
+        "name": "billingAddress.id_number",
+        "id": "billingAddress.id_number",
+        "placeholder": " ",
+        "label": "CPF ou CNPJ",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "46px",
+          "padding": "17px 10px 4px 13px",
+          "position": "static",
+          "zIndex": "9998",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99), border-bottom-left-radius, border-bottom-right-radius"
+        }
+      },
+      {
+        "type": "checkbox",
+        "name": null,
+        "id": "billingAddress.sameAddress",
+        "placeholder": null,
+        "label": "Usar as mesmas informações da entrega",
+        "styles": {
+          "flexDirection": "row",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Carrinho",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "25px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Pagamento",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Alterar",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "41.8438px",
+          "height": "24px",
+          "padding": "5px 0px",
+          "position": "absolute",
+          "top": "12px",
+          "zIndex": "999",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "12px",
+          "fontWeight": "400",
+          "lineHeight": "12px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "100%",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil.",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "6px",
+          "width": "834px",
+          "height": "84px",
+          "padding": "18px",
+          "margin": "0px 0px 10px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "border": "1px solid rgba(21, 21, 21, 0.3)",
+          "borderRadius": "3px",
+          "boxShadow": "rgba(50, 50, 50, 0.08) 0px 2px 4px 0px, rgba(50, 50, 50, 0.04) 0px 2px 2px 0px, rgba(50, 50, 50, 0.01) 0px 2px 6px 0px",
+          "opacity": "1",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "CONTINUAR PARA PAGAMENTO",
+        "styles": {
+          "display": "block",
+          "flexDirection": "row",
+          "width": "280px",
+          "height": "46.4062px",
+          "padding": "12px 18px",
+          "margin": "0px 0px 20px",
+          "position": "static",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "22.4px",
+          "textTransform": "uppercase",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(75, 0, 153)",
+          "border": "0px none rgb(255, 255, 255)",
+          "borderRadius": "3px",
+          "opacity": "1",
+          "transition": "background 0.3s"
+        }
+      }
+    ],
+    "shippingOptions": [
+      "Entrega",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81 Mandaê: Econômico Chega em 3 dias úteis",
+      "R$13,81",
+      "Mandaê: Econômico",
+      "Dados para entrega Nome Sobrenome Telefone com DDD Avenida Paulista CEP 01310100 - Bela Vista São Paulo - São Paulo Alterar Número Sem número Apto, Bloco, Refer",
+      "Custo de frete R$13,81"
+    ],
+    "summary": {
+      "tag": "div",
+      "classes": "summary d-block d-md-none fixed sticky",
+      "styles": {
+        "flexDirection": "row",
+        "width": "1440px",
+        "margin": "0px calc(50% - 720px)",
+        "position": "sticky",
+        "zIndex": "5",
+        "fontFamily": "Montserrat, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(21, 21, 21)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "border": "0px none rgb(21, 21, 21)",
+        "opacity": "1",
+        "transition": "all"
+      }
+    },
+    "bodyText": "Carrinho Entrega Pagamento Dados de contato E-mail Alterar Receber ofertas e novidades por e-mail Agilize sua compra Aproveite seus dados salvos e compre mais rápido e fácil. Entrega R$13,81 Mandaê: Econômico Chega em 3 dias úteis Mais opções Dados para entrega Nome Sobrenome Telefone com DDD Avenida Paulista CEP 01310100 - Bela Vista São Paulo - São Paulo Alterar Número Sem número Apto, Bloco, Referência, etc. (opcional) Dados para nota fiscal CPF ou CNPJ Usar as mesmas informações da entrega CONTINUAR PARA PAGAMENTO Filamento PLA Preto Velvet High Speed Premium - 1Kg × 1 -35% R$129,99 R$84,10 Subtotal R$84,10 Custo de frete R$13,81 Total R$97,91 Adicionar cupom de desconto"
+  },
+  "40-checkout-pagamento": {
+    "url": "https://voolt3d.com.br/checkout/v3/next/2025779300/67020abcd708ca3441011f78b93672d15bda0602?from_store=1&country=BR",
+    "title": "Frete e pagamento - Voolt3D",
+    "stepper": [
+      "Carrinho Entrega Pagamento",
+      "Carrinho Entrega Pagamento",
+      "Carrinho",
+      "Carrinho",
+      "Entrega"
+    ],
+    "headings": [
+      {
+        "text": "Forma de pagamento",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "834px",
+          "height": "41px",
+          "padding": "0px 0px 12px",
+          "margin": "0px 0px 15px",
+          "position": "relative",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "24px",
+          "fontWeight": "700",
+          "letterSpacing": "-0.2px",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "0.5s cubic-bezier(0.16, 0.68, 0.43, 0.99)"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "type": "checkbox",
+        "name": "isAcceptWallet",
+        "id": "isAcceptWallet",
+        "placeholder": null,
+        "label": "Salvar dados para comprar mais rápido",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "row",
+          "width": "20px",
+          "height": "20px",
+          "margin": "3px 3px 3px 4px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(0, 0, 0)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Carrinho",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Entrega",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "19px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "0.6",
+          "transition": "all"
+        }
+      },
+      {
+        "text": "Pagamento",
+        "styles": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "width": "25px",
+          "height": "41px",
+          "padding": "1px 6px",
+          "position": "static",
+          "fontFamily": "Arial",
+          "fontSize": "13.3333px",
+          "fontWeight": "400",
+          "color": "rgb(21, 21, 21)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "border": "0px none rgb(21, 21, 21)",
+          "opacity": "1",
+          "transition": "all"
+        }
+      }
+    ],
+    "shippingOptions": [
+      "Mandaê: Econômico · R$13,81 Chega segunda-feira 27/07",
+      "Chega segunda-feira 27/07",
+      "Custo de frete R$13,81"
+    ],
+    "summary": {
+      "tag": "div",
+      "classes": "summary d-block d-md-none fixed sticky",
+      "styles": {
+        "flexDirection": "row",
+        "width": "1440px",
+        "margin": "0px calc(50% - 720px)",
+        "position": "sticky",
+        "zIndex": "5",
+        "fontFamily": "Montserrat, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(21, 21, 21)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "border": "0px none rgb(21, 21, 21)",
+        "opacity": "1",
+        "transition": "all"
+      }
+    },
+    "bodyText": "Carrinho Entrega Pagamento Os prazos de entrega apresentados são estimativas fornecidas pela transportadora e podem sofrer alterações devido a fatores externos, como condições climáticas, imprevistos logísticos ou operacionais. teste-clone@example.com Avenida Paulista 1000 CEP 01310-100 - Bela Vista São Paulo, São Paulo - +5511950399547 Alterar Mandaê: Econômico · R$13,81 Chega segunda-feira 27/07 Alterar Instruções para o pedido coloque aqui: Adicionar Forma de pagamento Salvar dados para comprar mais rápido Nas próximas compras enviaremos um código para:(11) 95039-9547Alterar Ao salvar, você aceita os Termos de uso e Política de Privacidade FAZER PEDIDO Filamento PLA Preto Velvet High Speed Premium - 1Kg × 1 -35% R$129,99 R$84,10 Subtotal R$84,10 Custo de frete R$13,81 Total R$97,91 Adicionar cupom de desconto Frete e pagamento - Voolt3D"
+  }
+}

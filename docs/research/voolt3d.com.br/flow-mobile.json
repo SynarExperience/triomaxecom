@@ -1,0 +1,100 @@
+{
+  "log": [
+    {
+      "message": "listing url",
+      "data": {
+        "url": "https://voolt3d.com.br/produtos/"
+      }
+    },
+    {
+      "message": "clicou adicionar ao carrinho",
+      "data": {
+        "added": true
+      }
+    },
+    {
+      "message": "apos add url",
+      "data": {
+        "url": "https://voolt3d.com.br/produtos/"
+      }
+    },
+    {
+      "message": "cart drawer candidatos",
+      "data": []
+    },
+    {
+      "message": "cart page",
+      "data": {
+        "url": "https://voolt3d.com.br/comprar/",
+        "empty": false,
+        "badge": "1",
+        "text": "1 1 Ao navegar por este site você aceita o uso de cookies para agilizar a sua experiência de compra. Aceitar e fechar Carrinho Início Carrinho de compras Filamento PLA Preto Velvet High Speed Premium - 1Kg R$84,10 Quem viu amoouu Filamento PLA Verde Neon V-Silk High Speed Premium - 1Kg R$ 110,42 R$ 139,99 Comprar Filamento PETG HF Laranja High Fluidity Premium - 1Kg R$ 105,16 R$ 139,99 Comprar Esgotado Fixador para mesa de impressora 3D - 100ml R$ 26,21 R$ 35,90 Comprar Esgotado Filamento PETG HF Verde Neon Translúcido High Fluidity Premium - 1Kg R$ 105,16 R$ 139,99 Comprar Esgotado Filamento PETG HF Vermelho Translúcido High Fluidity Premium - 1Kg R$ 105,16 R$ 139,99 Comprar Esgotado KIT Filamento PLA Preto 10Kg - Caixa Master R$ 789,47 R$ 999,90 Comprar Subtotal : R$84,10 Total: R$84,10 Ou R$79,90 com Nuvem Pago Ver mais produtos Receba nossas novidades por e-mail e WhatsApp Maior fabricante nacional de filamentos para impressão 3D, com linhas 100% desenvolvidas e produzidas no Brasil. Líder de vendas no setor, oferecemos suporte técnico especializado e materiais de alta performance para todos os tipos de projeto. Confie em quem entende do assunto — transforme sua imaginação em r"
+      }
+    },
+    {
+      "message": "checkout button encontrado",
+      "data": {
+        "count": 1
+      }
+    },
+    {
+      "message": "checkout",
+      "data": {
+        "url": "https://voolt3d.com.br/checkout/v3/start/2025764116/cb194a5be40b0202bf0be004eb275b9859179960?from_store=1&country=BR",
+        "title": "Dados pessoais - Voolt3D"
+      }
+    },
+    {
+      "message": "checkout shape",
+      "data": {
+        "url": "https://voolt3d.com.br/checkout/v3/start/2025764116/cb194a5be40b0202bf0be004eb275b9859179960?from_store=1&country=BR",
+        "headings": [
+          "Dados de contato",
+          "Entrega"
+        ],
+        "inputs": 3
+      }
+    }
+  ],
+  "cartDrawer": [],
+  "checkoutShape": {
+    "url": "https://voolt3d.com.br/checkout/v3/start/2025764116/cb194a5be40b0202bf0be004eb275b9859179960?from_store=1&country=BR",
+    "headings": [
+      "Dados de contato",
+      "Entrega"
+    ],
+    "inputs": [
+      {
+        "tag": "input",
+        "type": "email",
+        "name": "contact.email",
+        "id": "contact.email",
+        "placeholder": " ",
+        "label": "E-mail"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "acceptedMarketing",
+        "id": "acceptedMarketing",
+        "placeholder": null,
+        "label": "Receber ofertas e novidades por e-mail"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "shippingAddress.zipcode",
+        "id": "shippingAddress.zipcode",
+        "placeholder": " ",
+        "label": "CEP"
+      }
+    ],
+    "buttons": [
+      "Carrinho",
+      "Entrega",
+      "Pagamento",
+      "Continuar para pagamento"
+    ],
+    "bodyText": "Ver detalhes do pedido R$84,10 Carrinho Entrega Pagamento Adicionar cupom de desconto Dados de contato E-mail Receber ofertas e novidades por e-mail Entrega CEP Não sei meu CEP CONTINUAR"
+  }
+}
