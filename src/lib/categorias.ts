@@ -18,6 +18,12 @@ export interface Categoria {
   caminho: string;
   /** 0 = raiz. A listagem indenta as subcategorias por este número. */
   nivel: number;
+  /**
+   * Nome-base do par de arquivos em `/banners/category-strip`, sem extensão
+   * nem largura — o `srcSet` monta. Vazio quando a categoria não tem arte, e
+   * nesse caso ela não aparece na tira da home (só no menu e nos filtros).
+   */
+  imagem: string;
 }
 
 type LinhaCategoria = {
@@ -26,6 +32,7 @@ type LinhaCategoria = {
   slug: string;
   pai_id: string | null;
   posicao: number;
+  imagem: string | null;
 };
 
 /**
@@ -38,7 +45,7 @@ const ERROS_SEM_CATEGORIAS = ["PGRST200", "PGRST205", "42P01"];
 export async function listarCategorias(): Promise<Categoria[]> {
   const { data, error } = await supabase
     .from("categorias")
-    .select("id, nome, slug, pai_id, posicao");
+    .select("id, nome, slug, pai_id, posicao, imagem");
 
   if (error) {
     if (ERROS_SEM_CATEGORIAS.includes(error.code)) return [];
@@ -66,7 +73,7 @@ export async function listarCategorias(): Promise<Categoria[]> {
     for (const c of filhasDe.get(paiId) ?? []) {
       if (vistos.has(c.id)) continue;
       const caminho = prefixo ? `${prefixo}/${c.nome}` : c.nome;
-      lista.push({ slug: c.slug, nome: c.nome, caminho, nivel });
+      lista.push({ slug: c.slug, nome: c.nome, caminho, nivel, imagem: c.imagem ?? "" });
       percorrer(c.id, nivel + 1, caminho, new Set(vistos).add(c.id));
     }
   };

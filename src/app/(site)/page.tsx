@@ -10,6 +10,7 @@ import { HeroSection } from "@/components/site/HeroSection";
 import { AnnouncementMarquee } from "@/components/site/Marquee";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { listarCategorias } from "@/lib/categorias";
 import { listarBanners, listarBeneficios } from "@/lib/conteudo";
 
 export default async function Home() {
@@ -29,6 +30,9 @@ export default async function Home() {
      vem daqui. */
   const beneficios = await listarBeneficios();
 
+  /* Os tiles de categoria saem do catálogo — a tira mostra as que têm arte. */
+  const categorias = await listarCategorias();
+
   return (
     <>
       <SiteHeader />
@@ -36,7 +40,7 @@ export default async function Home() {
       <main>
         <HeroSection banners={banners} />
         <BenefitsBar beneficios={beneficios} />
-        <CategoryStrip />
+        <CategoryStrip categorias={categorias} />
         <FeaturedProducts />
         <FeatureGrid />
         <PrintersRail />

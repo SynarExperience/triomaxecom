@@ -1,3 +1,4 @@
+import type { Categoria } from "@/lib/categorias";
 import { listarProdutos } from "@/lib/produtos";
 import {
   ArrowRightIcon,
@@ -102,23 +103,18 @@ export function FeatureGrid() {
  * Faixa de tiles logo abaixo da barra de benefícios. O layout nasceu como cópia
  * da home do voolt3d.com.br, mas a arte agora é nossa — os tiles anteriores
  * traziam o logo Voolt3D nos carretéis e serviam só para comparar layout.
+ *
+ * Os tiles eram uma lista fixa aqui dentro, e o link de todos apontava para
+ * `/produtos`: clicar em PLA e em PETG dava exatamente a mesma tela. Agora são
+ * as categorias do catálogo, então a tira, a top bar, os cards e o filtro da
+ * listagem falam todos da mesma coisa.
  */
-type StripTile = {
-  /** Nomeia o par de arquivos em /banners/category-strip. */
-  slug: string;
-  label: string;
-};
+export function CategoryStrip({ categorias }: { categorias: Categoria[] }) {
+  // Sem arte não há tile: o nome sozinho num quadrado vazio não é a tira.
+  const tiles = categorias.filter((c) => c.imagem);
 
-const stripTiles: StripTile[] = [
-  { slug: "pla", label: "PLA" },
-  { slug: "petg", label: "PETG" },
-  { slug: "tpu", label: "TPU" },
-  { slug: "impressoras", label: "Impressoras" },
-  { slug: "pecas", label: "Peças" },
-  { slug: "kits", label: "Kits" },
-];
+  if (tiles.length === 0) return null;
 
-export function CategoryStrip() {
   return (
     <section
       className={styles.categoryStrip}
@@ -127,8 +123,12 @@ export function CategoryStrip() {
     >
       <div className="container">
         <div className={styles.categoryStripTrack}>
-          {stripTiles.map((tile) => (
-            <a className={styles.categoryStripItem} href="/produtos" key={tile.slug}>
+          {tiles.map((tile) => (
+            <a
+              className={styles.categoryStripItem}
+              href={`/produtos?categoria=${tile.slug}`}
+              key={tile.slug}
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 /* O rótulo logo abaixo já nomeia o tile; repetir no alt faria o
@@ -140,10 +140,10 @@ export function CategoryStrip() {
                    390 px: 118 @3x sobra, e 196 @2x fica 2 px curto — meio por
                    cento, que não aparece. Subir a arte só por isso não paga. */
                 sizes="(max-width: 767px) 118px, 195px"
-                src={`/banners/category-strip/${tile.slug}-256.webp`}
-                srcSet={`/banners/category-strip/${tile.slug}-256.webp 256w, /banners/category-strip/${tile.slug}-390.webp 390w`}
+                src={`/banners/category-strip/${tile.imagem}-256.webp`}
+                srcSet={`/banners/category-strip/${tile.imagem}-256.webp 256w, /banners/category-strip/${tile.imagem}-390.webp 390w`}
               />
-              <span className={styles.categoryStripLabel}>{tile.label}</span>
+              <span className={styles.categoryStripLabel}>{tile.nome}</span>
             </a>
           ))}
         </div>
