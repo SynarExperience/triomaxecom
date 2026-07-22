@@ -82,8 +82,32 @@ h4 {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
+}
+
+/*
+ * O Safari no iOS dá zoom sozinho ao focar um campo com fonte menor que 16px, e
+ * não desfaz o zoom ao sair — o viewport fica preso e a pessoa precisa afastar
+ * com os dedos para voltar a ver a página. Era o que travava o checkout no
+ * celular.
+ *
+ * A correção é o tamanho do campo, não `maximum-scale=1` no viewport: aquilo
+ * mata o zoom por pinça de quem precisa dele para ler, e o iOS ignora desde a
+ * versão 10 de qualquer forma.
+ *
+ * Vale só onde o ponteiro é grosso (dedo), então o desktop mantém os tamanhos
+ * desenhados. O `!important` é necessário porque as regras dos módulos são mais
+ * específicas que um seletor de elemento — mesmo caso do bloco de movimento
+ * reduzido lá embaixo.
+ */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 button,
