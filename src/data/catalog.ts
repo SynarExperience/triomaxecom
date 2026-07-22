@@ -33,19 +33,7 @@ export type CategoryCard = {
   tone?: string;
 };
 
-export const categoryCards: CategoryCard[] = [
-  {
-    title: "PLA",
-    subtitle: "O dia a dia da impressão 3D",
-    href: "/produtos",
-    image: "/banners/categories/linha-pla",
-  },
-  {
-    title: "PETG",
-    subtitle: "Resistência para peças funcionais",
-    href: "/produtos",
-    image: "/banners/categories/linha-petg",
-  },
-];
+/* Os cards em si vivem na tabela `cards_categoria` — ver `listarCardsCategoria`
+   em `@/lib/conteudo`. Aqui fica só o formato que a UI espera. */
 
 export const navCategories = ["PLA", "PETG"] as const;

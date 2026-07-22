@@ -164,6 +164,29 @@
   }
 }
 
+/* ============ páginas de conteúdo (/pagina/[slug]) ============ */
+
+/* Mesma moldura de /sobre, mas alinhado à esquerda: são textos longos de
+   política e FAQ, que se leem melhor em bandeira que centralizados. */
+.contentBody {
+  max-width: 65ch;
+  margin: 0 auto;
+  color: var(--ink-soft);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.contentBody p {
+  margin: 0 0 16px;
+}
+
+/* O resumo abre a página com um pouco mais de peso que o corpo. */
+.contentLead {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 600;
+}
+
 .breadcrumb {
   display: flex;
   flex-wrap: wrap;

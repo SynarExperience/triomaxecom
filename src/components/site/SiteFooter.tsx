@@ -13,11 +13,13 @@ import styles from "./store.module.css";
 
 const categories = ["PLA", "PETG", "Impressoras 3D", "Acessórios"];
 
+/* Os três de baixo apontam para `/pagina/[slug]`, cujo texto o painel edita.
+   O resto segue em "#" até existir página publicada com aquele slug. */
 const institutionalA: { label: string; href: string }[] = [
   { label: "Quem somos", href: "/sobre" },
-  { label: "Perguntas frequentes", href: "#" },
-  { label: "Trocas e devoluções", href: "#" },
-  { label: "Política de privacidade", href: "#" },
+  { label: "Perguntas frequentes", href: "/pagina/perguntas-frequentes" },
+  { label: "Trocas e devoluções", href: "/pagina/trocas-e-devolucoes" },
+  { label: "Política de privacidade", href: "/pagina/politica-de-privacidade" },
 ];
 
 const institutionalB: { label: string; href: string }[] = [

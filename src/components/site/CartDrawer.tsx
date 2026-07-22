@@ -1,17 +1,43 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "./CartProvider";
 import { BagIcon, CloseIcon, PixIcon, TruckIcon, WhatsAppIcon } from "./icons";
 import { formatBRL } from "@/data/catalog";
+import { supabase } from "@/lib/supabase";
 import styles from "./cart.module.css";
 
 const FREE_SHIPPING_FROM = 299;
 const WHATSAPP_NUMBER = "555132768583";
 
+/* Validação frouxa de propósito: só barra o que claramente não é e-mail. Regra
+   apertada demais rejeita endereço válido e custa uma venda. */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+type Contato = { nome: string; email: string; whatsapp: string };
+type Erros = Partial<Record<keyof Contato, string>>;
+
+const CONTATO_VAZIO: Contato = { nome: "", email: "", whatsapp: "" };
+
 export function CartDrawer() {
   const { closeCart, isOpen, lines, pixTotal, removeItem, setQuantity, subtotal } = useCart();
   const panelRef = useRef<HTMLDivElement>(null);
+
+  /* A sacola ganha um passo antes do WhatsApp: sem o contato, um carrinho
+     abandonado não deixa rastro nenhum para o time recuperar. */
+  const [pedindoContato, setPedindoContato] = useState(false);
+  const [contato, setContato] = useState<Contato>(CONTATO_VAZIO);
+  const [erros, setErros] = useState<Erros>({});
+  const [enviando, setEnviando] = useState(false);
+
+  useEffect(() => {
+    // Fechar a gaveta desfaz o passo de contato: reabrir cai na sacola de novo.
+    if (!isOpen) {
+      setPedindoContato(false);
+      setErros({});
+      setEnviando(false);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -40,6 +66,84 @@ export function CartDrawer() {
       (line) => `• ${line.quantity}x ${line.product.name} — ${formatBRL(line.total)}`,
     ), `Total: ${formatBRL(subtotal)}`].join("\n"),
   )}`;
+
+  const digitos = (valor: string) => valor.replace(/\D/g, "");
+
+  const validar = (): Erros => {
+    const encontrados: Erros = {};
+    if (contato.nome.trim().length < 3) encontrados.nome = "Informe seu nome completo.";
+    if (!EMAIL_REGEX.test(contato.email.trim())) encontrados.email = "Informe um e-mail válido.";
+    if (digitos(contato.whatsapp).length < 10) {
+      encontrados.whatsapp = "Informe o WhatsApp com DDD.";
+    }
+    return encontrados;
+  };
+
+  const finalizar = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const encontrados = validar();
+    setErros(encontrados);
+    if (Object.keys(encontrados).length > 0) return;
+
+    setEnviando(true);
+
+    /* Itens congelados: nome e preço do momento da compra, para o carrinho
+       gravado não mudar se o catálogo mudar depois. */
+    const itens = lines.map(({ product, quantity }) => ({
+      nome: product.name,
+      sku: product.slug,
+      quantidade: quantity,
+      precoUnitario: product.price,
+    }));
+
+    try {
+      await supabase.from("carrinhos").insert({
+        nome: contato.nome.trim(),
+        email: contato.email.trim(),
+        whatsapp: digitos(contato.whatsapp),
+        itens,
+        subtotal,
+      });
+    } catch {
+      /* Falha ao registrar o carrinho não pode travar a venda: a conversa no
+         WhatsApp vale mais que o registro. Segue para o atendimento assim
+         mesmo — e o `insert` da anônima nem devolve o que gravou. */
+    }
+
+    /* `window.open` depois de um `await` pode ser barrado pelo bloqueador de
+       pop-up, já que o clique original "expirou"; nesse caso navegamos a
+       própria aba, que nunca é bloqueada. */
+    const janela = window.open(whatsappHref, "_blank", "noopener");
+    if (!janela) window.location.href = whatsappHref;
+
+    setEnviando(false);
+    closeCart();
+  };
+
+  const campo = (
+    campoNome: keyof Contato,
+    rotulo: string,
+    extras: React.InputHTMLAttributes<HTMLInputElement>,
+  ) => (
+    <label className={styles.campo}>
+      <span>{rotulo}</span>
+      <input
+        aria-invalid={erros[campoNome] ? true : undefined}
+        onChange={(event) =>
+          setContato((atual) => ({ ...atual, [campoNome]: event.target.value }))
+        }
+        required
+        value={contato[campoNome]}
+        {...extras}
+      />
+      {erros[campoNome] ? (
+        <p className={styles.erro} role="alert">
+          {erros[campoNome]}
+        </p>
+      ) : null}
+    </label>
+  );
 
   return (
     <div
@@ -138,13 +242,56 @@ export function CartDrawer() {
                 {formatBRL(pixTotal)} à vista no Pix
               </p>
 
-              <a className={styles.checkout} href={whatsappHref} rel="noreferrer" target="_blank">
-                <WhatsAppIcon />
-                Finalizar no WhatsApp
-              </a>
-              <button className={styles.keepShopping} onClick={closeCart} type="button">
-                Continuar comprando
-              </button>
+              {pedindoContato ? (
+                <form className={styles.contato} noValidate onSubmit={finalizar}>
+                  <p className={styles.contatoIntro}>
+                    Só faltam seus dados para a gente confirmar o pedido no WhatsApp.
+                  </p>
+                  {campo("nome", "Nome completo", {
+                    autoComplete: "name",
+                    autoFocus: true,
+                    placeholder: "Seu nome e sobrenome",
+                    type: "text",
+                  })}
+                  {campo("email", "E-mail", {
+                    autoComplete: "email",
+                    inputMode: "email",
+                    placeholder: "voce@email.com",
+                    type: "email",
+                  })}
+                  {campo("whatsapp", "WhatsApp", {
+                    autoComplete: "tel",
+                    inputMode: "tel",
+                    placeholder: "(51) 99999-9999",
+                    type: "tel",
+                  })}
+                  <button className={styles.checkout} disabled={enviando} type="submit">
+                    <WhatsAppIcon />
+                    {enviando ? "Abrindo WhatsApp…" : "Finalizar no WhatsApp"}
+                  </button>
+                  <button
+                    className={styles.keepShopping}
+                    onClick={() => setPedindoContato(false)}
+                    type="button"
+                  >
+                    Voltar para a sacola
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <button
+                    className={styles.checkout}
+                    onClick={() => setPedindoContato(true)}
+                    type="button"
+                  >
+                    <WhatsAppIcon />
+                    Finalizar no WhatsApp
+                  </button>
+                  <button className={styles.keepShopping} onClick={closeCart} type="button">
+                    Continuar comprando
+                  </button>
+                </>
+              )}
             </footer>
           </>
         )}
