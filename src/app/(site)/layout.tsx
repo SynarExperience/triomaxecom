@@ -1,5 +1,6 @@
 import { CartDrawer } from "@/components/site/CartDrawer";
 import { CartProvider } from "@/components/site/CartProvider";
+import { CartToast } from "@/components/site/CartToast";
 import { PontePreviaEditor } from "@/components/site/PontePreviaEditor";
 import { listarProdutos } from "@/lib/produtos";
 import "../globals.css";
@@ -16,6 +17,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     <CartProvider catalogo={catalogo}>
       {children}
       <CartDrawer />
+      {/* Adicionar ao carrinho avisa por aqui, em vez de abrir a gaveta. */}
+      <CartToast />
       {/* Só age quando a loja está dentro do iframe da prévia do painel. */}
       <PontePreviaEditor />
     </CartProvider>

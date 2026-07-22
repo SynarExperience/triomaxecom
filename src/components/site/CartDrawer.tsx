@@ -279,13 +279,20 @@ export function CartDrawer() {
                 </form>
               ) : (
                 <>
+                  {/* Caminho principal é o checkout próprio; o WhatsApp segue
+                      como alternativa porque é ele que registra o lead para o
+                      time recuperar carrinho abandonado. */}
+                  <a className={styles.checkout} href="/checkout" onClick={closeCart}>
+                    <BagIcon />
+                    Finalizar compra
+                  </a>
                   <button
-                    className={styles.checkout}
+                    className={styles.keepShopping}
                     onClick={() => setPedindoContato(true)}
                     type="button"
                   >
                     <WhatsAppIcon />
-                    Finalizar no WhatsApp
+                    Prefiro finalizar no WhatsApp
                   </button>
                   <button className={styles.keepShopping} onClick={closeCart} type="button">
                     Continuar comprando

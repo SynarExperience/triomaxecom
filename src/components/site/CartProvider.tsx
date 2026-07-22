@@ -20,12 +20,17 @@ type StoredItem = { slug: string; quantity: number };
 
 export type CartLine = { product: Product; quantity: number; total: number };
 
+/** Último item adicionado, para a notificação flutuante. O `id` cresce a cada
+    adição para que somar o mesmo produto duas vezes reative o aviso. */
+export type UltimaAdicao = { id: number; product: Product };
+
 type CartContextValue = {
   lines: CartLine[];
   count: number;
   subtotal: number;
   pixTotal: number;
   isOpen: boolean;
+  ultimaAdicao: UltimaAdicao | null;
   addItem: (product: Product, quantity?: number) => void;
   setQuantity: (slug: string, quantity: number) => void;
   removeItem: (slug: string) => void;
@@ -71,6 +76,7 @@ export function CartProvider({
 }) {
   const [items, setItems] = useState<StoredItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [ultimaAdicao, setUltimaAdicao] = useState<UltimaAdicao | null>(null);
   /* O primeiro render precisa bater com o HTML do servidor (sacola vazia).
      Só depois de hidratar é que o conteúdo salvo entra — e é a partir daí
      que vale gravar de volta, senão o estado inicial vazio apaga a sacola. */
@@ -106,7 +112,10 @@ export function CartProvider({
           : item,
       );
     });
-    setIsOpen(true);
+    /* Adicionar não abre a sacola: interromper a navegação com um painel de tela
+       cheia atrapalha quem está montando um pedido de várias cores. O aviso é a
+       notificação flutuante, como na loja de referência. */
+    setUltimaAdicao((atual) => ({ id: (atual?.id ?? 0) + 1, product }));
   }, []);
 
   const setQuantity = useCallback((slug: string, quantity: number) => {
@@ -141,13 +150,14 @@ export function CartProvider({
       subtotal,
       pixTotal: pixPrice(subtotal),
       isOpen,
+      ultimaAdicao,
       addItem,
       setQuantity,
       removeItem,
       openCart,
       closeCart,
     };
-  }, [addItem, closeCart, isOpen, items, openCart, porSlug, removeItem, setQuantity]);
+  }, [addItem, closeCart, isOpen, items, openCart, porSlug, removeItem, setQuantity, ultimaAdicao]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

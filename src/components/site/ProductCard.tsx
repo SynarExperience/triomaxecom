@@ -2,7 +2,7 @@
 
 import { formatBRL, installment, pixPrice, type Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
-import { BagIcon, CardIcon, PixIcon, WhatsAppIcon } from "./icons";
+import { CardIcon, CartIcon, PixIcon, WhatsAppIcon } from "./icons";
 import styles from "./store.module.css";
 
 const INSTALLMENTS = 12;
@@ -17,9 +17,9 @@ export function ProductCard({ product }: { product: Product }) {
     : 0;
 
   return (
-    /* O card inteiro leva à PDP por um link "esticado" sobre o nome do produto,
-       o que deixa o botão "Comprar" ser um <button> de verdade — botão dentro de
-       <a> é HTML inválido e roubaria o clique de adicionar à sacola. */
+    /* O card não é um <a> inteiro: o botão do carrinho precisa ser um <button>
+       de verdade, e botão dentro de <a> é HTML inválido. Os dois caminhos até a
+       PDP — nome e "Comprar" — são links próprios. */
     <article className={styles.card}>
       <div className={styles.cardMedia}>
         {product.badge ? <span className={styles.cardBadge}>{product.badge}</span> : null}
@@ -57,25 +57,20 @@ export function ProductCard({ product }: { product: Product }) {
           {INSTALLMENTS} x de {formatBRL(installment(product.price, INSTALLMENTS))}
         </span>
 
-        {/* Os dois botões fazem a mesma coisa, como no card do voolt3d. O de
-            ícone sai do fluxo de leitura por ser repetição do que está ao lado. */}
+        {/* Divisão do card do voolt3d: "Comprar" é um link que leva à página do
+            produto — quem clica ali quer ver o item —, e só o quadrado do
+            carrinho adiciona, sem tirar a pessoa da vitrine. */}
         <div className={styles.cardActions}>
-          <button
-            aria-label={`Adicionar ${product.name} à sacola`}
-            className={styles.cardAction}
-            onClick={() => addItem(product)}
-            type="button"
-          >
+          <a className={styles.cardAction} href={`/produto/${product.slug}`}>
             Comprar
-          </button>
+          </a>
           <button
-            aria-hidden="true"
+            aria-label={`Adicionar ${product.name} ao carrinho`}
             className={styles.cardActionIcon}
             onClick={() => addItem(product)}
-            tabIndex={-1}
             type="button"
           >
-            <BagIcon />
+            <CartIcon />
           </button>
         </div>
 

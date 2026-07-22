@@ -318,6 +318,7 @@
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.16em;
+  text-decoration: none;
   text-transform: uppercase;
   transition: opacity 240ms ease;
 }
@@ -337,15 +338,25 @@
 }
 
 .keepShopping {
+  display: flex;
   width: 100%;
+  align-items: center;
+  justify-content: center;
   margin-top: 10px;
   padding: 10px 0;
   border: 0;
   background: none;
   color: var(--ink-soft);
+  font-family: inherit;
   font-size: 13px;
+  gap: 8px;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.keepShopping svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* ============ contato antes do WhatsApp ============ */

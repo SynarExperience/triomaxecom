@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import type { Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
-import { BagIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
+import { CartIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
 import pageStyles from "./pages.module.css";
 
 /* Mesmo número do rodapé e da sacola — o atacado cai no mesmo atendimento. */
@@ -99,8 +99,8 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
             onClick={() => addItem(product, quantity)}
             type="button"
           >
-            <BagIcon />
-            Adicionar à sacola
+            <CartIcon />
+            Adicionar ao carrinho
           </button>
         </div>
 

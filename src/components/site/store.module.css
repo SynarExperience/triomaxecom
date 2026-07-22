@@ -380,6 +380,8 @@
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.16em;
+  /* É um <a> desde que "Comprar" passou a levar à página do produto. */
+  text-decoration: none;
   text-transform: uppercase;
   transition: opacity 240ms ease;
 }

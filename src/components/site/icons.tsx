@@ -363,3 +363,59 @@ export function VolumeIcon({ muted, ...props }: IconProps & { muted: boolean }) 
     </svg>
   );
 }
+
+/* ------------------------------------------------------- checkout */
+
+/** Lucide `mail` */
+export function MailIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+    </svg>
+  );
+}
+
+/** Lucide `map-pin` */
+export function PinIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
+/** Lucide `barcode` — usado para o boleto bancário. */
+export function BarcodeIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="M3 5v14" />
+      <path d="M8 5v14" />
+      <path d="M12 5v14" />
+      <path d="M17 5v14" />
+      <path d="M21 5v14" />
+    </svg>
+  );
+}
+
+/** Lucide `message-square` */
+export function NoteIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+/** Lucide `shopping-cart` — adicionar ao carrinho. Distinto do `BagIcon`, que
+    representa a sacola já montada no cabeçalho e na gaveta. */
+export function CartIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <circle cx="8" cy="21" r="1" />
+      <circle cx="19" cy="21" r="1" />
+      <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+    </svg>
+  );
+}

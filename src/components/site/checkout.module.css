@@ -1,0 +1,912 @@
+/*
+ * Carrinho e checkout. A estrutura segue o fluxo mapeado em
+ * `docs/research/voolt3d.com.br/CHECKOUT-FLOW.md`; a pele é a da Triomax
+ * (preto/branco/dourado), não o roxo da referência.
+ */
+
+/* ---------------------------------------------------------------- shell */
+
+.pagina {
+  min-height: 100vh;
+  background: var(--surface);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+
+/* A logo preta é empilhada (890×564): a 30px de altura sairia com 47px de
+   largura e sumiria na faixa. 54px a deixa com o mesmo peso visual que ela tem
+   no cabeçalho da loja. */
+.cabecalhoLogo {
+  height: 54px;
+  width: auto;
+}
+
+.conteudo {
+  display: grid;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  gap: 28px;
+  /* Formulário larga, resumo estreito — proporção da referência (~58/34). */
+  grid-template-columns: minmax(0, 1.72fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.titulo {
+  margin: 0 0 4px;
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.migalhas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.migalhas a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.migalhas a:hover {
+  color: var(--ink);
+}
+
+/* -------------------------------------------------------------- stepper */
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.stepperTrilha {
+  display: grid;
+  width: min(760px, 100%);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.passo {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* A linha nasce do centro do círculo e vai até o centro do próximo, por isso
+   ela começa em 50% e tem 100% de largura — não 50% a 50%. */
+.passo:not(:last-child)::after {
+  position: absolute;
+  z-index: 0;
+  top: 11px;
+  left: 50%;
+  width: 100%;
+  height: 1px;
+  background: var(--line-strong);
+  content: "";
+}
+
+.passoAtivo,
+.passoConcluido {
+  color: var(--ink);
+}
+
+.passoMarca {
+  display: grid;
+  z-index: 1;
+  width: 23px;
+  height: 23px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--paper);
+  place-items: center;
+}
+
+.passoMarca svg {
+  width: 13px;
+  height: 13px;
+}
+
+.passoAtivo .passoMarca {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.passoConcluido .passoMarca {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------- cartões */
+
+.bloco {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  background: var(--paper);
+}
+
+.blocoTitulo {
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.secaoTitulo {
+  margin: 28px 0 14px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.secaoTitulo:first-child {
+  margin-top: 0;
+}
+
+/* --------------------------------------------------------------- campos */
+
+.campo {
+  display: block;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.campoCaixa {
+  display: flex;
+  position: relative;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--paper);
+  gap: 10px;
+  transition: border-color 160ms ease;
+}
+
+.campoCaixa:focus-within {
+  border-color: var(--ink);
+}
+
+.campoInvalido .campoCaixa {
+  border-color: #c0392b;
+}
+
+/* O rótulo flutua sobre a borda quando há valor ou foco — como na referência,
+   em que o campo preenchido mostra "E-mail" acima do texto digitado. */
+.campoRotulo {
+  position: absolute;
+  z-index: 1;
+  top: 14px;
+  left: 14px;
+  color: var(--muted);
+  font-size: 15px;
+  pointer-events: none;
+  transition: transform 140ms ease, font-size 140ms ease, color 140ms ease;
+  transform-origin: left top;
+}
+
+.campoCaixa:focus-within .campoRotulo,
+.campoPreenchido .campoRotulo {
+  color: var(--muted);
+  font-size: 11px;
+  transform: translateY(-7px);
+}
+
+.campoCaixa input {
+  width: 100%;
+  padding: 20px 0 8px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.campoCaixa input:focus {
+  outline: none;
+}
+
+.campoTravado .campoCaixa {
+  background: var(--surface);
+}
+
+.campoTravado .campoCaixa input {
+  color: var(--muted);
+}
+
+.campoOk {
+  color: var(--price-pix);
+  flex-shrink: 0;
+}
+
+.campoOk svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.campoAcao {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.campoAcao:hover {
+  text-decoration: underline;
+}
+
+/* Barra sólida colada ao campo, exatamente como a validação da referência. */
+.campoErro {
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 0 0 8px 8px;
+  background: #c0392b;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+}
+
+.linhaCampos {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ------------------------------------------------------------- checkbox */
+
+.check {
+  display: flex;
+  align-items: center;
+  margin: 10px 0 4px;
+  cursor: pointer;
+  font-size: 14px;
+  gap: 10px;
+}
+
+.check input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--ink);
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------- frete */
+
+.fretes {
+  display: grid;
+  gap: 10px;
+}
+
+.frete {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--paper);
+  cursor: pointer;
+  gap: 12px;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+  width: 100%;
+  font-family: inherit;
+}
+
+.frete:hover {
+  border-color: var(--ink-soft);
+}
+
+.freteAtivo {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.freteMarca {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  flex-shrink: 0;
+  place-items: center;
+}
+
+.freteAtivo .freteMarca {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.freteMarca svg {
+  width: 13px;
+  height: 13px;
+}
+
+.freteCorpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.freteNome {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.fretePrazo {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.fretePreco {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.freteGratis {
+  color: var(--price-pix-dark);
+}
+
+.maisOpcoes {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  gap: 6px;
+}
+
+.maisOpcoes svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ------------------------------------------------------------- endereço */
+
+.enderecoCartao {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.enderecoCartao svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.enderecoCorpo {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.enderecoCorpo strong {
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------- botões */
+
+.avancar {
+  display: block;
+  min-width: 280px;
+  margin-left: auto;
+  padding: 14px 24px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: opacity 160ms ease;
+}
+
+.avancar:hover {
+  opacity: 0.86;
+}
+
+.avancar:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* ------------------------------------------------------------ pagamento */
+
+.pagamentos {
+  display: grid;
+  gap: 10px;
+}
+
+.pagamento {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 18px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--paper);
+  cursor: pointer;
+  font-family: inherit;
+  gap: 12px;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.pagamento:hover {
+  border-color: var(--ink-soft);
+}
+
+.pagamentoAtivo {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.pagamento > svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.pagamentoNome {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.selo {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.seloPix {
+  background: var(--price-pix-dark);
+}
+
+.parcelas {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 14px;
+}
+
+.parcelas select {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--paper);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* Aviso âmbar do topo da tela de pagamento da referência. */
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border: 1px solid #f0e0b0;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  background: #fdf8ec;
+  font-size: 14px;
+  gap: 12px;
+  line-height: 1.5;
+}
+
+.aviso svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Cartão de revisão: e-mail, endereço, frete, observações. */
+.revisao {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  background: var(--paper);
+}
+
+.revisaoLinha {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 18px;
+  gap: 14px;
+}
+
+.revisaoLinha + .revisaoLinha {
+  border-top: 1px solid var(--line);
+}
+
+.revisaoLinha > svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.revisaoCorpo {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------- resumo */
+
+.resumo {
+  position: sticky;
+  top: 24px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+}
+
+.resumoItem {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.resumoImagem {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.resumoNome {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.4;
+  min-width: 0;
+}
+
+.resumoQuantidade {
+  color: var(--muted);
+}
+
+.resumoPrecos {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.resumoDe {
+  display: block;
+  color: var(--price-off);
+  font-size: 12px;
+  text-decoration: line-through;
+}
+
+.resumoPor {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.resumoLinha {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.resumoTotal {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  margin-top: 10px;
+}
+
+.resumoTotal span {
+  font-size: 20px;
+}
+
+.resumoTotal strong {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.resumoPix {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 4px 0 0;
+  color: var(--price-pix-dark);
+  font-size: 13px;
+  font-weight: 600;
+  gap: 6px;
+}
+
+.resumoPix svg {
+  width: 15px;
+  height: 15px;
+}
+
+.cupom {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 13px;
+  border: 0;
+  border-radius: 8px;
+  margin-top: 16px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  gap: 8px;
+}
+
+.cupom:hover {
+  background: var(--surface-2);
+}
+
+.cupom svg {
+  width: 16px;
+  height: 16px;
+}
+
+.cupomForm {
+  display: flex;
+  margin-top: 16px;
+  gap: 8px;
+}
+
+.cupomForm input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.cupomForm button {
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* Barra colapsável que substitui o resumo no celular. */
+.resumoBarra {
+  display: none;
+}
+
+/* --------------------------------------------------------------- vazio */
+
+.vazio {
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  text-align: center;
+}
+
+.vazio a {
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------- confirmação */
+
+.confirmacao {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 60px 24px 90px;
+  text-align: center;
+}
+
+.confirmacaoMarca {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  background: var(--price-pix);
+  color: #fff;
+  place-items: center;
+}
+
+.confirmacaoMarca svg {
+  width: 32px;
+  height: 32px;
+}
+
+.confirmacaoNumero {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  margin: 12px 0 24px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.confirmacaoCartao {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  text-align: left;
+}
+
+.voltar {
+  display: inline-block;
+  padding: 14px 28px;
+  border-radius: 8px;
+  margin-top: 26px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------- responsivo */
+
+@media (max-width: 900px) {
+  .conteudo {
+    padding: 20px 16px 60px;
+    gap: 0;
+    grid-template-columns: 1fr;
+  }
+
+  /* No celular o resumo sobe para uma barra escura fixa no topo, que abre e
+     fecha — igual à referência. A coluna do resumo perde o sticky. */
+  .colunaResumo {
+    display: contents;
+  }
+
+  .resumoBarra {
+    display: block;
+    position: sticky;
+    z-index: 20;
+    top: 0;
+    order: -1;
+    margin: 0 -16px;
+    background: var(--dark-block);
+    color: var(--paper);
+  }
+
+  .resumoBarraBotao {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 14px 16px;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    gap: 10px;
+  }
+
+  .resumoBarraBotao svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 200ms ease;
+  }
+
+  .resumoBarraAberta .resumoBarraBotao svg {
+    transform: rotate(180deg);
+  }
+
+  .resumoBarraTotal {
+    margin-left: auto;
+    font-weight: 600;
+  }
+
+  .resumo {
+    position: static;
+    order: -1;
+    border-radius: 0;
+    border-width: 0 0 1px;
+    margin: 0 -16px;
+  }
+
+  .resumoOculto {
+    display: none;
+  }
+
+  .titulo {
+    font-size: 26px;
+  }
+
+  .avancar {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .linhaCampos {
+    grid-template-columns: 1fr;
+  }
+
+  .stepper {
+    padding: 14px 16px;
+  }
+
+  .passo {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campoRotulo,
+  .frete,
+  .pagamento,
+  .resumoBarraBotao svg {
+    transition: none;
+  }
+}

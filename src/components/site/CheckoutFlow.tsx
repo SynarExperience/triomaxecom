@@ -1,0 +1,636 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "./CartProvider";
+import { CheckoutCampo } from "./CheckoutCampo";
+import { CheckoutStepper } from "./CheckoutStepper";
+import { ResumoPedido } from "./ResumoPedido";
+import {
+  BarcodeIcon,
+  CardIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  HelpIcon,
+  MailIcon,
+  NoteIcon,
+  PinIcon,
+  PixIcon,
+  TruckIcon,
+} from "./icons";
+import { formatBRL } from "@/data/catalog";
+import {
+  cepValido,
+  consultarCep,
+  cotarFrete,
+  documentoValido,
+  emailValido,
+  gerarNumeroPedido,
+  mascaraCep,
+  mascaraDocumento,
+  mascaraTelefone,
+  PARCELAS_MAXIMAS,
+  previsaoEntrega,
+  telefoneValido,
+  totalPorPagamento,
+} from "@/lib/checkout";
+import type {
+  DadosContato,
+  DadosEntrega,
+  Endereco,
+  FormaPagamento,
+  OpcaoFrete,
+  PedidoConfirmado,
+} from "@/types/checkout";
+import styles from "./checkout.module.css";
+
+/** Chave onde o pedido fechado espera a tela de confirmação. */
+export const PEDIDO_STORAGE_KEY = "triomax:pedido";
+
+/**
+ * As seções vão sendo reveladas conforme o passo anterior valida — o checkout
+ * de referência faz tudo numa URL só, sem recarregar. `contato` mostra e-mail e
+ * CEP; `entrega` acrescenta frete, endereço e nota fiscal; `pagamento` troca
+ * tudo pelo cartão de revisão e as formas de pagamento.
+ */
+type Fase = "contato" | "entrega" | "pagamento";
+
+const CONTATO_VAZIO: DadosContato = { email: "", novidades: false };
+const ENTREGA_VAZIA: DadosEntrega = {
+  nome: "",
+  sobrenome: "",
+  telefone: "",
+  numero: "",
+  semNumero: false,
+  complemento: "",
+  documento: "",
+};
+
+export function CheckoutFlow() {
+  const router = useRouter();
+  const { lines, subtotal, count } = useCart();
+
+  const [fase, setFase] = useState<Fase>("contato");
+  const [contato, setContato] = useState<DadosContato>(CONTATO_VAZIO);
+  const [cep, setCep] = useState("");
+  const [endereco, setEndereco] = useState<Endereco | null>(null);
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const [entrega, setEntrega] = useState<DadosEntrega>(ENTREGA_VAZIA);
+  const [freteId, setFreteId] = useState<string | null>(null);
+  const [verTodosFretes, setVerTodosFretes] = useState(true);
+  const [pagamento, setPagamento] = useState<FormaPagamento | null>(null);
+  const [parcelas, setParcelas] = useState(1);
+  const [observacoes, setObservacoes] = useState("");
+  const [erros, setErros] = useState<Record<string, string>>({});
+  const [enviando, setEnviando] = useState(false);
+
+  /* Sacola vazia não tem checkout. Só age depois da hidratação — antes disso
+     `lines` está vazio por definição e mandaria todo mundo para o carrinho. */
+  const [hidratado, setHidratado] = useState(false);
+  useEffect(() => setHidratado(true), []);
+  useEffect(() => {
+    if (hidratado && count === 0) router.replace("/carrinho");
+  }, [count, hidratado, router]);
+
+  const fretes = useMemo(
+    () => (endereco ? cotarFrete(endereco.cep, subtotal) : []),
+    [endereco, subtotal],
+  );
+  const freteEscolhido = fretes.find((opcao) => opcao.id === freteId) ?? null;
+  const total = subtotal + (freteEscolhido?.preco ?? 0);
+
+  const errar = (campo: string, mensagem: string) =>
+    setErros((atuais) => ({ ...atuais, [campo]: mensagem }));
+  const limparErro = (campo: string) =>
+    setErros((atuais) => {
+      const { [campo]: _removido, ...resto } = atuais;
+      return resto;
+    });
+
+  /* ------------------------------------------------------ passo: contato */
+
+  const confirmarContato = async () => {
+    let valido = true;
+    if (!emailValido(contato.email)) {
+      errar("email", "Digite um e-mail válido");
+      valido = false;
+    }
+    if (!cepValido(cep)) {
+      errar("cep", "Digite um CEP válido");
+      valido = false;
+    }
+    if (!valido) return;
+
+    setBuscandoCep(true);
+    const encontrado = await consultarCep(cep);
+    setBuscandoCep(false);
+
+    if (!encontrado) {
+      errar("cep", "Não encontramos esse CEP");
+      return;
+    }
+
+    setEndereco(encontrado);
+    setFase("entrega");
+  };
+
+  /* ------------------------------------------------------ passo: entrega */
+
+  const confirmarEntrega = () => {
+    const encontrados: Record<string, string> = {};
+    if (!freteId) encontrados.frete = "Escolha uma forma de entrega";
+    if (entrega.nome.trim().length < 2) encontrados.nome = "Este campo deve ser preenchido";
+    if (entrega.sobrenome.trim().length < 2) {
+      encontrados.sobrenome = "Este campo deve ser preenchido";
+    }
+    if (!telefoneValido(entrega.telefone)) {
+      encontrados.telefone = "Este campo deve ser preenchido";
+    }
+    if (!entrega.semNumero && !entrega.numero.trim()) {
+      encontrados.numero = "Este campo deve ser preenchido";
+    }
+    if (!documentoValido(entrega.documento)) {
+      encontrados.documento = "Digite um número de CPF ou CNPJ válido";
+    }
+
+    setErros(encontrados);
+    if (Object.keys(encontrados).length > 0) return;
+
+    setFase("pagamento");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /* ---------------------------------------------------- passo: pagamento */
+
+  const fazerPedido = () => {
+    if (!pagamento || !freteEscolhido || !endereco) return;
+    setEnviando(true);
+
+    const pedido: PedidoConfirmado = {
+      numero: gerarNumeroPedido(),
+      email: contato.email.trim(),
+      /* Itens congelados: o pedido confirmado não pode mudar se o catálogo
+         mudar depois — mesma regra da sacola. */
+      itens: lines.map(({ product, quantity, total: totalLinha }) => ({
+        nome: product.name,
+        quantidade: quantity,
+        total: totalLinha,
+      })),
+      subtotal,
+      frete: freteEscolhido,
+      total: totalPorPagamento(total, pagamento),
+      pagamento,
+      endereco,
+      entrega,
+    };
+
+    try {
+      window.sessionStorage.setItem(PEDIDO_STORAGE_KEY, JSON.stringify(pedido));
+    } catch {
+      /* Modo privado ou cota cheia: a confirmação cai no estado genérico, mas
+         o pedido não pode falhar por causa disso. */
+    }
+
+    router.push("/checkout/confirmacao");
+  };
+
+  if (!hidratado || count === 0) return null;
+
+  const faseStepper = fase === "pagamento" ? "pagamento" : "entrega";
+  const fretesVisiveis = verTodosFretes || !freteEscolhido ? fretes : [freteEscolhido];
+
+  return (
+    <>
+      <CheckoutStepper atual={faseStepper} />
+
+      <div className={styles.conteudo}>
+        <div>
+          {fase === "pagamento" ? (
+            <SecaoPagamento
+              endereco={endereco!}
+              entrega={entrega}
+              email={contato.email}
+              enviando={enviando}
+              frete={freteEscolhido!}
+              observacoes={observacoes}
+              onObservacoes={setObservacoes}
+              onPagamento={setPagamento}
+              onParcelas={setParcelas}
+              onSubmit={fazerPedido}
+              pagamento={pagamento}
+              parcelas={parcelas}
+              total={total}
+            />
+          ) : (
+            <>
+              <h2 className={styles.secaoTitulo}>Dados de contato</h2>
+              <CheckoutCampo
+                acao={fase === "entrega" ? { rotulo: "Alterar", onClick: () => setFase("contato") } : undefined}
+                erro={erros.email}
+                extras={{ autoComplete: "email", inputMode: "email", type: "email" }}
+                onChange={(valor) => {
+                  setContato((atual) => ({ ...atual, email: valor }));
+                  limparErro("email");
+                }}
+                rotulo="E-mail"
+                travado={fase === "entrega"}
+                valido={emailValido(contato.email)}
+                valor={contato.email}
+              />
+              <label className={styles.check}>
+                <input
+                  checked={contato.novidades}
+                  onChange={(evento) =>
+                    setContato((atual) => ({ ...atual, novidades: evento.target.checked }))
+                  }
+                  type="checkbox"
+                />
+                Receber ofertas e novidades por e-mail
+              </label>
+
+              <h2 className={styles.secaoTitulo}>Entrega</h2>
+
+              {fase === "contato" ? (
+                <>
+                  <CheckoutCampo
+                    acao={{
+                      rotulo: "Não sei meu CEP",
+                      onClick: () =>
+                        window.open("https://buscacepinter.correios.com.br/app/endereco/", "_blank", "noopener"),
+                    }}
+                    erro={erros.cep}
+                    extras={{ autoComplete: "postal-code", inputMode: "numeric" }}
+                    onChange={(valor) => {
+                      setCep(mascaraCep(valor));
+                      limparErro("cep");
+                    }}
+                    rotulo="CEP"
+                    valido={cepValido(cep)}
+                    valor={cep}
+                  />
+                  <button
+                    className={styles.avancar}
+                    disabled={buscandoCep}
+                    onClick={confirmarContato}
+                    type="button"
+                  >
+                    {buscandoCep ? "Buscando CEP…" : "Continuar"}
+                  </button>
+                </>
+              ) : (
+                <SecaoEntrega
+                  endereco={endereco!}
+                  entrega={entrega}
+                  erros={erros}
+                  freteId={freteId}
+                  fretes={fretesVisiveis}
+                  onAlterarCep={() => {
+                    setFase("contato");
+                    setFreteId(null);
+                    setVerTodosFretes(true);
+                  }}
+                  onEntrega={(mudanca) => setEntrega((atual) => ({ ...atual, ...mudanca }))}
+                  onFrete={(id) => {
+                    setFreteId(id);
+                    setVerTodosFretes(false);
+                    limparErro("frete");
+                  }}
+                  onLimparErro={limparErro}
+                  onSubmit={confirmarEntrega}
+                  onVerTodos={() => setVerTodosFretes(true)}
+                  verTodos={verTodosFretes}
+                />
+              )}
+            </>
+          )}
+        </div>
+
+        <ResumoPedido frete={freteEscolhido} />
+      </div>
+    </>
+  );
+}
+
+/* ==================================================================== */
+
+function SecaoEntrega({
+  endereco,
+  entrega,
+  erros,
+  fretes,
+  freteId,
+  onAlterarCep,
+  onEntrega,
+  onFrete,
+  onLimparErro,
+  onSubmit,
+  onVerTodos,
+  verTodos,
+}: {
+  endereco: Endereco;
+  entrega: DadosEntrega;
+  erros: Record<string, string>;
+  fretes: OpcaoFrete[];
+  freteId: string | null;
+  onAlterarCep: () => void;
+  onEntrega: (mudanca: Partial<DadosEntrega>) => void;
+  onFrete: (id: string) => void;
+  onLimparErro: (campo: string) => void;
+  onSubmit: () => void;
+  onVerTodos: () => void;
+  verTodos: boolean;
+}) {
+  return (
+    <>
+      <div className={styles.fretes}>
+        {fretes.map((opcao) => (
+          <button
+            className={[styles.frete, opcao.id === freteId ? styles.freteAtivo : ""].join(" ")}
+            key={opcao.id}
+            onClick={() => onFrete(opcao.id)}
+            type="button"
+          >
+            <span className={styles.freteMarca}>{opcao.id === freteId ? <CheckIcon /> : null}</span>
+            <span className={styles.freteCorpo}>
+              <span className={styles.freteNome}>
+                {opcao.transportadora}: {opcao.servico}
+              </span>
+              <span className={styles.fretePrazo}>
+                Chega em {opcao.prazoDias} {opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}
+              </span>
+            </span>
+            <span className={[styles.fretePreco, opcao.preco === 0 ? styles.freteGratis : ""].join(" ")}>
+              {opcao.preco === 0 ? "Grátis" : formatBRL(opcao.preco)}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {erros.frete ? <p className={styles.campoErro}>{erros.frete}</p> : null}
+
+      {!verTodos ? (
+        <button className={styles.maisOpcoes} onClick={onVerTodos} type="button">
+          Mais opções
+          <ChevronDownIcon />
+        </button>
+      ) : null}
+
+      <h2 className={styles.secaoTitulo}>Dados para entrega</h2>
+
+      <div className={styles.linhaCampos}>
+        <CheckoutCampo
+          erro={erros.nome}
+          extras={{ autoComplete: "given-name" }}
+          onChange={(valor) => {
+            onEntrega({ nome: valor });
+            onLimparErro("nome");
+          }}
+          rotulo="Nome"
+          valido={entrega.nome.trim().length >= 2}
+          valor={entrega.nome}
+        />
+        <CheckoutCampo
+          erro={erros.sobrenome}
+          extras={{ autoComplete: "family-name" }}
+          onChange={(valor) => {
+            onEntrega({ sobrenome: valor });
+            onLimparErro("sobrenome");
+          }}
+          rotulo="Sobrenome"
+          valido={entrega.sobrenome.trim().length >= 2}
+          valor={entrega.sobrenome}
+        />
+      </div>
+
+      <CheckoutCampo
+        erro={erros.telefone}
+        extras={{ autoComplete: "tel", inputMode: "tel", type: "tel" }}
+        onChange={(valor) => {
+          onEntrega({ telefone: mascaraTelefone(valor) });
+          onLimparErro("telefone");
+        }}
+        rotulo="Telefone com DDD"
+        valido={telefoneValido(entrega.telefone)}
+        valor={entrega.telefone}
+      />
+
+      <div className={styles.enderecoCartao}>
+        <PinIcon />
+        <div className={styles.enderecoCorpo}>
+          {endereco.logradouro || "Endereço"}
+          <br />
+          <strong>CEP {endereco.cep}</strong>
+          {endereco.bairro ? ` - ${endereco.bairro}` : ""}
+          <br />
+          {endereco.cidade} - {endereco.uf}
+        </div>
+        <button className={styles.campoAcao} onClick={onAlterarCep} type="button">
+          Alterar
+        </button>
+      </div>
+
+      <div className={styles.linhaCampos}>
+        <CheckoutCampo
+          erro={erros.numero}
+          extras={{ inputMode: "numeric" }}
+          onChange={(valor) => {
+            onEntrega({ numero: valor });
+            onLimparErro("numero");
+          }}
+          rotulo="Número"
+          travado={entrega.semNumero}
+          valido={Boolean(entrega.numero.trim())}
+          valor={entrega.semNumero ? "S/N" : entrega.numero}
+        />
+        <CheckoutCampo
+          onChange={(valor) => onEntrega({ complemento: valor })}
+          rotulo="Apto, bloco, referência (opcional)"
+          valor={entrega.complemento}
+        />
+      </div>
+
+      <label className={styles.check}>
+        <input
+          checked={entrega.semNumero}
+          onChange={(evento) => {
+            onEntrega({ semNumero: evento.target.checked });
+            onLimparErro("numero");
+          }}
+          type="checkbox"
+        />
+        Sem número
+      </label>
+
+      <h2 className={styles.secaoTitulo}>Dados para nota fiscal</h2>
+      <CheckoutCampo
+        erro={erros.documento}
+        extras={{ inputMode: "numeric" }}
+        onChange={(valor) => {
+          onEntrega({ documento: mascaraDocumento(valor) });
+          onLimparErro("documento");
+        }}
+        rotulo="CPF ou CNPJ"
+        valido={documentoValido(entrega.documento)}
+        valor={entrega.documento}
+      />
+
+      <button className={styles.avancar} onClick={onSubmit} type="button">
+        Continuar para pagamento
+      </button>
+    </>
+  );
+}
+
+/* ==================================================================== */
+
+const FORMAS: { id: FormaPagamento; nome: string; Icone: typeof CardIcon }[] = [
+  { id: "cartao", nome: "Cartão de crédito", Icone: CardIcon },
+  { id: "pix", nome: "Pix", Icone: PixIcon },
+  { id: "boleto", nome: "Boleto bancário", Icone: BarcodeIcon },
+];
+
+function SecaoPagamento({
+  email,
+  endereco,
+  entrega,
+  enviando,
+  frete,
+  observacoes,
+  onObservacoes,
+  onPagamento,
+  onParcelas,
+  onSubmit,
+  pagamento,
+  parcelas,
+  total,
+}: {
+  email: string;
+  endereco: Endereco;
+  entrega: DadosEntrega;
+  enviando: boolean;
+  frete: OpcaoFrete;
+  observacoes: string;
+  onObservacoes: (valor: string) => void;
+  onPagamento: (forma: FormaPagamento) => void;
+  onParcelas: (valor: number) => void;
+  onSubmit: () => void;
+  pagamento: FormaPagamento | null;
+  parcelas: number;
+  total: number;
+}) {
+  const [editandoObs, setEditandoObs] = useState(false);
+
+  return (
+    <>
+      <div className={styles.aviso}>
+        <HelpIcon />
+        Os prazos de entrega são estimativas da transportadora e podem sofrer alterações por
+        fatores externos, como condições climáticas ou imprevistos logísticos.
+      </div>
+
+      <div className={styles.revisao}>
+        <div className={styles.revisaoLinha}>
+          <MailIcon />
+          <div className={styles.revisaoCorpo}>{email}</div>
+        </div>
+
+        <div className={styles.revisaoLinha}>
+          <PinIcon />
+          <div className={styles.revisaoCorpo}>
+            {endereco.logradouro} {entrega.semNumero ? "s/n" : entrega.numero}
+            {entrega.complemento ? ` - ${entrega.complemento}` : ""}
+            <br />
+            CEP {endereco.cep} - {endereco.bairro}
+            <br />
+            {endereco.cidade}, {endereco.uf} - {entrega.telefone}
+          </div>
+        </div>
+
+        <div className={styles.revisaoLinha}>
+          <TruckIcon />
+          <div className={styles.revisaoCorpo}>
+            <strong>
+              {frete.transportadora}: {frete.servico} ·{" "}
+              {frete.preco === 0 ? "Grátis" : formatBRL(frete.preco)}
+            </strong>
+            <br />
+            Chega {previsaoEntrega(frete.prazoDias)}
+          </div>
+        </div>
+
+        <div className={styles.revisaoLinha}>
+          <NoteIcon />
+          <div className={styles.revisaoCorpo}>
+            {editandoObs ? (
+              <CheckoutCampo
+                onChange={onObservacoes}
+                rotulo="Instruções para o pedido"
+                valor={observacoes}
+              />
+            ) : (
+              <strong>{observacoes || "Instruções para o pedido"}</strong>
+            )}
+          </div>
+          <button
+            className={styles.campoAcao}
+            onClick={() => setEditandoObs((atual) => !atual)}
+            type="button"
+          >
+            {editandoObs ? "Pronto" : "Adicionar"}
+          </button>
+        </div>
+      </div>
+
+      <h2 className={styles.secaoTitulo}>Forma de pagamento</h2>
+
+      <div className={styles.pagamentos}>
+        {FORMAS.map(({ id, nome, Icone }) => {
+          const comDesconto = totalPorPagamento(total, id);
+          return (
+            <button
+              className={[styles.pagamento, pagamento === id ? styles.pagamentoAtivo : ""].join(" ")}
+              key={id}
+              onClick={() => onPagamento(id)}
+              type="button"
+            >
+              <Icone />
+              <span className={styles.pagamentoNome}>{nome}</span>
+              {comDesconto < total ? (
+                <span className={[styles.selo, id === "pix" ? styles.seloPix : ""].join(" ")}>
+                  Pague {formatBRL(comDesconto)}
+                </span>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+
+      {pagamento === "cartao" ? (
+        <div className={styles.parcelas}>
+          Em quantas vezes?
+          <select
+            aria-label="Número de parcelas"
+            onChange={(evento) => onParcelas(Number(evento.target.value))}
+            value={parcelas}
+          >
+            {Array.from({ length: PARCELAS_MAXIMAS }, (_, indice) => indice + 1).map((vezes) => (
+              <option key={vezes} value={vezes}>
+                {vezes}× de {formatBRL(total / vezes)} sem juros
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+
+      <button
+        className={styles.avancar}
+        disabled={!pagamento || enviando}
+        onClick={onSubmit}
+        style={{ marginTop: 24 }}
+        type="button"
+      >
+        {enviando ? "Processando…" : "Fazer pedido"}
+      </button>
+    </>
+  );
+}
