@@ -45,6 +45,16 @@ const ORIGENS_PERMITIDAS = (process.env.NEXT_PUBLIC_EDITOR_ORIGINS ?? "")
 
 type MensagemDestacar = { tipo: "destacar"; bloco: unknown };
 
+/** O painel pede recarga depois de salvar, para a prévia mostrar o conteúdo
+    novo sem o lojista precisar atualizar a página na mão. */
+function ehPedidoDeRecarga(dados: unknown): boolean {
+  return (
+    typeof dados === "object" &&
+    dados !== null &&
+    (dados as Record<string, unknown>).tipo === "recarregar"
+  );
+}
+
 function ehMensagemDestacar(dados: unknown): dados is MensagemDestacar {
   return (
     typeof dados === "object" &&
@@ -71,6 +81,12 @@ export function PontePreviaEditor() {
     const aoReceber = (evento: MessageEvent) => {
       // Origem primeiro: o conteúdo da mensagem só interessa se veio do painel.
       if (!ORIGENS_PERMITIDAS.includes(evento.origin)) return;
+
+      if (ehPedidoDeRecarga(evento.data)) {
+        window.location.reload();
+        return;
+      }
+
       if (!ehMensagemDestacar(evento.data)) return;
 
       // Limpa antes de qualquer coisa: bloco desconhecido some com o destaque
