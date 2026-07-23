@@ -6,7 +6,14 @@ import { formatBRL } from "@/data/catalog";
 import type { PedidoBase } from "./CartaoForm";
 import styles from "./checkout.module.css";
 
-type PixGerado = { id: number; qrCode: string; qrCodeBase64: string; ticketUrl: string };
+type PixGerado = {
+  id: number;
+  /** Número do pedido gravado no banco, para a confirmação exibir o mesmo do painel. */
+  numeroPedido: number | null;
+  qrCode: string;
+  qrCodeBase64: string;
+  ticketUrl: string;
+};
 
 /** Intervalo de verificação do pagamento. 4s é o que o próprio painel do
     Mercado Pago usa — rápido o bastante sem martelar a API. */
@@ -20,7 +27,7 @@ export function PixPanel({
 }: {
   pedido: PedidoBase;
   total: number;
-  onAprovado: (paymentId: number) => void;
+  onAprovado: (paymentId: number, numeroPedido: number | null) => void;
   onErro: (mensagem: string) => void;
 }) {
   const [pix, setPix] = useState<PixGerado | null>(null);
@@ -41,7 +48,7 @@ export function PixPanel({
         onErro(dados.erro ?? "Não foi possível gerar o Pix.");
         return;
       }
-      setPix({ id: dados.id, ...dados.pix });
+      setPix({ id: dados.id, numeroPedido: dados.numeroPedido ?? null, ...dados.pix });
     } catch {
       onErro("Não foi possível gerar o Pix. Tente novamente.");
     } finally {
@@ -61,7 +68,7 @@ export function PixPanel({
         if (dados.status === "approved" && !jaAprovou.current) {
           jaAprovou.current = true;
           window.clearInterval(relogio);
-          onAprovado(pix.id);
+          onAprovado(pix.id, pix.numeroPedido);
         }
       } catch {
         /* Falha de rede numa checagem não interrompe: a próxima tenta de novo. */

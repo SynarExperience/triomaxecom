@@ -2,7 +2,8 @@ import "server-only";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { listarProdutos } from "@/lib/produtos";
 import { digitos } from "@/lib/checkout";
-import type { DadosEntrega, OpcaoFrete } from "@/types/checkout";
+import { criarPedido, statusDoMercadoPago } from "@/lib/pedidos";
+import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 
 /*
  * Checkout Transparente do Mercado Pago: o pagamento é criado aqui, no
@@ -28,6 +29,8 @@ type DadosBase = {
   frete: OpcaoFrete;
   contato: { email: string };
   entrega: DadosEntrega;
+  /** Resolvido pelo CEP; vai para o endereço de entrega do pedido. */
+  endereco: Endereco;
 };
 
 export type DadosPix = DadosBase;
@@ -45,6 +48,8 @@ export type ResultadoPagamento = {
   status: string;
   statusDetail: string;
   total: number;
+  /** Número do pedido gravado no banco; `null` se a gravação falhou. */
+  numeroPedido: number | null;
   /** Só no Pix: dados para exibir o QR na nossa tela. */
   pix?: {
     qrCode: string;
@@ -92,8 +97,10 @@ async function montarPedido(dados: DadosBase) {
     },
   };
 
-  return { total, descricao, payer };
+  return { total, subtotal, descricao, payer, linhas };
 }
+
+type PedidoMontado = Awaited<ReturnType<typeof montarPedido>>;
 
 /** Chave de idempotência por tentativa: se o request for repetido (rede,
     duplo-clique), o Mercado Pago não cria dois pagamentos. */
@@ -101,10 +108,47 @@ function chaveIdempotencia(prefixo: string) {
   return `${prefixo}-${globalThis.crypto.randomUUID()}`;
 }
 
+/* Quando definida, o Mercado Pago avisa esta URL a cada mudança de status —
+   evita depender só do que estiver configurado no painel deles. */
+const notificationUrl = process.env.MERCADOPAGO_NOTIFICATION_URL;
+
+/**
+ * Grava o pedido depois que o pagamento existe, guardando o id do pagamento
+ * para o webhook reencontrá-lo. Nunca lança: o dinheiro já foi movimentado e
+ * uma falha de gravação não pode derrubar o checkout do cliente.
+ */
+async function gravarPedido(
+  dados: DadosBase,
+  montado: PedidoMontado,
+  pagamentoId: number,
+  status: string,
+  meioPagamento: "pix" | "cartao",
+): Promise<number | null> {
+  const pedido = await criarPedido({
+    itens: montado.linhas.map((linha) => ({
+      nome: linha.produto.name,
+      sku: linha.produto.slug,
+      quantidade: linha.quantidade,
+      precoUnitario: linha.produto.price,
+    })),
+    subtotal: montado.subtotal,
+    total: montado.total,
+    frete: dados.frete,
+    contato: dados.contato,
+    entrega: dados.entrega,
+    endereco: dados.endereco,
+    meioPagamento,
+    pagamentoId: String(pagamentoId),
+    statusPagamento: statusDoMercadoPago(status),
+  });
+  return pedido?.numero ?? null;
+}
+
 /** Cria um pagamento Pix. Volta `pending` com o QR; o dinheiro só se move
     quando o cliente paga o QR. */
 export async function criarPagamentoPix(dados: DadosPix): Promise<ResultadoPagamento> {
-  const { total, descricao, payer } = await montarPedido(dados);
+  const montado = await montarPedido(dados);
+  const { total, descricao, payer } = montado;
   const payment = new Payment(client);
 
   const resultado = await payment.create({
@@ -113,9 +157,20 @@ export async function criarPagamentoPix(dados: DadosPix): Promise<ResultadoPagam
       description: descricao,
       payment_method_id: "pix",
       payer,
+      ...(notificationUrl ? { notification_url: notificationUrl } : {}),
     },
     requestOptions: { idempotencyKey: chaveIdempotencia("pix") },
   });
+
+  /* Nasce `pending`: o Pix só vira `recebido` quando o cliente paga o QR, e
+     quem faz essa virada é o webhook. */
+  const numeroPedido = await gravarPedido(
+    dados,
+    montado,
+    resultado.id!,
+    resultado.status ?? "pending",
+    "pix",
+  );
 
   const transacao = resultado.point_of_interaction?.transaction_data;
   return {
@@ -123,6 +178,7 @@ export async function criarPagamentoPix(dados: DadosPix): Promise<ResultadoPagam
     status: resultado.status ?? "desconhecido",
     statusDetail: resultado.status_detail ?? "",
     total,
+    numeroPedido,
     pix: {
       qrCode: transacao?.qr_code ?? "",
       qrCodeBase64: transacao?.qr_code_base64 ?? "",
@@ -135,7 +191,8 @@ export async function criarPagamentoPix(dados: DadosPix): Promise<ResultadoPagam
     juros, quando houver, são os do próprio Mercado Pago — o `transaction_amount`
     é o total à vista e o parcelamento é aplicado por ele. */
 export async function criarPagamentoCartao(dados: DadosCartao): Promise<ResultadoPagamento> {
-  const { total, descricao, payer } = await montarPedido(dados);
+  const montado = await montarPedido(dados);
+  const { total, descricao, payer } = montado;
   const payment = new Payment(client);
 
   const resultado = await payment.create({
@@ -148,15 +205,27 @@ export async function criarPagamentoCartao(dados: DadosCartao): Promise<Resultad
       // O SDK tipa issuer_id como número; o cliente manda string.
       issuer_id: dados.issuerId ? Number(dados.issuerId) : undefined,
       payer,
+      ...(notificationUrl ? { notification_url: notificationUrl } : {}),
     },
     requestOptions: { idempotencyKey: chaveIdempotencia("card") },
   });
+
+  /* No cartão o status já vem resolvido (approved/rejected), mas o webhook
+     ainda cobre estorno e análise antifraude que terminam depois. */
+  const numeroPedido = await gravarPedido(
+    dados,
+    montado,
+    resultado.id!,
+    resultado.status ?? "pending",
+    "cartao",
+  );
 
   return {
     id: resultado.id!,
     status: resultado.status ?? "desconhecido",
     statusDetail: resultado.status_detail ?? "",
     total,
+    numeroPedido,
   };
 }
 

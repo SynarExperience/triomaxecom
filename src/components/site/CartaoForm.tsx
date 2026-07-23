@@ -5,7 +5,7 @@ import { CheckoutCampo } from "./CheckoutCampo";
 import { obterMercadoPago, type MercadoPagoInstance } from "@/lib/mercadopago-cliente";
 import { digitos } from "@/lib/checkout";
 import { formatBRL } from "@/data/catalog";
-import type { DadosEntrega, OpcaoFrete } from "@/types/checkout";
+import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 import styles from "./checkout.module.css";
 
 /** Dados do pedido que o pagamento precisa — os mesmos para Pix e cartão. */
@@ -14,6 +14,8 @@ export type PedidoBase = {
   frete: OpcaoFrete;
   contato: { email: string };
   entrega: DadosEntrega;
+  /** Endereço resolvido pelo CEP; o servidor grava no pedido. */
+  endereco: Endereco;
 };
 
 type Parcela = { numero: number; rotulo: string };
@@ -38,7 +40,7 @@ export function CartaoForm({
   pedido: PedidoBase;
   total: number;
   /** Chamado com o id do pagamento quando aprovado. */
-  onAprovado: (paymentId: number) => void;
+  onAprovado: (paymentId: number, numeroPedido: number | null) => void;
   onErro: (mensagem: string) => void;
 }) {
   const [numero, setNumero] = useState("");
@@ -142,7 +144,7 @@ export function CartaoForm({
       if (!resposta.ok) { onErro(dados.erro ?? "Falha ao processar o cartão."); return; }
 
       if (dados.status === "approved") {
-        onAprovado(dados.id);
+        onAprovado(dados.id, dados.numeroPedido ?? null);
       } else if (dados.status === "in_process" || dados.status === "pending") {
         onErro("Pagamento em análise. Você receberá a confirmação por e-mail.");
       } else {

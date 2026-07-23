@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ erro: "Corpo inválido." }, { status: 400 });
   }
 
-  if (!corpo?.itens?.length || !corpo?.contato?.email || !corpo?.frete) {
+  if (!corpo?.itens?.length || !corpo?.contato?.email || !corpo?.frete || !corpo?.endereco?.cep) {
     return NextResponse.json({ erro: "Dados do pedido incompletos." }, { status: 400 });
   }
 

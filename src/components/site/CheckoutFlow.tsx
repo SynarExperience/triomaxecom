@@ -196,23 +196,26 @@ export function CheckoutFlow() {
   /* Dados que o pagamento precisa. O preço não vai daqui — o servidor relê pelo
      slug —, mas nome e total congelam para a tela de confirmação. */
   const pedidoBase = useMemo<PedidoBase | null>(() => {
-    if (!freteEscolhido) return null;
+    if (!freteEscolhido || !endereco) return null;
     return {
       itens: lines.map(({ product, quantity }) => ({ slug: product.slug, quantidade: quantity })),
       frete: freteEscolhido,
       contato: { email: contato.email.trim() },
       entrega,
+      endereco,
     };
-  }, [contato.email, entrega, freteEscolhido, lines]);
+  }, [contato.email, endereco, entrega, freteEscolhido, lines]);
 
   /* Chamado pelos painéis de cartão/Pix quando o Mercado Pago aprova. Guarda o
      pedido para a confirmação e navega. O id do pagamento vai junto para a tela
      poder reconferir o status pela API. */
-  const aoAprovar = (paymentId: number) => {
+  const aoAprovar = (paymentId: number, numeroPedido: number | null) => {
     if (!pagamento || !freteEscolhido || !endereco) return;
 
     const pedido: PedidoConfirmado = {
-      numero: gerarNumeroPedido(),
+      /* O número vem do banco, para o cliente ver o mesmo que aparece no
+         painel. Só cai no gerado localmente se a gravação tiver falhado. */
+      numero: numeroPedido ? `#${numeroPedido}` : gerarNumeroPedido(),
       email: contato.email.trim(),
       itens: lines.map(({ product, quantity, total: totalLinha }) => ({
         nome: product.name,
@@ -565,7 +568,7 @@ function SecaoPagamento({
   observacoes: string;
   onObservacoes: (valor: string) => void;
   onPagamento: (forma: FormaPagamento) => void;
-  onAprovado: (paymentId: number) => void;
+  onAprovado: (paymentId: number, numeroPedido: number | null) => void;
   onErro: (mensagem: string) => void;
   pagamento: FormaPagamento | null;
   pedido: PedidoBase;

@@ -15,7 +15,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ erro: "Corpo inválido." }, { status: 400 });
   }
 
-  if (!corpo?.token || !corpo?.paymentMethodId || !corpo?.itens?.length || !corpo?.contato?.email) {
+  if (
+    !corpo?.token ||
+    !corpo?.paymentMethodId ||
+    !corpo?.itens?.length ||
+    !corpo?.contato?.email ||
+    !corpo?.endereco?.cep
+  ) {
     return NextResponse.json({ erro: "Dados do pagamento incompletos." }, { status: 400 });
   }
 
