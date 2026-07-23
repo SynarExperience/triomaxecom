@@ -109,6 +109,44 @@ export function FeatureGrid() {
  * as categorias do catálogo, então a tira, a top bar, os cards e o filtro da
  * listagem falam todos da mesma coisa.
  */
+/*
+ * A arte do tile vem em duas formas, e a tira aceita as duas:
+ *
+ * - **nome-base** ("pla") — a arte original, versionada em
+ *   `/banners/category-strip`, servida em dois tamanhos por srcset;
+ * - **URL absoluta** (Storage) — quando a arte foi enviada pelo painel. Já é o
+ *   arquivo final, sem variação de tamanho.
+ *
+ * O que distingue é a barra: URL tem, nome-base não.
+ */
+function TileImagem({ imagem }: { imagem: string }) {
+  const enviada = imagem.includes("/");
+
+  if (enviada) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img alt="" aria-hidden="true" loading="lazy" sizes="(max-width: 767px) 118px, 195px" src={imagem} />
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      /* O rótulo logo abaixo já nomeia o tile; repetir no alt faria o leitor de
+         tela anunciar a categoria duas vezes seguidas. */
+      alt=""
+      aria-hidden="true"
+      loading="lazy"
+      /* Renderiza a ~196 CSS no desktop e 118 no celular. O master tem 390 px:
+         118 @3x sobra, e 196 @2x fica 2 px curto — meio por cento, que não
+         aparece. Subir a arte só por isso não paga. */
+      sizes="(max-width: 767px) 118px, 195px"
+      src={`/banners/category-strip/${imagem}-256.webp`}
+      srcSet={`/banners/category-strip/${imagem}-256.webp 256w, /banners/category-strip/${imagem}-390.webp 390w`}
+    />
+  );
+}
+
 export function CategoryStrip({ categorias }: { categorias: Categoria[] }) {
   // Sem arte não há tile: o nome sozinho num quadrado vazio não é a tira.
   const tiles = categorias.filter((c) => c.imagem);
@@ -129,20 +167,7 @@ export function CategoryStrip({ categorias }: { categorias: Categoria[] }) {
               href={`/produtos?categoria=${tile.slug}`}
               key={tile.slug}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                /* O rótulo logo abaixo já nomeia o tile; repetir no alt faria o
-                   leitor de tela anunciar a categoria duas vezes seguidas. */
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                /* Renderiza a ~196 CSS no desktop e 118 no celular. O master tem
-                   390 px: 118 @3x sobra, e 196 @2x fica 2 px curto — meio por
-                   cento, que não aparece. Subir a arte só por isso não paga. */
-                sizes="(max-width: 767px) 118px, 195px"
-                src={`/banners/category-strip/${tile.imagem}-256.webp`}
-                srcSet={`/banners/category-strip/${tile.imagem}-256.webp 256w, /banners/category-strip/${tile.imagem}-390.webp 390w`}
-              />
+              <TileImagem imagem={tile.imagem} />
               <span className={styles.categoryStripLabel}>{tile.nome}</span>
             </a>
           ))}
