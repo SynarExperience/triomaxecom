@@ -42,8 +42,8 @@ export type BannerHero = {
  */
 const BANNERS_PADRAO: BannerHero[] = [
   {
-    name: "banner-pla-petg",
-    alt: "Banner Triomax: carretéis de filamento vermelho, verde, azul e amarelo empilhados sobre fundo laranja e amarelo — PLA e PETG sem pedido mínimo",
+    name: "banner-pla-petg-novo",
+    alt: "Banner Triomax: carretéis de filamento laranja, verde, azul, amarelo e preto empilhados sobre fundo bege — PLA e PETG sem pedido mínimo",
     label: "Ver banner de PLA e PETG sem pedido mínimo",
     link: "/produtos",
   },
