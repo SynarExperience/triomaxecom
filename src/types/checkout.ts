@@ -24,7 +24,8 @@ export type OpcaoFrete = {
   prazoDias: number;
 };
 
-export type FormaPagamento = "pix" | "cartao" | "boleto";
+/* Boleto ficou de fora da integração com o Mercado Pago — só Pix e cartão. */
+export type FormaPagamento = "pix" | "cartao";
 
 export type DadosContato = {
   email: string;
@@ -54,4 +55,6 @@ export type PedidoConfirmado = {
   pagamento: FormaPagamento;
   endereco: Endereco;
   entrega: DadosEntrega;
+  /** Id do pagamento no Mercado Pago, para a confirmação reconferir o status. */
+  paymentId: number;
 };

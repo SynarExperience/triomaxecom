@@ -12,7 +12,6 @@ import styles from "./checkout.module.css";
 const NOME_PAGAMENTO: Record<FormaPagamento, string> = {
   pix: "Pix",
   cartao: "Cartão de crédito",
-  boleto: "Boleto bancário",
 };
 
 /** Lê o pedido guardado pelo checkout e confirma. Recarregar mantém a tela; a

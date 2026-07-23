@@ -227,6 +227,13 @@
   outline: none;
 }
 
+/* O rótulo flutuante ocupa o mesmo lugar do placeholder quando o campo está
+   vazio e sem foco. Escondemos o placeholder até o foco — aí o rótulo já subiu
+   e os dois não colidem (ex.: "Validade" x "MM/AA"). */
+.campoCaixa input:not(:focus)::placeholder {
+  color: transparent;
+}
+
 .campoTravado .campoCaixa {
   background: var(--surface);
 }
@@ -302,6 +309,14 @@
 .fretes {
   display: grid;
   gap: 10px;
+}
+
+.freteInfo {
+  padding: 14px 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  color: var(--ink-soft, #666);
+  font-size: 14px;
 }
 
 .frete {
@@ -529,6 +544,146 @@
   background: var(--paper);
   font-family: inherit;
   font-size: 14px;
+}
+
+.pagamentoErro {
+  padding: 12px 14px;
+  border: 1px solid #e2b4ad;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: #fbecea;
+  color: #a5342a;
+  font-size: 14px;
+}
+
+/* ---------------------------------------------------- cartão (transparente) */
+
+.cartaoForm {
+  padding: 18px;
+  border: 1px solid var(--line-strong);
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  margin-top: -10px;
+  background: var(--surface);
+}
+
+/* ------------------------------------------------------- pix (transparente) */
+
+.pixPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 18px;
+  border: 1px solid var(--line-strong);
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  margin-top: -10px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.pixIntro {
+  display: flex;
+  align-items: center;
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  gap: 8px;
+}
+
+.pixIntro svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.pixPanel .avancar {
+  width: 100%;
+  min-width: 0;
+  margin-left: 0;
+}
+
+.pixQr {
+  width: 220px;
+  height: 220px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.pixInstrucao {
+  max-width: 420px;
+  margin: 16px 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pixCodigo {
+  display: flex;
+  width: 100%;
+  max-width: 460px;
+  align-items: center;
+  padding: 10px 10px 10px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--paper);
+  gap: 10px;
+}
+
+.pixCodigo code {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pixCodigo button {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 13px;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.pixCodigo button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pixAguardando {
+  display: flex;
+  align-items: center;
+  margin: 18px 0 0;
+  color: var(--price-pix-dark);
+  font-size: 14px;
+  font-weight: 600;
+  gap: 8px;
+}
+
+.pixAguardando::before {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--price-pix);
+  animation: pulsePix 1.2s ease-in-out infinite;
+  content: "";
+}
+
+@keyframes pulsePix {
+  50% { opacity: 0.25; }
 }
 
 /* Aviso âmbar do topo da tela de pagamento da referência. */
@@ -908,5 +1063,9 @@
   .pagamento,
   .resumoBarraBotao svg {
     transition: none;
+  }
+
+  .pixAguardando::before {
+    animation: none;
   }
 }

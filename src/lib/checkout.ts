@@ -1,4 +1,4 @@
-import type { Endereco, FormaPagamento, OpcaoFrete } from "@/types/checkout";
+import type { Endereco, OpcaoFrete } from "@/types/checkout";
 
 /** Só dígitos — usado por todas as máscaras e validações abaixo. */
 export const digitos = (valor: string) => valor.replace(/\D/g, "");
@@ -125,42 +125,27 @@ export async function consultarCep(cep: string): Promise<Endereco | null> {
 export const FRETE_GRATIS_A_PARTIR_DE = 299;
 
 /**
- * Cotação simulada, nas três faixas observadas no checkout de referência
- * (econômico, rápido, expresso). Não há transportadora integrada: o preço varia
- * um pouco com a região só para o fluxo não parecer estático.
+ * Cota o frete real no Melhor Envio, via nossa rota `/api/checkout/frete`. O
+ * cálculo roda no servidor (o token nunca chega ao navegador) — aqui só
+ * passamos o CEP e os itens do carrinho. Lança em erro de rede/HTTP para o
+ * checkout distinguir "sem opções" de "falhou"; devolve [] só quando não há o
+ * que cotar.
  */
-export function cotarFrete(cep: string, subtotal: number): OpcaoFrete[] {
-  const regiao = Number(digitos(cep).slice(0, 1) || 0);
-  // Região 0-1 é Grande SP/interior paulista, onde fica o CD; quanto mais longe
-  // dali, mais caro e mais lento.
-  const distancia = Math.abs(regiao - 1);
-  const base = 13.8 + distancia * 2.4;
+export async function cotarFrete(
+  cep: string,
+  itens: { slug: string; quantidade: number }[],
+): Promise<OpcaoFrete[]> {
+  if (digitos(cep).length !== 8 || itens.length === 0) return [];
 
-  const gratis = subtotal >= FRETE_GRATIS_A_PARTIR_DE;
+  const resposta = await fetch("/api/checkout/frete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cep, itens }),
+  });
+  if (!resposta.ok) throw new Error("Falha ao cotar frete.");
 
-  return [
-    {
-      id: "economico",
-      transportadora: "Correios",
-      servico: "PAC Econômico",
-      preco: gratis ? 0 : Number(base.toFixed(2)),
-      prazoDias: 3 + distancia,
-    },
-    {
-      id: "rapido",
-      transportadora: "Correios",
-      servico: "SEDEX Rápido",
-      preco: Number((base * 1.35).toFixed(2)),
-      prazoDias: 2 + Math.floor(distancia / 2),
-    },
-    {
-      id: "expresso",
-      transportadora: "Triomax Express",
-      servico: "Origem: Porto Alegre-RS",
-      preco: Number((base * 1.6).toFixed(2)),
-      prazoDias: 1 + Math.floor(distancia / 2),
-    },
-  ];
+  const dados = (await resposta.json()) as { opcoes?: OpcaoFrete[] };
+  return Array.isArray(dados.opcoes) ? dados.opcoes : [];
 }
 
 /** Data de entrega por extenso, como "segunda-feira, 27/07". */
@@ -181,17 +166,9 @@ export function previsaoEntrega(prazoDias: number, hoje = new Date()) {
 
 /* ------------------------------------------------------------------ pagamento */
 
-/** Desconto no Pix — o mesmo 10% que a vitrine já anuncia no catálogo. */
-export const DESCONTO_PIX = 0.1;
-/** Boleto tem desconto menor: compensa a taxa, não o risco de não pagamento. */
-export const DESCONTO_BOLETO = 0.03;
-export const PARCELAS_MAXIMAS = 12;
-
-export function totalPorPagamento(total: number, forma: FormaPagamento) {
-  if (forma === "pix") return total * (1 - DESCONTO_PIX);
-  if (forma === "boleto") return total * (1 - DESCONTO_BOLETO);
-  return total;
-}
+/* Parcelas e eventual desconto não são mais calculados aqui: no Checkout
+   Transparente é o Mercado Pago que devolve as parcelas reais (com juros) e
+   cobra o valor certo. Ver `src/lib/mercadopago.ts`. */
 
 /** Número do pedido derivado do relógio: legível e único o bastante na demo. */
 export function gerarNumeroPedido(agora = new Date()) {

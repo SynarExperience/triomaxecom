@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "./CartProvider";
+import { CartaoForm, type PedidoBase } from "./CartaoForm";
 import { CheckoutCampo } from "./CheckoutCampo";
 import { CheckoutStepper } from "./CheckoutStepper";
+import { PixPanel } from "./PixPanel";
 import { ResumoPedido } from "./ResumoPedido";
 import {
-  BarcodeIcon,
   CardIcon,
   CheckIcon,
   ChevronDownIcon,
@@ -29,10 +30,8 @@ import {
   mascaraCep,
   mascaraDocumento,
   mascaraTelefone,
-  PARCELAS_MAXIMAS,
   previsaoEntrega,
   telefoneValido,
-  totalPorPagamento,
 } from "@/lib/checkout";
 import type {
   DadosContato,
@@ -79,10 +78,9 @@ export function CheckoutFlow() {
   const [freteId, setFreteId] = useState<string | null>(null);
   const [verTodosFretes, setVerTodosFretes] = useState(true);
   const [pagamento, setPagamento] = useState<FormaPagamento | null>(null);
-  const [parcelas, setParcelas] = useState(1);
   const [observacoes, setObservacoes] = useState("");
   const [erros, setErros] = useState<Record<string, string>>({});
-  const [enviando, setEnviando] = useState(false);
+  const [erroPagamento, setErroPagamento] = useState<string | null>(null);
 
   /* Sacola vazia não tem checkout. Só age depois da hidratação — antes disso
      `lines` está vazio por definição e mandaria todo mundo para o carrinho. */
@@ -92,10 +90,43 @@ export function CheckoutFlow() {
     if (hidratado && count === 0) router.replace("/carrinho");
   }, [count, hidratado, router]);
 
-  const fretes = useMemo(
-    () => (endereco ? cotarFrete(endereco.cep, subtotal) : []),
-    [endereco, subtotal],
+  const [fretes, setFretes] = useState<OpcaoFrete[]>([]);
+  const [cotandoFrete, setCotandoFrete] = useState(false);
+  const [erroFrete, setErroFrete] = useState<string | null>(null);
+
+  const itensCarrinho = useMemo(
+    () => lines.map((linha) => ({ slug: linha.product.slug, quantidade: linha.quantity })),
+    [lines],
   );
+
+  /* Cotação real roda no servidor: assim que o endereço fica pronto, buscamos
+     as opções no Melhor Envio. Endereço novo zera a escolha anterior. */
+  useEffect(() => {
+    if (!endereco) {
+      setFretes([]);
+      return;
+    }
+    let ativo = true;
+    setCotandoFrete(true);
+    setErroFrete(null);
+    setFreteId(null);
+    cotarFrete(endereco.cep, itensCarrinho)
+      .then((opcoes) => {
+        if (!ativo) return;
+        setFretes(opcoes);
+        if (opcoes.length === 0) setErroFrete("Nenhuma transportadora atende esse CEP.");
+      })
+      .catch(() => {
+        if (ativo) setErroFrete("Não foi possível calcular o frete. Tente novamente.");
+      })
+      .finally(() => {
+        if (ativo) setCotandoFrete(false);
+      });
+    return () => {
+      ativo = false;
+    };
+  }, [endereco, itensCarrinho]);
+
   const freteEscolhido = fretes.find((opcao) => opcao.id === freteId) ?? null;
   const total = subtotal + (freteEscolhido?.preco ?? 0);
 
@@ -162,15 +193,27 @@ export function CheckoutFlow() {
 
   /* ---------------------------------------------------- passo: pagamento */
 
-  const fazerPedido = () => {
+  /* Dados que o pagamento precisa. O preço não vai daqui — o servidor relê pelo
+     slug —, mas nome e total congelam para a tela de confirmação. */
+  const pedidoBase = useMemo<PedidoBase | null>(() => {
+    if (!freteEscolhido) return null;
+    return {
+      itens: lines.map(({ product, quantity }) => ({ slug: product.slug, quantidade: quantity })),
+      frete: freteEscolhido,
+      contato: { email: contato.email.trim() },
+      entrega,
+    };
+  }, [contato.email, entrega, freteEscolhido, lines]);
+
+  /* Chamado pelos painéis de cartão/Pix quando o Mercado Pago aprova. Guarda o
+     pedido para a confirmação e navega. O id do pagamento vai junto para a tela
+     poder reconferir o status pela API. */
+  const aoAprovar = (paymentId: number) => {
     if (!pagamento || !freteEscolhido || !endereco) return;
-    setEnviando(true);
 
     const pedido: PedidoConfirmado = {
       numero: gerarNumeroPedido(),
       email: contato.email.trim(),
-      /* Itens congelados: o pedido confirmado não pode mudar se o catálogo
-         mudar depois — mesma regra da sacola. */
       itens: lines.map(({ product, quantity, total: totalLinha }) => ({
         nome: product.name,
         quantidade: quantity,
@@ -178,17 +221,17 @@ export function CheckoutFlow() {
       })),
       subtotal,
       frete: freteEscolhido,
-      total: totalPorPagamento(total, pagamento),
+      total,
       pagamento,
       endereco,
       entrega,
+      paymentId,
     };
 
     try {
       window.sessionStorage.setItem(PEDIDO_STORAGE_KEY, JSON.stringify(pedido));
     } catch {
-      /* Modo privado ou cota cheia: a confirmação cai no estado genérico, mas
-         o pedido não pode falhar por causa disso. */
+      /* Modo privado ou cota cheia: a confirmação cai no estado genérico. */
     }
 
     router.push("/checkout/confirmacao");
@@ -205,20 +248,20 @@ export function CheckoutFlow() {
 
       <div className={styles.conteudo}>
         <div>
-          {fase === "pagamento" ? (
+          {fase === "pagamento" && pedidoBase ? (
             <SecaoPagamento
               endereco={endereco!}
               entrega={entrega}
               email={contato.email}
-              enviando={enviando}
+              erroPagamento={erroPagamento}
               frete={freteEscolhido!}
               observacoes={observacoes}
               onObservacoes={setObservacoes}
-              onPagamento={setPagamento}
-              onParcelas={setParcelas}
-              onSubmit={fazerPedido}
+              onPagamento={(forma) => { setPagamento(forma); setErroPagamento(null); }}
+              onAprovado={aoAprovar}
+              onErro={setErroPagamento}
               pagamento={pagamento}
-              parcelas={parcelas}
+              pedido={pedidoBase}
               total={total}
             />
           ) : (
@@ -281,6 +324,8 @@ export function CheckoutFlow() {
                 <SecaoEntrega
                   endereco={endereco!}
                   entrega={entrega}
+                  cotando={cotandoFrete}
+                  erroFrete={erroFrete}
                   erros={erros}
                   freteId={freteId}
                   fretes={fretesVisiveis}
@@ -314,8 +359,10 @@ export function CheckoutFlow() {
 /* ==================================================================== */
 
 function SecaoEntrega({
+  cotando,
   endereco,
   entrega,
+  erroFrete,
   erros,
   fretes,
   freteId,
@@ -327,8 +374,10 @@ function SecaoEntrega({
   onVerTodos,
   verTodos,
 }: {
+  cotando: boolean;
   endereco: Endereco;
   entrega: DadosEntrega;
+  erroFrete: string | null;
   erros: Record<string, string>;
   fretes: OpcaoFrete[];
   freteId: string | null;
@@ -343,29 +392,34 @@ function SecaoEntrega({
   return (
     <>
       <div className={styles.fretes}>
-        {fretes.map((opcao) => (
-          <button
-            className={[styles.frete, opcao.id === freteId ? styles.freteAtivo : ""].join(" ")}
-            key={opcao.id}
-            onClick={() => onFrete(opcao.id)}
-            type="button"
-          >
-            <span className={styles.freteMarca}>{opcao.id === freteId ? <CheckIcon /> : null}</span>
-            <span className={styles.freteCorpo}>
-              <span className={styles.freteNome}>
-                {opcao.transportadora}: {opcao.servico}
+        {cotando && fretes.length === 0 ? (
+          <p className={styles.freteInfo}>Calculando frete…</p>
+        ) : (
+          fretes.map((opcao) => (
+            <button
+              className={[styles.frete, opcao.id === freteId ? styles.freteAtivo : ""].join(" ")}
+              key={opcao.id}
+              onClick={() => onFrete(opcao.id)}
+              type="button"
+            >
+              <span className={styles.freteMarca}>{opcao.id === freteId ? <CheckIcon /> : null}</span>
+              <span className={styles.freteCorpo}>
+                <span className={styles.freteNome}>
+                  {opcao.transportadora}: {opcao.servico}
+                </span>
+                <span className={styles.fretePrazo}>
+                  Chega em {opcao.prazoDias} {opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}
+                </span>
               </span>
-              <span className={styles.fretePrazo}>
-                Chega em {opcao.prazoDias} {opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}
+              <span className={[styles.fretePreco, opcao.preco === 0 ? styles.freteGratis : ""].join(" ")}>
+                {opcao.preco === 0 ? "Grátis" : formatBRL(opcao.preco)}
               </span>
-            </span>
-            <span className={[styles.fretePreco, opcao.preco === 0 ? styles.freteGratis : ""].join(" ")}>
-              {opcao.preco === 0 ? "Grátis" : formatBRL(opcao.preco)}
-            </span>
-          </button>
-        ))}
+            </button>
+          ))
+        )}
       </div>
 
+      {erroFrete ? <p className={styles.campoErro}>{erroFrete}</p> : null}
       {erros.frete ? <p className={styles.campoErro}>{erros.frete}</p> : null}
 
       {!verTodos ? (
@@ -486,36 +540,35 @@ function SecaoEntrega({
 const FORMAS: { id: FormaPagamento; nome: string; Icone: typeof CardIcon }[] = [
   { id: "cartao", nome: "Cartão de crédito", Icone: CardIcon },
   { id: "pix", nome: "Pix", Icone: PixIcon },
-  { id: "boleto", nome: "Boleto bancário", Icone: BarcodeIcon },
 ];
 
 function SecaoPagamento({
   email,
   endereco,
   entrega,
-  enviando,
+  erroPagamento,
   frete,
   observacoes,
   onObservacoes,
   onPagamento,
-  onParcelas,
-  onSubmit,
+  onAprovado,
+  onErro,
   pagamento,
-  parcelas,
+  pedido,
   total,
 }: {
   email: string;
   endereco: Endereco;
   entrega: DadosEntrega;
-  enviando: boolean;
+  erroPagamento: string | null;
   frete: OpcaoFrete;
   observacoes: string;
   onObservacoes: (valor: string) => void;
   onPagamento: (forma: FormaPagamento) => void;
-  onParcelas: (valor: number) => void;
-  onSubmit: () => void;
+  onAprovado: (paymentId: number) => void;
+  onErro: (mensagem: string) => void;
   pagamento: FormaPagamento | null;
-  parcelas: number;
+  pedido: PedidoBase;
   total: number;
 }) {
   const [editandoObs, setEditandoObs] = useState(false);
@@ -583,54 +636,31 @@ function SecaoPagamento({
 
       <h2 className={styles.secaoTitulo}>Forma de pagamento</h2>
 
+      {erroPagamento ? <p className={styles.pagamentoErro} role="alert">{erroPagamento}</p> : null}
+
+      {/* Cada método revela o próprio painel logo abaixo da sua linha: cartão
+          tokeniza e mostra as parcelas reais; Pix gera o QR. O pedido só é
+          confirmado quando o Mercado Pago aprova. */}
       <div className={styles.pagamentos}>
-        {FORMAS.map(({ id, nome, Icone }) => {
-          const comDesconto = totalPorPagamento(total, id);
-          return (
+        {FORMAS.map(({ id, nome, Icone }) => (
+          <div key={id}>
             <button
               className={[styles.pagamento, pagamento === id ? styles.pagamentoAtivo : ""].join(" ")}
-              key={id}
               onClick={() => onPagamento(id)}
               type="button"
             >
               <Icone />
               <span className={styles.pagamentoNome}>{nome}</span>
-              {comDesconto < total ? (
-                <span className={[styles.selo, id === "pix" ? styles.seloPix : ""].join(" ")}>
-                  Pague {formatBRL(comDesconto)}
-                </span>
-              ) : null}
             </button>
-          );
-        })}
+            {pagamento === id && id === "cartao" ? (
+              <CartaoForm pedido={pedido} total={total} onAprovado={onAprovado} onErro={onErro} />
+            ) : null}
+            {pagamento === id && id === "pix" ? (
+              <PixPanel pedido={pedido} total={total} onAprovado={onAprovado} onErro={onErro} />
+            ) : null}
+          </div>
+        ))}
       </div>
-
-      {pagamento === "cartao" ? (
-        <div className={styles.parcelas}>
-          Em quantas vezes?
-          <select
-            aria-label="Número de parcelas"
-            onChange={(evento) => onParcelas(Number(evento.target.value))}
-            value={parcelas}
-          >
-            {Array.from({ length: PARCELAS_MAXIMAS }, (_, indice) => indice + 1).map((vezes) => (
-              <option key={vezes} value={vezes}>
-                {vezes}× de {formatBRL(total / vezes)} sem juros
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : null}
-
-      <button
-        className={styles.avancar}
-        disabled={!pagamento || enviando}
-        onClick={onSubmit}
-        style={{ marginTop: 24 }}
-        type="button"
-      >
-        {enviando ? "Processando…" : "Fazer pedido"}
-      </button>
     </>
   );
 }

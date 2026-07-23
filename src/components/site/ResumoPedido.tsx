@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDownIcon, PixIcon, TagIcon } from "./icons";
+import { ChevronDownIcon, TagIcon } from "./icons";
 import { useCart } from "./CartProvider";
 import { formatBRL } from "@/data/catalog";
-import { DESCONTO_PIX } from "@/lib/checkout";
+
 import type { OpcaoFrete } from "@/types/checkout";
 import styles from "./checkout.module.css";
 
@@ -75,11 +75,6 @@ export function ResumoPedido({ frete }: { frete?: OpcaoFrete | null }) {
           <span>Total</span>
           <strong>{formatBRL(total)}</strong>
         </div>
-
-        <p className={styles.resumoPix}>
-          <PixIcon />
-          {formatBRL(total * (1 - DESCONTO_PIX))} no Pix
-        </p>
 
         {pedindoCupom ? (
           <form
