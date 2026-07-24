@@ -29,12 +29,41 @@ const cepOrigem = digitos(process.env.MELHORENVIO_FROM_CEP ?? "");
 // O Melhor Envio exige um contato no User-Agent para identificar a integração.
 const contatoUA = process.env.MELHORENVIO_USER_AGENT_EMAIL ?? "contato@triomax.com.br";
 
-const caixaPadrao = {
-  weight: Number(process.env.MELHORENVIO_BOX_WEIGHT ?? 1),
+const caixa = {
   height: Number(process.env.MELHORENVIO_BOX_HEIGHT ?? 20),
   width: Number(process.env.MELHORENVIO_BOX_WIDTH ?? 20),
   length: Number(process.env.MELHORENVIO_BOX_LENGTH ?? 20),
+  /** Quantos produtos cabem em uma caixa. */
+  capacidade: Math.max(1, Number(process.env.MELHORENVIO_CAIXA_CAPACIDADE ?? 3)),
 };
+
+/** Peso de um produto, em kg — o catálogo não guarda peso. (Aceita o nome
+    antigo MELHORENVIO_BOX_WEIGHT por compatibilidade.) */
+const pesoProduto = Number(
+  process.env.MELHORENVIO_PESO_PRODUTO ?? process.env.MELHORENVIO_BOX_WEIGHT ?? 1,
+);
+
+/**
+ * Divide os produtos em caixas: cada uma leva até `capacidade` produtos e pesa
+ * (produtos nela × peso do produto). Ex.: 7 produtos, capacidade 3 → caixas de
+ * 3, 3 e 1. É por isso que 6 itens viram 2 caixas, e não 6 volumes soltos.
+ */
+function montarVolumes(totalProdutos: number) {
+  const numCaixas = Math.max(1, Math.ceil(totalProdutos / caixa.capacidade));
+  const volumes: { height: number; width: number; length: number; weight: number }[] = [];
+  let restante = totalProdutos;
+  for (let i = 0; i < numCaixas; i += 1) {
+    const naCaixa = Math.min(caixa.capacidade, restante);
+    restante -= naCaixa;
+    volumes.push({
+      height: caixa.height,
+      width: caixa.width,
+      length: caixa.length,
+      weight: Number((naCaixa * pesoProduto).toFixed(2)),
+    });
+  }
+  return volumes;
+}
 
 /** O que o cliente envia do carrinho: o preço/medidas NUNCA vêm daqui. */
 export type ItemFrete = { slug: string; quantidade: number };
@@ -69,26 +98,20 @@ export async function calcularFrete(
   const catalogo = await listarProdutos();
   const porSlug = new Map(catalogo.map((produto) => [produto.slug, produto]));
 
-  const produtos = itens
+  const linhas = itens
     .map(({ slug, quantidade }) => {
       const produto = porSlug.get(slug);
       if (!produto) return null;
       const qtd = Math.max(1, Math.min(9, Math.trunc(quantidade)));
-      return {
-        id: produto.slug,
-        width: caixaPadrao.width,
-        height: caixaPadrao.height,
-        length: caixaPadrao.length,
-        weight: caixaPadrao.weight,
-        insurance_value: produto.price,
-        quantity: qtd,
-      };
+      return { produto, qtd };
     })
-    .filter((p): p is NonNullable<typeof p> => p !== null);
+    .filter((l): l is NonNullable<typeof l> => l !== null);
 
-  if (produtos.length === 0) throw new Error("Nenhum item válido no carrinho.");
+  if (linhas.length === 0) throw new Error("Nenhum item válido no carrinho.");
 
-  const subtotal = produtos.reduce((s, p) => s + p.insurance_value * p.quantity, 0);
+  const totalProdutos = linhas.reduce((s, l) => s + l.qtd, 0);
+  const subtotal = linhas.reduce((s, l) => s + l.produto.price * l.qtd, 0);
+  const volumes = montarVolumes(totalProdutos);
 
   const resposta = await fetch(`${BASE}/api/v2/me/shipment/calculate`, {
     method: "POST",
@@ -101,7 +124,8 @@ export async function calcularFrete(
     body: JSON.stringify({
       from: { postal_code: cepOrigem },
       to: { postal_code: destino },
-      products: produtos,
+      volumes,
+      options: { insurance_value: Number(subtotal.toFixed(2)) },
     }),
   });
 
