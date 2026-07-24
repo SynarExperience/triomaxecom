@@ -143,7 +143,7 @@ export async function SiteFooter() {
             </li>
             <li>
               <StoreIcon />
-              <span>contato@triomax.com.br</span>
+              <span>contato@triomaxoficial.com.br</span>
             </li>
             <li>
               <PhoneIcon />

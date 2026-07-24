@@ -154,7 +154,7 @@ export function SiteHeaderClient({ itens }: { itens: ItemMenu[] }) {
                 <WhatsAppIcon />
                 Comprar pelo WhatsApp
               </a>
-              <a href="mailto:contato@triomax.com.br">
+              <a href="mailto:contato@triomaxoficial.com.br">
                 <HeadsetIcon />
                 Atendimento
               </a>

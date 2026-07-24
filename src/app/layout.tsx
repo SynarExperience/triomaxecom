@@ -32,6 +32,7 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://triomaxoficial.com.br"),
   title: "Triomax | Filamentos e Impressoras 3D",
   description:
     "Triomax — filamentos de alta performance e impressoras 3D. Experiência premium em impressão 3D.",
