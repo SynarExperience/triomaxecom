@@ -67,7 +67,20 @@ export async function POST(request: Request) {
 
   try {
     // Fonte da verdade: o status vem da API, não do corpo da notificação.
-    const pagamento = await consultarPagamento(dataId);
+    let pagamento;
+    try {
+      pagamento = await consultarPagamento(dataId);
+    } catch (erro) {
+      /* Pagamento que não existe (notificação de teste do painel, ou de outra
+         conta) nunca vai passar a existir: responder 200 encerra o assunto.
+         Um 500 aqui faria o Mercado Pago reenviar a notificação para sempre. */
+      if ((erro as { status?: number })?.status === 404) {
+        console.warn("[webhook mp] pagamento inexistente:", dataId);
+        return NextResponse.json({ ignorado: true });
+      }
+      throw erro;
+    }
+
     const status = statusDoMercadoPago(pagamento.status);
     const encontrado = await atualizarPagamento(dataId, status);
 
