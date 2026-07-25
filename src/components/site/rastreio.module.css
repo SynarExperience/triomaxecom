@@ -1,7 +1,32 @@
+/* Topo minimalista: só o logo, sem menu nem rodapé — página única. */
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoMark {
+  height: 30px;
+  width: auto;
+}
+
+.logoText {
+  height: 21px;
+  width: auto;
+}
+
 .wrap {
   max-width: 660px;
   margin: 0 auto;
-  padding: 48px 20px 80px;
+  padding: 56px 20px 88px;
 }
 
 .titulo {
