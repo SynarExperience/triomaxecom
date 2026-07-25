@@ -243,6 +243,24 @@
 }
 
 /* Selo de desconto: verde escuro para o texto branco alcançar 5:1. */
+/* Mesma caixa do selo, em cinza: esgotado é informação, não promoção, e disputar
+   destaque com o preço só atrapalharia quem está varrendo a vitrine. */
+.cardSoldOutBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #6b6b6b;
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .cardDiscount {
   position: absolute;
   top: 8px;
@@ -375,6 +393,26 @@
 .cardAction svg {
   width: 16px;
   height: 16px;
+}
+
+/* Ocupa a linha inteira que "Comprar" + carrinho ocupavam, para o card não
+   encolher e a grade não desalinhar quando um produto acaba. Sem cursor de
+   clique e sem fundo dourado: não é ação, é estado. */
+.cardSoldOut {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 43px;
+  border: 1px solid #e2e2e2;
+  border-radius: 30px;
+  background: transparent;
+  color: #6b6b6b;
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .cardActionIcon {

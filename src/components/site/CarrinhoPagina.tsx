@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCart } from "./CartProvider";
 import { TruckIcon } from "./icons";
-import { formatBRL, type Product } from "@/data/catalog";
+import { formatBRL, isSoldOut, type Product } from "@/data/catalog";
 import { FRETE_GRATIS_A_PARTIR_DE } from "@/lib/checkout";
 import styles from "./checkout.module.css";
 import carrinho from "./carrinho.module.css";
@@ -21,9 +21,13 @@ export function CarrinhoPagina({ sugestoes }: { sugestoes: Product[] }) {
 
   const faltaParaFreteGratis = FRETE_GRATIS_A_PARTIR_DE - subtotal;
 
-  /* Não sugerimos o que já está na sacola: ocupa espaço e não converte. */
+  /* Não sugerimos o que já está na sacola: ocupa espaço e não converte. Nem o
+     que está esgotado — ali o único botão é "Comprar", e sugerir o que não dá
+     para comprar é pior do que não sugerir nada. */
   const naSacola = new Set(lines.map((linha) => linha.product.slug));
-  const vitrine = sugestoes.filter((produto) => !naSacola.has(produto.slug)).slice(0, 6);
+  const vitrine = sugestoes
+    .filter((produto) => !naSacola.has(produto.slug) && !isSoldOut(produto))
+    .slice(0, 6);
 
   return (
     <div className={styles.pagina}>

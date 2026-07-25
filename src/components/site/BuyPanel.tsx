@@ -1,9 +1,11 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
-import type { Product } from "@/data/catalog";
+import { formatBRL, isSoldOut, type Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
 import { CartIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
+import { cepValido, cotarFrete, mascaraCep, previsaoEntrega } from "@/lib/checkout";
+import type { OpcaoFrete } from "@/types/checkout";
 import pageStyles from "./pages.module.css";
 
 /* Mesmo número do rodapé e da sacola — o atacado cai no mesmo atendimento. */
@@ -61,7 +63,11 @@ function ProductGallery({ product }: { product: Product }) {
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
       >
-        {product.badge ? <span className={pageStyles.pdpBadge}>{product.badge}</span> : null}
+        {isSoldOut(product) ? (
+          <span className={pageStyles.pdpSoldOutBadge}>Esgotado</span>
+        ) : product.badge ? (
+          <span className={pageStyles.pdpBadge}>{product.badge}</span>
+        ) : null}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt={foto?.alt ?? product.name}
@@ -98,6 +104,34 @@ function ProductGallery({ product }: { product: Product }) {
 export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) {
   const [quantity, setQuantity] = useState(1);
   const { addItem } = useCart();
+  const esgotado = isSoldOut(product);
+
+  /* Cotação de frete na PDP: reusa a mesma rota do checkout, com este produto
+     na quantidade escolhida. */
+  const [cep, setCep] = useState("");
+  const [cotando, setCotando] = useState(false);
+  const [fretes, setFretes] = useState<OpcaoFrete[] | null>(null);
+  const [erroFrete, setErroFrete] = useState<string | null>(null);
+
+  const calcularFrete = async () => {
+    if (!cepValido(cep)) {
+      setErroFrete("Digite um CEP válido.");
+      setFretes(null);
+      return;
+    }
+    setCotando(true);
+    setErroFrete(null);
+    try {
+      const opcoes = await cotarFrete(cep, [{ slug: product.slug, quantidade: quantity }]);
+      setFretes(opcoes);
+      if (opcoes.length === 0) setErroFrete("Nenhuma transportadora atende esse CEP.");
+    } catch {
+      setErroFrete("Não foi possível calcular o frete. Tente novamente.");
+      setFretes(null);
+    } finally {
+      setCotando(false);
+    }
+  };
 
   return (
     <div className={pageStyles.pdpLayout}>
@@ -107,34 +141,44 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
         {infoTop}
 
         {/* Stepper e botão dividem a linha, como na referência: quantidade à
-            esquerda, ação de compra ocupando o resto. */}
-        <div className={pageStyles.buyRow}>
-          <div aria-label="Quantidade" className={pageStyles.qty}>
+            esquerda, ação de compra ocupando o resto. Esgotado some com os
+            dois: escolher quantidade de algo que não dá para comprar é convite
+            para frustração. O atacado logo abaixo continua, porque é onde a
+            pessoa pergunta quando volta. */}
+        {esgotado ? (
+          <p className={pageStyles.soldOutNotice}>
+            Esgotado
+            <span>Sem unidades disponíveis no momento.</span>
+          </p>
+        ) : (
+          <div className={pageStyles.buyRow}>
+            <div aria-label="Quantidade" className={pageStyles.qty}>
+              <button
+                aria-label="Diminuir quantidade"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                type="button"
+              >
+                −
+              </button>
+              <span aria-live="polite">{quantity}</span>
+              <button
+                aria-label="Aumentar quantidade"
+                onClick={() => setQuantity((q) => Math.min(9, q + 1))}
+                type="button"
+              >
+                +
+              </button>
+            </div>
             <button
-              aria-label="Diminuir quantidade"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              className={pageStyles.buyButton}
+              onClick={() => addItem(product, quantity)}
               type="button"
             >
-              −
-            </button>
-            <span aria-live="polite">{quantity}</span>
-            <button
-              aria-label="Aumentar quantidade"
-              onClick={() => setQuantity((q) => Math.min(9, q + 1))}
-              type="button"
-            >
-              +
+              <CartIcon />
+              Adicionar ao carrinho
             </button>
           </div>
-          <button
-            className={pageStyles.buyButton}
-            onClick={() => addItem(product, quantity)}
-            type="button"
-          >
-            <CartIcon />
-            Adicionar ao carrinho
-          </button>
-        </div>
+        )}
 
         <a
           className={pageStyles.wholesaleButton}
@@ -158,7 +202,10 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
           <form
             aria-label="Calcular frete"
             className={pageStyles.shippingBody}
-            onSubmit={(event) => event.preventDefault()}
+            onSubmit={(event) => {
+              event.preventDefault();
+              calcularFrete();
+            }}
           >
             <label
               htmlFor="cep"
@@ -173,11 +220,45 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
                 inputMode="numeric"
                 name="cep"
                 placeholder="Seu CEP"
+                value={cep}
+                onChange={(event) => {
+                  setCep(mascaraCep(event.target.value));
+                  setErroFrete(null);
+                }}
               />
-              <button className={pageStyles.shippingCalc} type="submit">
-                Calcular
+              <button className={pageStyles.shippingCalc} type="submit" disabled={cotando}>
+                {cotando ? "Calculando…" : "Calcular"}
               </button>
             </div>
+
+            {erroFrete ? <p className={pageStyles.shippingError}>{erroFrete}</p> : null}
+
+            {fretes && fretes.length > 0 ? (
+              <ul className={pageStyles.shippingOptions}>
+                {fretes.map((opcao) => (
+                  <li key={opcao.id} className={pageStyles.shippingOption}>
+                    <div>
+                      <span className={pageStyles.shippingOptionName}>
+                        {opcao.transportadora} {opcao.servico}
+                      </span>
+                      <span className={pageStyles.shippingOptionEta}>
+                        Chega {previsaoEntrega(opcao.prazoDias)}
+                      </span>
+                    </div>
+                    <span
+                      className={
+                        opcao.preco === 0
+                          ? `${pageStyles.shippingOptionPrice} ${pageStyles.shippingOptionFree}`
+                          : pageStyles.shippingOptionPrice
+                      }
+                    >
+                      {opcao.preco === 0 ? "Grátis" : formatBRL(opcao.preco)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
             <a
               className={pageStyles.shippingHelp}
               href="https://buscacepinter.correios.com.br/app/endereco/index.php"

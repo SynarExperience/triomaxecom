@@ -1,6 +1,6 @@
 "use client";
 
-import { formatBRL, installment, type Product } from "@/data/catalog";
+import { formatBRL, installment, isSoldOut, type Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
 import { CardIcon, CartIcon, WhatsAppIcon } from "./icons";
 import styles from "./store.module.css";
@@ -15,6 +15,7 @@ export function ProductCard({ product }: { product: Product }) {
   const discount = product.compareAt
     ? Math.round((1 - product.price / product.compareAt) * 100)
     : 0;
+  const esgotado = isSoldOut(product);
 
   return (
     /* O card não é um <a> inteiro: o botão do carrinho precisa ser um <button>
@@ -22,8 +23,16 @@ export function ProductCard({ product }: { product: Product }) {
        PDP — nome e "Comprar" — são links próprios. */
     <article className={styles.card}>
       <div className={styles.cardMedia}>
-        {product.badge ? <span className={styles.cardBadge}>{product.badge}</span> : null}
-        {discount > 0 ? <span className={styles.cardDiscount}>{discount}% off</span> : null}
+        {/* Esgotado toma o lugar do selo: os dois ficam no mesmo canto, e saber
+            que acabou importa mais do que saber que é lançamento. */}
+        {esgotado ? (
+          <span className={styles.cardSoldOutBadge}>Esgotado</span>
+        ) : product.badge ? (
+          <span className={styles.cardBadge}>{product.badge}</span>
+        ) : null}
+        {discount > 0 && !esgotado ? (
+          <span className={styles.cardDiscount}>{discount}% off</span>
+        ) : null}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img alt={product.name} className="productPhoto" loading="lazy" src={product.image} />
         {/* Passar o mouse revela a segunda foto por cima da principal — só quando
@@ -66,17 +75,26 @@ export function ProductCard({ product }: { product: Product }) {
             produto — quem clica ali quer ver o item —, e só o quadrado do
             carrinho adiciona, sem tirar a pessoa da vitrine. */}
         <div className={styles.cardActions}>
-          <a className={styles.cardAction} href={`/produto/${product.slug}`}>
-            Comprar
-          </a>
-          <button
-            aria-label={`Adicionar ${product.name} ao carrinho`}
-            className={styles.cardActionIcon}
-            onClick={() => addItem(product)}
-            type="button"
-          >
-            <CartIcon />
-          </button>
+          {esgotado ? (
+            /* Sem "Comprar" e sem o quadrado do carrinho: oferecer a ação e
+               depois recusar a compra é pior do que não oferecer. A tarja é um
+               <span>, não um botão desabilitado, porque não há o que clicar. */
+            <span className={styles.cardSoldOut}>Esgotado</span>
+          ) : (
+            <>
+              <a className={styles.cardAction} href={`/produto/${product.slug}`}>
+                Comprar
+              </a>
+              <button
+                aria-label={`Adicionar ${product.name} ao carrinho`}
+                className={styles.cardActionIcon}
+                onClick={() => addItem(product)}
+                type="button"
+              >
+                <CartIcon />
+              </button>
+            </>
+          )}
         </div>
 
         <a

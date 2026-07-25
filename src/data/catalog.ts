@@ -27,6 +27,10 @@ export type Product = {
    */
   images: ProductImage[];
   short: string;
+  /** Título/descrição para o <head> (SEO), vindos do painel. Ausentes, a
+      página usa nome e `short`. */
+  seoTitle?: string;
+  seoDescription?: string;
   description: string[];
   specs: [string, string][];
   /**
@@ -35,7 +39,17 @@ export type Product = {
    * Vazia quando a taxonomia ainda não foi aplicada no banco.
    */
   categories: string[];
+  /**
+   * Quantidade em estoque. `null` quando o produto não tem linha de estoque no
+   * banco — que é diferente de zero: zero é "acabou", nulo é "não controlado".
+   * Só o zero esgota o produto na loja; o nulo mantém a compra liberada, senão
+   * um cadastro incompleto tiraria o item de venda sem ninguém pedir.
+   */
+  stock: number | null;
 };
+
+/** Produto sem unidade disponível: a loja troca as ações de compra por "Esgotado". */
+export const isSoldOut = (product: Product) => product.stock === 0;
 
 export const formatBRL = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

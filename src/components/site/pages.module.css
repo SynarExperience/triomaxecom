@@ -563,6 +563,53 @@
   text-transform: uppercase;
 }
 
+/* Mesma tarja do selo, em cinza — ver `.cardSoldOutBadge` no card. */
+.pdpSoldOutBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 7px 13px;
+  background: #6b6b6b;
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/*
+ * Ocupa o lugar do stepper e do botão de comprar. Mesma altura da linha que
+ * substitui (56px do `.buyButton` mais a margem), para o resto da coluna não
+ * saltar quando o produto acaba.
+ */
+.soldOutNotice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border: 1px solid #e2e2e2;
+  border-radius: 999px;
+  color: #6b6b6b;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.soldOutNotice span {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
 .pdpCategory {
   margin: 0 0 8px;
   color: var(--muted);
@@ -929,6 +976,63 @@
 
 .shippingCalc:hover {
   opacity: 0.85;
+}
+
+.shippingCalc:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.shippingError {
+  margin-top: 12px;
+  color: #c0392b;
+  font-size: 13px;
+}
+
+.shippingOptions {
+  list-style: none;
+  margin: 14px 0 4px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.shippingOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.shippingOptionName {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.shippingOptionEta {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.shippingOptionPrice {
+  flex: 0 0 auto;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.shippingOptionFree {
+  color: var(--price-pix);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .shippingHelp {

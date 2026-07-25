@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const product = await buscarProduto(slug);
   if (!product) return { title: "Produto não encontrado | Triomax" };
   return {
-    title: `${product.name} | Triomax`,
-    description: product.short,
+    title: product.seoTitle || `${product.name} | Triomax`,
+    description: product.seoDescription || product.short,
   };
 }
 

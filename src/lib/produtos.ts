@@ -7,9 +7,13 @@ import type { Product } from "@/data/catalog";
  * de UI seguem iguais e só a origem do dado mudou.
  */
 
+/* `estoque` entra em todas as consultas porque é ele que decide se o card mostra
+   o botão de comprar ou a tarja de esgotado — e isso vale na home, na listagem e
+   na PDP. A tabela existe desde a primeira migração, então o embed não precisa
+   do tratamento de "tabela ausente" que a galeria e as categorias exigem. */
 /** Colunas que compõem um `Product`. Explícitas para não trafegar campo à toa. */
 const COLUNAS =
-  "slug, nome, categoria, linha, cor, cor_hex, selo, preco, preco_comparativo, imagem, resumo, descricao, especificacoes";
+  "slug, nome, categoria, linha, cor, cor_hex, selo, preco, preco_comparativo, imagem, resumo, descricao, especificacoes, seo_titulo, seo_descricao, estoque(quantidade)";
 
 /* As categorias vêm no mesmo embed da listagem porque é ela que filtra por
    elas — buscar depois, produto a produto, seria uma consulta por card. A
@@ -51,6 +55,9 @@ type LinhaProduto = {
   resumo: string | null;
   descricao: string[] | null;
   especificacoes: [string, string][] | null;
+  /* Vem como lista porque é embed de tabela filha, mas o banco garante no
+     máximo uma linha por produto (índice único em `estoque.produto_id`). */
+  estoque?: { quantidade: number }[] | null;
   /** Ausente nas consultas sem embed e nos produtos que ainda não têm galeria. */
   fotos_produto?: LinhaFoto[] | null;
   /** Ausente nas consultas sem embed e nos produtos sem categoria. */
@@ -81,6 +88,9 @@ function paraProduto(l: LinhaProduto): Product {
     image: l.imagem ?? "",
     images: fotos.length > 0 ? fotos : unica,
     short: l.resumo ?? "",
+    /* SEO preenchido no painel; ausente, o <head> cai no nome/resumo. */
+    ...(l.seo_titulo ? { seoTitle: l.seo_titulo as string } : {}),
+    ...(l.seo_descricao ? { seoDescription: l.seo_descricao as string } : {}),
     description: l.descricao ?? [],
     specs: l.especificacoes ?? [],
     /* Só os slugs: a listagem compara com o da URL, e o nome de exibição ela
@@ -88,6 +98,9 @@ function paraProduto(l: LinhaProduto): Product {
     categories: (l.produtos_categorias ?? [])
       .map((v) => v.categorias?.slug)
       .filter((s): s is string => Boolean(s)),
+    /* Produto sem linha de estoque fica `null` — "não controlado", e não
+       "esgotado". Ver `isSoldOut` em `@/data/catalog`. */
+    stock: l.estoque?.[0] ? Number(l.estoque[0].quantidade) : null,
   };
 }
 
