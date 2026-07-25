@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import type { Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
 import { CartIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
@@ -27,14 +27,46 @@ function ProductGallery({ product }: { product: Product }) {
      principal em vez de deixar a moldura vazia. */
   const foto = fotos[ativa] ?? fotos[0];
 
+  /*
+   * Arrastar a foto para o lado troca de slide no celular — mesmo gesto do hero.
+   * Só conta como horizontal quando anda mais em X que em Y, senão rolar a
+   * página verticalmente com o dedo trocaria a foto. O índice é grampeado nas
+   * pontas (sem dar a volta), que é o que se espera de uma galeria.
+   */
+  const dragStart = useRef<{ x: number; y: number } | null>(null);
+
+  const handlePointerDown = (event: React.PointerEvent) => {
+    dragStart.current = { x: event.clientX, y: event.clientY };
+  };
+
+  const handlePointerUp = (event: React.PointerEvent) => {
+    const start = dragStart.current;
+    dragStart.current = null;
+    if (!start || fotos.length < 2) return;
+
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (Math.abs(dx) < 45 || Math.abs(dx) <= Math.abs(dy)) return;
+
+    setAtiva((atual) => {
+      const proximo = atual + (dx < 0 ? 1 : -1);
+      return Math.min(fotos.length - 1, Math.max(0, proximo));
+    });
+  };
+
   return (
     <div className={pageStyles.pdpGallery}>
-      <figure className={pageStyles.pdpMedia}>
+      <figure
+        className={pageStyles.pdpMedia}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+      >
         {product.badge ? <span className={pageStyles.pdpBadge}>{product.badge}</span> : null}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt={foto?.alt ?? product.name}
           className="productPhoto"
+          draggable={false}
           /* Sem `lazy`: esta é a LCP da página. */
           src={foto?.url ?? product.image}
         />

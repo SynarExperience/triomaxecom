@@ -461,6 +461,11 @@
   top: 174px;
   display: grid;
   gap: 10px;
+  /* Item de grid com `min-width: auto` não encolhe abaixo do próprio conteúdo:
+     a foto e a tira de miniaturas seguravam a coluna em ~356px e vazavam a
+     largura da tela nos celulares mais estreitos (< ~371px). O `0` deixa a
+     coluna acompanhar o viewport. */
+  min-width: 0;
 }
 
 .pdpMedia {
@@ -474,6 +479,10 @@
   background: var(--paper);
   place-items: center;
   isolation: isolate;
+  /* O arrasto horizontal é nosso (troca de foto); o vertical continua rolando a
+     página. `min-width: 0` impede a foto de segurar a largura da coluna. */
+  min-width: 0;
+  touch-action: pan-y;
 }
 
 .pdpMedia img {
@@ -481,6 +490,10 @@
   height: 84%;
   object-fit: contain;
   transition: transform 700ms var(--ease-out), opacity 300ms ease;
+  /* Arrastar a foto para trocar de slide não pode virar seleção nem o
+     "fantasma" de arrastar imagem nativo do navegador. */
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .pdpMedia:hover img {
@@ -1069,7 +1082,9 @@
   }
 
   .pdpLayout {
-    grid-template-columns: 1fr;
+    /* `minmax(0, 1fr)`, não `1fr`: a faixa `1fr` tem mínimo `auto` e não deixava
+       a galeria encolher, empurrando a página para além da largura da tela. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 26px;
   }
 
