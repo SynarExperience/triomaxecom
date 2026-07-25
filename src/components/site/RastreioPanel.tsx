@@ -103,13 +103,19 @@ function Resultado({ dados }: { dados: RastreioPedido }) {
         {dados.etapas.map((etapa, indice) => {
           const proxima = dados.etapas[indice + 1];
           const ultima = indice === dados.etapas.length - 1;
+          // O último passo (Entregue), concluído, ganha o verde de sucesso.
+          const dotClasse = !etapa.concluida
+            ? ""
+            : ultima && dados.entregue
+              ? styles.dotEntregue
+              : styles.dotConcluida;
           return (
             <div
               key={etapa.titulo}
               className={`${styles.etapa} ${etapa.concluida ? "" : styles.etapaPendente}`}
             >
               <div className={styles.marcador}>
-                <span className={`${styles.dot} ${etapa.concluida ? styles.dotConcluida : ""}`} />
+                <span className={`${styles.dot} ${dotClasse}`} />
                 {!ultima ? (
                   <span
                     className={`${styles.linha} ${

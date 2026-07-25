@@ -1,75 +1,93 @@
 .wrap {
-  max-width: 640px;
+  max-width: 660px;
   margin: 0 auto;
-  padding: 40px 20px 72px;
+  padding: 48px 20px 80px;
 }
 
 .titulo {
-  font-size: 26px;
+  font-family: var(--font-heading);
+  font-size: 30px;
   font-weight: 700;
-  color: var(--ink, #1a1a1a);
-  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 8px;
 }
 
 .subtitulo {
-  color: var(--ink-soft, #666);
+  font-family: var(--font-sans);
+  color: var(--muted);
   font-size: 15px;
-  margin-bottom: 24px;
+  line-height: 1.5;
+  margin-bottom: 28px;
 }
+
+/* -------------------------------------------------------------------- form */
 
 .form {
   display: flex;
   gap: 10px;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
 .input {
   flex: 1;
-  height: 48px;
+  height: 54px;
   padding: 0 16px;
-  border: 1px solid var(--line-strong, #d5d5d5);
-  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  font-family: var(--font-sans);
   font-size: 16px; /* 16px evita o zoom automático no iOS */
-  background: var(--paper, #fff);
-  color: var(--ink, #1a1a1a);
+  background: var(--paper);
+  color: var(--ink);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  transition: border-color 160ms ease;
+}
+
+.input::placeholder {
+  color: var(--muted);
+  letter-spacing: 0.02em;
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--brand, #128a3f);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand, #128a3f) 18%, transparent);
+  border-color: var(--ink);
 }
 
 .botao {
-  height: 48px;
-  padding: 0 22px;
-  border: none;
-  border-radius: 10px;
-  background: var(--brand, #128a3f);
-  color: #fff;
-  font-size: 15px;
+  height: 54px;
+  padding: 0 26px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 14px;
   font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
-  transition: filter 140ms ease;
+  transition: opacity 160ms ease;
 }
 
 .botao:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: default;
 }
 
 .botao:not(:disabled):hover {
-  filter: brightness(1.05);
+  opacity: 0.85;
 }
 
+/* ---------------------------------------------------------------- resultado */
+
 .resultado {
-  border: 1px solid var(--line, #ececec);
+  border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 22px;
-  background: var(--paper, #fff);
+  padding: 26px;
+  background: var(--paper);
+  box-shadow: var(--shadow-card);
 }
 
 .cabecalho {
@@ -78,40 +96,45 @@
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  border-bottom: 1px solid var(--line, #ececec);
-  padding-bottom: 16px;
-  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 18px;
+  margin-bottom: 24px;
 }
 
 .pedido {
+  font-family: var(--font-sans);
   font-size: 15px;
-  color: var(--ink-soft, #666);
+  color: var(--muted);
 }
 
 .pedido strong {
-  color: var(--ink, #1a1a1a);
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .badge {
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-size: 12px;
   font-weight: 700;
-  padding: 6px 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 7px 14px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--brand, #128a3f) 12%, transparent);
-  color: var(--brand, #128a3f);
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .badgeEntregue {
-  background: color-mix(in srgb, #128a3f 14%, transparent);
-  color: #0f7a37;
+  background: var(--price-pix);
+  color: var(--paper);
 }
 
 .badgeCancelado {
-  background: color-mix(in srgb, #d64545 14%, transparent);
-  color: #c0392b;
+  background: #c0392b;
+  color: var(--paper);
 }
 
-/* -------------------------------------------------------------- timeline */
+/* ----------------------------------------------------------------- timeline */
 
 .timeline {
   display: flex;
@@ -120,8 +143,8 @@
 
 .etapa {
   display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 12px;
+  grid-template-columns: 26px 1fr;
+  gap: 14px;
 }
 
 .marcador {
@@ -131,34 +154,39 @@
 }
 
 .dot {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  border: 2px solid var(--line-strong, #cfcfcf);
-  background: var(--paper, #fff);
-  margin-top: 3px;
+  border: 2px solid var(--line-strong);
+  background: var(--paper);
+  margin-top: 2px;
   flex-shrink: 0;
 }
 
 .dotConcluida {
-  border-color: var(--brand, #128a3f);
-  background: var(--brand, #128a3f);
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.dotEntregue {
+  border-color: var(--price-pix);
+  background: var(--price-pix);
 }
 
 .linha {
   width: 2px;
   flex: 1;
-  background: var(--line, #ececec);
+  background: var(--line);
   margin: 4px 0;
-  min-height: 20px;
+  min-height: 22px;
 }
 
 .linhaConcluida {
-  background: var(--brand, #128a3f);
+  background: var(--ink);
 }
 
 .corpoEtapa {
-  padding-bottom: 20px;
+  padding-bottom: 22px;
 }
 
 .etapa:last-child .corpoEtapa {
@@ -166,26 +194,30 @@
 }
 
 .etapaTitulo {
+  font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 600;
-  color: var(--ink, #1a1a1a);
+  color: var(--ink);
 }
 
 .etapaPendente .etapaTitulo {
-  color: var(--ink-soft, #999);
+  color: var(--muted);
   font-weight: 500;
 }
 
 .etapaData {
+  font-family: var(--font-sans);
   font-size: 13px;
-  color: var(--ink-soft, #666);
-  margin-top: 2px;
+  color: var(--muted);
+  margin-top: 3px;
 }
 
+/* -------------------------------------------------------------------- rodapé */
+
 .rodape {
-  margin-top: 22px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line, #ececec);
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -194,38 +226,50 @@
 }
 
 .codigo {
+  font-family: var(--font-sans);
   font-size: 13px;
-  color: var(--ink-soft, #666);
+  color: var(--muted);
 }
 
 .codigo strong {
-  color: var(--ink, #1a1a1a);
+  color: var(--ink);
+  font-weight: 600;
   letter-spacing: 0.03em;
 }
 
 .linkCompleto {
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-size: 13px;
   font-weight: 600;
-  color: var(--brand, #128a3f);
+  letter-spacing: 0.03em;
+  color: var(--ink);
   text-decoration: none;
+  border-bottom: 1.5px solid var(--gold-line);
+  padding-bottom: 1px;
+  transition: color 140ms ease;
 }
 
 .linkCompleto:hover {
-  text-decoration: underline;
+  color: var(--gold);
 }
 
+/* --------------------------------------------------------------- vazio/erro */
+
 .vazio {
-  border: 1px dashed var(--line-strong, #d5d5d5);
+  border: 1px dashed var(--line-strong);
   border-radius: 14px;
-  padding: 28px 22px;
+  padding: 32px 24px;
   text-align: center;
-  color: var(--ink-soft, #666);
+  color: var(--muted);
+  font-family: var(--font-sans);
   font-size: 15px;
+  line-height: 1.5;
 }
 
 .erro {
   color: #c0392b;
+  font-family: var(--font-sans);
   font-size: 14px;
-  margin-top: -14px;
-  margin-bottom: 20px;
+  margin-top: -18px;
+  margin-bottom: 24px;
 }
