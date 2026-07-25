@@ -82,9 +82,12 @@ async function montarPedido(dados: DadosBase) {
   // Centavos redondos: o Mercado Pago rejeita transaction_amount com dízima.
   const total = Math.round((subtotal + dados.frete.preco) * 100) / 100;
 
-  const descricao = linhas.length === 1
+  // Sempre prefixado com "Site Triomax": é o texto que aparece na Atividade do
+  // Mercado Pago, e o pedido de 1 item não pode sair sem identificar a loja.
+  const itensTexto = linhas.length === 1
     ? `${linhas[0].quantidade}x ${linhas[0].produto.name}`
-    : `Pedido Triomax — ${linhas.reduce((n, l) => n + l.quantidade, 0)} itens`;
+    : `${linhas.reduce((n, l) => n + l.quantidade, 0)} itens`;
+  const descricao = `Site Triomax • ${itensTexto}`;
 
   const documento = digitos(dados.entrega.documento);
   const payer = {
@@ -155,6 +158,8 @@ export async function criarPagamentoPix(dados: DadosPix): Promise<ResultadoPagam
     body: {
       transaction_amount: total,
       description: descricao,
+      // Aparece na fatura do cliente (relevante no cartão; ignorado no Pix).
+      statement_descriptor: "SITE TRIOMAX",
       payment_method_id: "pix",
       payer,
       ...(notificationUrl ? { notification_url: notificationUrl } : {}),
@@ -200,6 +205,7 @@ export async function criarPagamentoCartao(dados: DadosCartao): Promise<Resultad
       transaction_amount: total,
       token: dados.token,
       description: descricao,
+      statement_descriptor: "SITE TRIOMAX",
       installments: Math.max(1, Math.min(12, Math.trunc(dados.parcelas))),
       payment_method_id: dados.paymentMethodId,
       // O SDK tipa issuer_id como número; o cliente manda string.
