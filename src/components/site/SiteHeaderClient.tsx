@@ -158,7 +158,7 @@ export function SiteHeaderClient({ itens }: { itens: ItemMenu[] }) {
                 <HeadsetIcon />
                 Atendimento
               </a>
-              <a href="#rastrear-pedido">
+              <a href="/rastreio">
                 <TrackingIcon />
                 Rastrear pedido
               </a>
@@ -172,7 +172,7 @@ export function SiteHeaderClient({ itens }: { itens: ItemMenu[] }) {
                 <StoreIcon />
                 Seja revendedor
               </a>
-              <a href="#troca-facil">
+              <a href="/pagina/trocas-e-devolucoes">
                 <RefreshIcon />
                 Troca fácil
               </a>

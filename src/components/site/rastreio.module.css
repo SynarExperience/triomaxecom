@@ -1,0 +1,231 @@
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 20px 72px;
+}
+
+.titulo {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink, #1a1a1a);
+  margin-bottom: 6px;
+}
+
+.subtitulo {
+  color: var(--ink-soft, #666);
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.input {
+  flex: 1;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--line-strong, #d5d5d5);
+  border-radius: 10px;
+  font-size: 16px; /* 16px evita o zoom automático no iOS */
+  background: var(--paper, #fff);
+  color: var(--ink, #1a1a1a);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--brand, #128a3f);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand, #128a3f) 18%, transparent);
+}
+
+.botao {
+  height: 48px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 10px;
+  background: var(--brand, #128a3f);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter 140ms ease;
+}
+
+.botao:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.botao:not(:disabled):hover {
+  filter: brightness(1.05);
+}
+
+.resultado {
+  border: 1px solid var(--line, #ececec);
+  border-radius: 14px;
+  padding: 22px;
+  background: var(--paper, #fff);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line, #ececec);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.pedido {
+  font-size: 15px;
+  color: var(--ink-soft, #666);
+}
+
+.pedido strong {
+  color: var(--ink, #1a1a1a);
+}
+
+.badge {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand, #128a3f) 12%, transparent);
+  color: var(--brand, #128a3f);
+}
+
+.badgeEntregue {
+  background: color-mix(in srgb, #128a3f 14%, transparent);
+  color: #0f7a37;
+}
+
+.badgeCancelado {
+  background: color-mix(in srgb, #d64545 14%, transparent);
+  color: #c0392b;
+}
+
+/* -------------------------------------------------------------- timeline */
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.etapa {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+}
+
+.marcador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong, #cfcfcf);
+  background: var(--paper, #fff);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.dotConcluida {
+  border-color: var(--brand, #128a3f);
+  background: var(--brand, #128a3f);
+}
+
+.linha {
+  width: 2px;
+  flex: 1;
+  background: var(--line, #ececec);
+  margin: 4px 0;
+  min-height: 20px;
+}
+
+.linhaConcluida {
+  background: var(--brand, #128a3f);
+}
+
+.corpoEtapa {
+  padding-bottom: 20px;
+}
+
+.etapa:last-child .corpoEtapa {
+  padding-bottom: 0;
+}
+
+.etapaTitulo {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink, #1a1a1a);
+}
+
+.etapaPendente .etapaTitulo {
+  color: var(--ink-soft, #999);
+  font-weight: 500;
+}
+
+.etapaData {
+  font-size: 13px;
+  color: var(--ink-soft, #666);
+  margin-top: 2px;
+}
+
+.rodape {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line, #ececec);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.codigo {
+  font-size: 13px;
+  color: var(--ink-soft, #666);
+}
+
+.codigo strong {
+  color: var(--ink, #1a1a1a);
+  letter-spacing: 0.03em;
+}
+
+.linkCompleto {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand, #128a3f);
+  text-decoration: none;
+}
+
+.linkCompleto:hover {
+  text-decoration: underline;
+}
+
+.vazio {
+  border: 1px dashed var(--line-strong, #d5d5d5);
+  border-radius: 14px;
+  padding: 28px 22px;
+  text-align: center;
+  color: var(--ink-soft, #666);
+  font-size: 15px;
+}
+
+.erro {
+  color: #c0392b;
+  font-size: 14px;
+  margin-top: -14px;
+  margin-bottom: 20px;
+}

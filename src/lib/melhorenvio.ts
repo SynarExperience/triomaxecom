@@ -155,3 +155,52 @@ export async function calcularFrete(
 
   return opcoes;
 }
+
+/** Ciclo de vida de um envio, como o Melhor Envio devolve no rastreio. */
+export type RastreioMelhorEnvio = {
+  status: string;
+  tracking: string | null;
+  melhorenvioTracking: string | null;
+  createdAt: string | null;
+  paidAt: string | null;
+  generatedAt: string | null;
+  postedAt: string | null;
+  deliveredAt: string | null;
+  canceledAt: string | null;
+};
+
+/**
+ * Rastreia um envio pelo id do Melhor Envio (o `melhorenvio_order_id` gravado
+ * ao emitir a etiqueta). Devolve o ciclo de vida, ou `null` se o id não existe.
+ */
+export async function rastrearMelhorEnvio(orderId: string): Promise<RastreioMelhorEnvio | null> {
+  const resposta = await fetch(`${BASE}/api/v2/me/shipment/tracking`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      "User-Agent": `Triomax (${contatoUA})`,
+    },
+    body: JSON.stringify({ orders: [orderId] }),
+  });
+
+  if (!resposta.ok) return null;
+
+  const dados = (await resposta.json()) as Record<string, Record<string, unknown>>;
+  const info = dados[orderId];
+  if (!info || typeof info !== "object") return null;
+
+  const str = (v: unknown) => (typeof v === "string" ? v : null);
+  return {
+    status: str(info.status) ?? "pending",
+    tracking: str(info.tracking),
+    melhorenvioTracking: str(info.melhorenvio_tracking),
+    createdAt: str(info.created_at),
+    paidAt: str(info.paid_at),
+    generatedAt: str(info.generated_at),
+    postedAt: str(info.posted_at),
+    deliveredAt: str(info.delivered_at),
+    canceledAt: str(info.canceled_at),
+  };
+}
