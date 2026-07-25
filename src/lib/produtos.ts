@@ -53,6 +53,8 @@ type LinhaProduto = {
   preco_comparativo: number | null;
   imagem: string | null;
   resumo: string | null;
+  seo_titulo: string | null;
+  seo_descricao: string | null;
   descricao: string[] | null;
   especificacoes: [string, string][] | null;
   /* Vem como lista porque é embed de tabela filha, mas o banco garante no
