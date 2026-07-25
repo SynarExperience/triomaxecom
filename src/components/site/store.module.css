@@ -195,6 +195,9 @@
 }
 
 .cardMedia img {
+  /* As duas fotos ocupam a mesma célula do grid para se sobreporem; o
+     `place-items: center` do container centraliza cada uma. */
+  grid-area: 1 / 1;
   width: 92%;
   height: 92%;
   object-fit: contain;
@@ -203,6 +206,24 @@
 
 .card:hover .cardMedia img {
   transform: scale(1.04);
+}
+
+/* Segunda foto: entra por cima da principal no hover e some ao tirar o mouse. */
+.cardMediaHover {
+  opacity: 0;
+  transition: opacity 300ms ease, transform 600ms var(--ease-out);
+}
+
+.card:hover .cardMediaHover {
+  opacity: 1;
+}
+
+/* Sem hover no toque: no celular a segunda foto ficaria presa por cima depois
+   do tap. Fica escondida e o card mantém a foto principal. */
+@media (hover: none) {
+  .cardMediaHover {
+    display: none;
+  }
 }
 
 .cardBadge {

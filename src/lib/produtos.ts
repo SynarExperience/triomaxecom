@@ -12,11 +12,12 @@ const COLUNAS =
   "slug, nome, categoria, linha, cor, cor_hex, selo, preco, preco_comparativo, imagem, resumo, descricao, especificacoes";
 
 /* As categorias vêm no mesmo embed da listagem porque é ela que filtra por
-   elas — buscar depois, produto a produto, seria uma consulta por card. */
-const COLUNAS_COM_CATEGORIAS = `${COLUNAS}, produtos_categorias(categorias(slug))`;
+   elas — buscar depois, produto a produto, seria uma consulta por card. A
+   galeria entra junto porque o card troca para a segunda foto no hover; só as
+   duas primeiras interessam ali, mas o custo de trazer as demais é irrisório. */
+const COLUNAS_COM_CATEGORIAS = `${COLUNAS}, produtos_categorias(categorias(slug)), fotos_produto(url, alt, posicao)`;
 
-/* A galeria só interessa à PDP: listagem e relacionados mostram uma foto só, e
-   embutir `fotos_produto` ali seria trafegar dezenas de URLs sem uso. */
+/* A PDP monta a tira de miniaturas com a galeria inteira. */
 const COLUNAS_COM_FOTOS = `${COLUNAS}, fotos_produto(url, alt, posicao)`;
 
 /**
@@ -96,7 +97,10 @@ export async function listarProdutos(): Promise<Product[]> {
     .select(COLUNAS_COM_CATEGORIAS)
     .eq("ativo", true)
     .order("linha")
-    .order("nome");
+    .order("nome")
+    // Menor posição primeiro: `images[0]` é a foto principal e `images[1]` a que
+    // aparece no hover do card.
+    .order("posicao", { referencedTable: "fotos_produto" });
 
   if (!comCategorias.error) {
     return (comCategorias.data as unknown as LinhaProduto[]).map(paraProduto);

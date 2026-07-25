@@ -26,6 +26,19 @@ export function ProductCard({ product }: { product: Product }) {
         {discount > 0 ? <span className={styles.cardDiscount}>{discount}% off</span> : null}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img alt={product.name} className="productPhoto" loading="lazy" src={product.image} />
+        {/* Passar o mouse revela a segunda foto por cima da principal — só quando
+            o produto tem galeria. `aria-hidden` porque é a mesma peça: repetir
+            no leitor de tela não agrega. */}
+        {product.images.length > 1 ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            alt=""
+            aria-hidden
+            className={`productPhoto ${styles.cardMediaHover}`}
+            loading="lazy"
+            src={product.images[1].url}
+          />
+        ) : null}
       </div>
 
       <div className={styles.cardBody}>
