@@ -282,56 +282,21 @@
  * center` ele escorregava para o meio quando a linha quebrava em dois, que era
  * o efeito de "texto quebrado" nos cards estreitos.
  */
-.cardPix {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  margin-top: auto;
-  color: var(--price-pix);
-  font-variant-numeric: tabular-nums;
-}
-
-.cardPixText {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: 6px;
-}
-
-.cardPixText strong {
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
-}
-
-.cardPixLabel {
-  font-size: 12.5px;
-  font-weight: 600;
-  line-height: 1.15;
-}
-
-/* Mesma largura do ícone das parcelas: é o que faz "R$ 80,91" e "12 x de"
-   começarem na mesma coluna. A margem centra o ícone na primeira linha. */
-.cardPix svg {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 auto;
-  margin-top: 2px;
-}
-
 .cardPriceRow {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin-top: 5px;
+  /* Empurra o bloco de preço para a base do card, alinhando entre cards de
+     nomes com alturas diferentes (era o papel do antigo bloco do Pix). */
+  margin-top: auto;
 }
 
-/* Dourado igual ao do PDP — no voolt3d esta linha é a cor de marca deles. */
+/* Preço em destaque, no dourado de marca (mesma cor do valor principal no PDP). */
 .cardPrice {
   color: var(--gold);
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 700;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1499,7 +1464,7 @@
   }
 
   .cardPrice {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .categoryCardBody {

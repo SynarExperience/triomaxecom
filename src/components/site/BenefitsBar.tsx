@@ -46,8 +46,8 @@ const padrao: Beneficio[] = [
   {
     id: "pix",
     icone: "pix",
-    titulo: "10% off no Pix",
-    texto: "Desconto aplicado direto no carrinho",
+    titulo: "Pix aprovado na hora",
+    texto: "Pague com Pix e o pedido é confirmado na hora",
   },
   {
     id: "protegido",

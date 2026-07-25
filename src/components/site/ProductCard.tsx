@@ -1,8 +1,8 @@
 "use client";
 
-import { formatBRL, installment, pixPrice, type Product } from "@/data/catalog";
+import { formatBRL, installment, type Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
-import { CardIcon, CartIcon, PixIcon, WhatsAppIcon } from "./icons";
+import { CardIcon, CartIcon, WhatsAppIcon } from "./icons";
 import styles from "./store.module.css";
 
 const INSTALLMENTS = 12;
@@ -48,21 +48,13 @@ export function ProductCard({ product }: { product: Product }) {
           </a>
         </h3>
 
-        {/* Valor e sufixo em elementos separados: num card estreito "com Pix"
-            desce sozinho como rótulo, em vez de partir o número no meio. */}
-        <span className={styles.cardPix}>
-          <PixIcon />
-          <span className={styles.cardPixText}>
-            <strong>{formatBRL(pixPrice(product.price))}</strong>
-            <span className={styles.cardPixLabel}>com Pix</span>
-          </span>
-        </span>
-
+        {/* Preço em destaque; o valor cheio anterior fica riscado ao lado quando
+            há promoção. */}
         <span className={styles.cardPriceRow}>
           {product.compareAt ? (
             <s className={styles.cardCompare}>{formatBRL(product.compareAt)}</s>
           ) : null}
-          <span className={styles.cardPrice}>{formatBRL(product.price)}</span>
+          <strong className={styles.cardPrice}>{formatBRL(product.price)}</strong>
         </span>
 
         <span className={styles.cardInstallments}>

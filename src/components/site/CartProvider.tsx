@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { pixPrice, type Product } from "@/data/catalog";
+import { type Product } from "@/data/catalog";
 
 const STORAGE_KEY = "triomax:sacola";
 const MAX_QUANTITY = 9;
@@ -28,7 +28,6 @@ type CartContextValue = {
   lines: CartLine[];
   count: number;
   subtotal: number;
-  pixTotal: number;
   isOpen: boolean;
   ultimaAdicao: UltimaAdicao | null;
   addItem: (product: Product, quantity?: number) => void;
@@ -148,7 +147,6 @@ export function CartProvider({
       lines,
       count: lines.reduce((sum, line) => sum + line.quantity, 0),
       subtotal,
-      pixTotal: pixPrice(subtotal),
       isOpen,
       ultimaAdicao,
       addItem,

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "./CartProvider";
-import { BagIcon, CloseIcon, PixIcon, TruckIcon, WhatsAppIcon } from "./icons";
+import { BagIcon, CloseIcon, TruckIcon, WhatsAppIcon } from "./icons";
 import { formatBRL } from "@/data/catalog";
 import { supabase } from "@/lib/supabase";
 import styles from "./cart.module.css";
@@ -20,7 +20,7 @@ type Erros = Partial<Record<keyof Contato, string>>;
 const CONTATO_VAZIO: Contato = { nome: "", email: "", whatsapp: "" };
 
 export function CartDrawer() {
-  const { closeCart, isOpen, lines, pixTotal, removeItem, setQuantity, subtotal } = useCart();
+  const { closeCart, isOpen, lines, removeItem, setQuantity, subtotal } = useCart();
   const panelRef = useRef<HTMLDivElement>(null);
 
   /* A sacola ganha um passo antes do WhatsApp: sem o contato, um carrinho
@@ -237,10 +237,6 @@ export function CartDrawer() {
                 <span>Subtotal</span>
                 <strong>{formatBRL(subtotal)}</strong>
               </div>
-              <p className={styles.pix}>
-                <PixIcon />
-                {formatBRL(pixTotal)} à vista no Pix
-              </p>
 
               {pedindoContato ? (
                 <form className={styles.contato} noValidate onSubmit={finalizar}>

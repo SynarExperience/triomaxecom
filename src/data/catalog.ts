@@ -40,8 +40,6 @@ export type Product = {
 export const formatBRL = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-export const pixPrice = (value: number) => value * 0.9;
-
 export const installment = (value: number, times = 12) => value / times;
 
 export type CategoryCard = {

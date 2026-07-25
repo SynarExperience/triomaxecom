@@ -648,37 +648,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Linha do Pix em verde, com o logo oficial do Pix logo depois da frase. */
-.pricePix {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0 0;
-  color: var(--price-pix);
-  font-size: 18px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.pricePix svg {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 auto;
-  color: var(--price-pix);
-}
-
-/* "X% de desconto" em dourado bem claro; o resto da frase em tom neutro. */
-.pricePixNote {
-  margin: 4px 0 0;
-  color: var(--ink-soft);
-  font-size: 14px;
-}
-
-.pricePixNote strong {
-  color: var(--gold-light);
-  font-weight: 700;
-}
-
 /* "Ver mais detalhes": gatilho discreto com ícone de pagamento e seta. */
 .priceDetails {
   margin-top: 12px;

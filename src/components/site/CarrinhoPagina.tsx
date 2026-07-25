@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "./CartProvider";
-import { PixIcon, TruckIcon } from "./icons";
+import { TruckIcon } from "./icons";
 import { formatBRL, type Product } from "@/data/catalog";
 import { FRETE_GRATIS_A_PARTIR_DE } from "@/lib/checkout";
 import styles from "./checkout.module.css";
@@ -17,7 +17,7 @@ import carrinho from "./carrinho.module.css";
  * página (server), já que `SiteHeader` e `SiteFooter` são componentes async.
  */
 export function CarrinhoPagina({ sugestoes }: { sugestoes: Product[] }) {
-  const { addItem, lines, pixTotal, removeItem, setQuantity, subtotal } = useCart();
+  const { addItem, lines, removeItem, setQuantity, subtotal } = useCart();
 
   const faltaParaFreteGratis = FRETE_GRATIS_A_PARTIR_DE - subtotal;
 
@@ -127,11 +127,6 @@ export function CarrinhoPagina({ sugestoes }: { sugestoes: Product[] }) {
               <span>Total</span>
               <strong>{formatBRL(subtotal)}</strong>
             </div>
-
-            <p className={styles.resumoPix}>
-              <PixIcon />
-              {formatBRL(pixTotal)} no Pix
-            </p>
 
             <Link className={carrinho.finalizar} href="/checkout">
               Finalizar compra

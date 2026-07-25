@@ -10,14 +10,13 @@ import {
   BoxIcon,
   CardIcon,
   ChevronDownIcon,
-  PixIcon,
   RefreshIcon,
   StarIcon,
   TruckIcon,
 } from "@/components/site/icons";
 import pageStyles from "@/components/site/pages.module.css";
 import storeStyles from "@/components/site/store.module.css";
-import { formatBRL, installment, pixPrice } from "@/data/catalog";
+import { formatBRL, installment } from "@/data/catalog";
 import { buscarProduto, listarProdutos, produtosRelacionados } from "@/lib/produtos";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -44,12 +43,10 @@ export default async function ProductPage({ params }: PageProps) {
 
   const related = await produtosRelacionados(slug);
 
-  // Desconto do preço cheio (só existe quando há `compareAt`) e o do Pix, que
-  // sai do próprio `pixPrice` (10%) — os dois números vêm dos dados, nunca fixos.
+  // Desconto do preço cheio — só existe quando há `compareAt`, e vem dos dados.
   const discount = product.compareAt
     ? Math.round((1 - product.price / product.compareAt) * 100)
     : 0;
-  const pixDiscount = Math.round((1 - pixPrice(product.price) / product.price) * 100);
 
   const infoTop = (
     <>
@@ -73,13 +70,6 @@ export default async function ProductPage({ params }: PageProps) {
           <strong>{formatBRL(product.price)}</strong>
           {discount > 0 ? <span className={pageStyles.priceOff}>{discount}% OFF</span> : null}
         </div>
-        <p className={pageStyles.pricePix}>
-          {formatBRL(pixPrice(product.price))} com Pix
-          <PixIcon />
-        </p>
-        <p className={pageStyles.pricePixNote}>
-          <strong>{pixDiscount}% de desconto</strong> pagando com Pix
-        </p>
         {/* Detalhes de pagamento recolhidos, como o "Ver mais detalhes" da
             referência — nativo em <details>, abre sem JS. */}
         <details className={pageStyles.priceDetails}>
