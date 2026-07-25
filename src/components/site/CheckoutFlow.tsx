@@ -411,7 +411,9 @@ function SecaoEntrega({
                   {opcao.transportadora}: {opcao.servico}
                 </span>
                 <span className={styles.fretePrazo}>
-                  Chega em {opcao.prazoDias} {opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}
+                  {opcao.retirada
+                    ? "Retire na loja em até 24h úteis"
+                    : `Chega em ${opcao.prazoDias} ${opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}`}
                 </span>
               </span>
               <span className={[styles.fretePreco, opcao.preco === 0 ? styles.freteGratis : ""].join(" ")}>
@@ -610,7 +612,9 @@ function SecaoPagamento({
               {frete.preco === 0 ? "Grátis" : formatBRL(frete.preco)}
             </strong>
             <br />
-            Chega {previsaoEntrega(frete.prazoDias)}
+            {frete.retirada
+              ? "Retire na loja em até 24h úteis"
+              : `Chega ${previsaoEntrega(frete.prazoDias)}`}
           </div>
         </div>
 

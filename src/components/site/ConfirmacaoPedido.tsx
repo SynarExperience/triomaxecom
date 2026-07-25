@@ -81,12 +81,19 @@ export function ConfirmacaoPedido() {
           <strong>{formatBRL(pedido.total)}</strong>
         </div>
 
-        <p style={{ marginBottom: 0 }}>
-          Entrega prevista para <strong>{previsaoEntrega(pedido.frete.prazoDias)}</strong>, em{" "}
-          {pedido.endereco.logradouro}
-          {pedido.entrega.semNumero ? ", s/n" : `, ${pedido.entrega.numero}`} —{" "}
-          {pedido.endereco.cidade}/{pedido.endereco.uf}.
-        </p>
+        {pedido.frete.retirada ? (
+          <p style={{ marginBottom: 0 }}>
+            <strong>Retirada na loja</strong> ({pedido.frete.servico}) — disponível em até 24h
+            úteis. Avisamos por e-mail quando estiver pronto.
+          </p>
+        ) : (
+          <p style={{ marginBottom: 0 }}>
+            Entrega prevista para <strong>{previsaoEntrega(pedido.frete.prazoDias)}</strong>, em{" "}
+            {pedido.endereco.logradouro}
+            {pedido.entrega.semNumero ? ", s/n" : `, ${pedido.entrega.numero}`} —{" "}
+            {pedido.endereco.cidade}/{pedido.endereco.uf}.
+          </p>
+        )}
       </div>
 
       <Link className={styles.voltar} href="/produtos">

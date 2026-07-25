@@ -22,6 +22,8 @@ export type OpcaoFrete = {
   /** Em reais. Zero significa frete grátis e é exibido como tal. */
   preco: number;
   prazoDias: number;
+  /** Retirada na loja: sem entrega, o cliente busca no balcão. */
+  retirada?: boolean;
 };
 
 /* Boleto ficou de fora da integração com o Mercado Pago — só Pix e cartão. */

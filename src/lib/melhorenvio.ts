@@ -137,7 +137,7 @@ export async function calcularFrete(
   const dados = (await resposta.json()) as ServicoME[];
 
   const opcoes = dados
-    .filter((s) => !s.error && s.price != null)
+    .filter((s) => !s.error && s.price != null && transportadoraPermitida(s))
     .map<OpcaoFrete>((s) => ({
       id: String(s.id),
       transportadora: s.company?.name ?? "Transportadora",
@@ -153,7 +153,31 @@ export async function calcularFrete(
     opcoes[0] = { ...opcoes[0], preco: 0 };
   }
 
-  return opcoes;
+  // Retirada na loja: sempre disponível e grátis, no topo da lista.
+  return [retirarNaLoja(), ...opcoes];
+}
+
+/** Só Correios (PAC/SEDEX) e Jadlog entram na lista mostrada ao cliente. */
+function transportadoraPermitida(s: ServicoME): boolean {
+  const empresa = (s.company?.name ?? "").toLowerCase();
+  const servico = (s.name ?? "").toLowerCase();
+  if (empresa.includes("jadlog")) return true;
+  if (empresa.includes("correios") && (servico.includes("pac") || servico.includes("sedex"))) {
+    return true;
+  }
+  return false;
+}
+
+/** Opção de retirar no balcão da loja — sem entrega, sem custo. */
+function retirarNaLoja(): OpcaoFrete {
+  return {
+    id: "retirada",
+    transportadora: "Retirada na loja",
+    servico: process.env.MELHORENVIO_FROM_CITY ?? "Camboriú/SC",
+    preco: 0,
+    prazoDias: 1,
+    retirada: true,
+  };
 }
 
 /** Ciclo de vida de um envio, como o Melhor Envio devolve no rastreio. */

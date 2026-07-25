@@ -242,7 +242,9 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
                         {opcao.transportadora} {opcao.servico}
                       </span>
                       <span className={pageStyles.shippingOptionEta}>
-                        Chega {previsaoEntrega(opcao.prazoDias)}
+                        {opcao.retirada
+                          ? "Pronto para retirada em até 24h úteis"
+                          : `Chega ${previsaoEntrega(opcao.prazoDias)}`}
                       </span>
                     </div>
                     <span
