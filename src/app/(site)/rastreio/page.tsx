@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { AnnouncementMarquee } from "@/components/site/Marquee";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { RastreioPanel } from "@/components/site/RastreioPanel";
 
 export const metadata: Metadata = {
-  title: "Rastreie seu pedido",
+  title: "Rastreie seu pedido | Triomax",
   description: "Acompanhe a entrega do seu pedido Triomax pelo código de rastreio.",
 };
 
@@ -14,5 +17,14 @@ export default async function RastreioPage({
   searchParams: Promise<{ codigo?: string }>;
 }) {
   const { codigo } = await searchParams;
-  return <RastreioPanel codigoInicial={codigo ?? ""} />;
+  return (
+    <>
+      <SiteHeader />
+      <AnnouncementMarquee />
+      <main>
+        <RastreioPanel codigoInicial={codigo ?? ""} />
+      </main>
+      <SiteFooter />
+    </>
+  );
 }
