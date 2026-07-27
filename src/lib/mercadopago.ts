@@ -2,7 +2,7 @@ import "server-only";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { listarProdutos } from "@/lib/produtos";
 import { variantPrice } from "@/data/catalog";
-import { digitos, totalCartao } from "@/lib/checkout";
+import { digitos, totalCartaoAvista } from "@/lib/checkout";
 import { criarPedido, statusDoMercadoPago } from "@/lib/pedidos";
 import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 
@@ -218,10 +218,9 @@ export async function criarPagamentoCartao(dados: DadosCartao): Promise<Resultad
   const payment = new Payment(client);
 
   const parcelas = Math.max(1, Math.min(12, Math.trunc(dados.parcelas)));
-  /* Repassa a taxa da conta (Parcelado Vendedor) em todas as faixas, por
-     gross-up. Vale enquanto a conta não estiver em "Parcelado Comprador" — aí o
-     próprio MP cobraria os juros do cliente e isto duplicaria. */
-  const totalCobrado = totalCartao(total, parcelas);
+  /* Só o 1× repassa a taxa da venda à vista; 2×–12× seguem o valor do MP, que
+     já aplica o custo de parcelamento conforme a config da conta. */
+  const totalCobrado = parcelas === 1 ? totalCartaoAvista(total) : total;
 
   const resultado = await payment.create({
     body: {

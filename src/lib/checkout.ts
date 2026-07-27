@@ -170,26 +170,17 @@ export function previsaoEntrega(prazoDias: number, hoje = new Date()) {
    cartão é a exceção: o MP não repassa a taxa da venda à vista para o cliente,
    então repassamos aqui. */
 
-/**
- * Taxas de cartão da conta, por faixa de parcela (recebimento na hora). São as
- * do plano "Parcelado Vendedor": o lojista as absorveria, e é isso que estamos
- * repassando. Se a conta mudar para "Parcelado Comprador", o próprio Mercado
- * Pago passa a cobrar os juros do cliente e este repasse cobraria em dobro.
- */
-export function taxaCartao(parcelas: number): number {
-  if (parcelas <= 1) return 0.0498; // à vista
-  if (parcelas <= 6) return 0.0299; // 2x a 6x
-  return 0.0309; // 7x a 12x
-}
+/** Taxa de cartão de crédito à vista da conta (recebimento na hora). */
+export const TAXA_CARTAO_AVISTA = 0.0498;
 
 /**
- * Valor a cobrar no cartão para o lojista receber o preço cheio. É um "gross-up":
- * divide por (1 − taxa), em vez de somar a taxa — somar deixaria a taxa incidir
- * sobre o valor já maior e faltaria o troco. Arredonda ao centavo, que o Mercado
- * Pago exige.
+ * Valor a cobrar no cartão à vista para o lojista receber o preço cheio. É um
+ * "gross-up": divide por (1 − taxa), em vez de somar a taxa — somar deixaria a
+ * taxa incidir sobre o valor já maior e faltaria o troco. Arredonda ao centavo,
+ * que o Mercado Pago exige.
  */
-export function totalCartao(base: number, parcelas: number): number {
-  return Math.round((base / (1 - taxaCartao(parcelas))) * 100) / 100;
+export function totalCartaoAvista(base: number) {
+  return Math.round((base / (1 - TAXA_CARTAO_AVISTA)) * 100) / 100;
 }
 
 /** Número do pedido derivado do relógio: legível e único o bastante na demo. */
