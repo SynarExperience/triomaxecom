@@ -12,7 +12,9 @@ import { listarCategorias, type Categoria } from "@/lib/categorias";
 import { listarFiltros, type CampoFiltro, type Filtro } from "@/lib/conteudo";
 import { listarProdutos } from "@/lib/produtos";
 
-export const metadata: Metadata = {
+/* O <head> desta página é dinâmico (generateMetadata, mais abaixo): com uma
+   categoria filtrada ele usa o SEO dela; sem filtro, cai neste padrão. */
+const METADATA_PADRAO: Metadata = {
   title: "Todos os produtos | Triomax",
   description: "Filamentos de alta performance Triomax — PLA e PETG em seis cores.",
 };
@@ -164,18 +166,18 @@ type PageProps = {
 /**
  * <head> da listagem filtrada por UMA categoria: usa o Título/Descrição SEO
  * definidos no painel (colunas da migração 0012) e cai no nome da categoria
- * quando não preenchidos. Com zero ou várias categorias, herda o padrão do
- * layout — não há um "assunto" único para descrever.
+ * quando não preenchidos. Com zero ou várias categorias, vale o padrão da
+ * página — não há um "assunto" único para descrever.
  */
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
   const params = await searchParams;
   const bruto = params["categoria"];
   const escolhidas = (Array.isArray(bruto) ? bruto : bruto ? [bruto] : []).filter(Boolean);
-  if (escolhidas.length !== 1) return {};
+  if (escolhidas.length !== 1) return METADATA_PADRAO;
 
   const categorias = await listarCategorias();
   const categoria = categorias.find((c) => c.slug === escolhidas[0]);
-  if (!categoria) return {};
+  if (!categoria) return METADATA_PADRAO;
 
   return {
     title: categoria.seoTitulo || `${categoria.nome} | Triomax`,
