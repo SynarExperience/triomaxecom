@@ -20,14 +20,18 @@ const URL_SEGURA = /^(https?:\/\/|mailto:)/i;
 
 /** Ordem dos grupos: 1 negrito, 2 itálico, 3/4 link. O itálico exige borda de
     palavra para "snake_case" não virar formatação. */
-const INLINE = /\*\*([^*]+)\*\*|(?<![\w])_([^_\n]+)_(?![\w])|\[([^\]]+)\]\(([^)\s]+)\)/g;
+const INLINE = /\*\*([^*]+)\*\*|(?<![\w])_([^_\n]+)_(?![\w])|\[([^\]]+)\]\(([^)\s]+)\)/;
 
 function inline(texto: string, base: string): ReactNode[] {
   const nos: ReactNode[] = [];
   let cursor = 0;
   let n = 0;
-  INLINE.lastIndex = 0;
-  for (let m = INLINE.exec(texto); m; m = INLINE.exec(texto)) {
+  /* O regex precisa ser LOCAL: `inline` é recursiva (negrito com itálico
+     dentro), e a recursão zeraria o lastIndex de um objeto compartilhado —
+     o loop de fora rescanearia do começo para sempre, até estourar a memória
+     (aconteceu em produção). */
+  const re = new RegExp(INLINE.source, "g");
+  for (let m = re.exec(texto); m; m = re.exec(texto)) {
     if (m.index > cursor) nos.push(texto.slice(cursor, m.index));
     const chave = `${base}-${n++}`;
     if (m[1] !== undefined) {
@@ -44,6 +48,7 @@ function inline(texto: string, base: string): ReactNode[] {
       nos.push(m[3]);
     }
     cursor = m.index + m[0].length;
+    re.lastIndex = cursor;
   }
   if (cursor < texto.length) nos.push(texto.slice(cursor));
   return nos;
