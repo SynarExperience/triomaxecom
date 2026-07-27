@@ -739,6 +739,47 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Seletor de variação (ex.: 1 kg / 500 g): pílulas antes da linha de compra.
+   A ativa fica com a borda e o fundo do dourado da marca. */
+.variantRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.variantPill {
+  padding: 9px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out);
+}
+
+.variantPill:hover {
+  border-color: var(--ink);
+}
+
+.variantPillActive {
+  border-color: var(--gold);
+  background: rgba(146, 107, 43, 0.08);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+.variantPillSoldOut {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.variantPillSoldOut span {
+  text-decoration: none;
+  font-weight: 400;
+}
+
 /* Stepper e botão na mesma linha, como na referência: a altura dos dois é
    igualada por `align-items: stretch`. */
 .buyRow {
@@ -812,6 +853,12 @@
 
 .buyButton:hover {
   opacity: 0.88;
+}
+
+/* Só acontece com variação esgotada selecionada de propósito. */
+.buyButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /*

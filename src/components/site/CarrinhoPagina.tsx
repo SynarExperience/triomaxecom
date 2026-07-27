@@ -47,21 +47,22 @@ export function CarrinhoPagina({ sugestoes }: { sugestoes: Product[] }) {
       ) : (
         <div className={styles.conteudo}>
           <ul className={carrinho.itens}>
-            {lines.map(({ product, quantity, total }) => (
-              <li className={carrinho.item} key={product.slug}>
+            {lines.map(({ lineId, product, variant, quantity, unitPrice, total }) => (
+              <li className={carrinho.item} key={lineId}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img alt="" className={carrinho.itemImagem} src={product.image} />
 
                 <div className={carrinho.itemCorpo}>
                   <Link className={carrinho.itemNome} href={`/produto/${product.slug}`}>
                     {product.name}
+                    {variant ? ` · ${variant.name}` : ""}
                   </Link>
 
                   <div className={carrinho.itemControles}>
                     <div aria-label={`Quantidade de ${product.name}`} className={carrinho.qtd}>
                       <button
                         aria-label="Diminuir quantidade"
-                        onClick={() => setQuantity(product.slug, quantity - 1)}
+                        onClick={() => setQuantity(lineId, quantity - 1)}
                         type="button"
                       >
                         −
@@ -69,13 +70,13 @@ export function CarrinhoPagina({ sugestoes }: { sugestoes: Product[] }) {
                       <span aria-live="polite">{quantity}</span>
                       <button
                         aria-label="Aumentar quantidade"
-                        onClick={() => setQuantity(product.slug, quantity + 1)}
+                        onClick={() => setQuantity(lineId, quantity + 1)}
                         type="button"
                       >
                         +
                       </button>
                     </div>
-                    <span className={carrinho.itemUnitario}>{formatBRL(product.price)}</span>
+                    <span className={carrinho.itemUnitario}>{formatBRL(unitPrice)}</span>
                   </div>
                 </div>
 
@@ -84,7 +85,7 @@ export function CarrinhoPagina({ sugestoes }: { sugestoes: Product[] }) {
                 <button
                   aria-label={`Remover ${product.name}`}
                   className={carrinho.remover}
-                  onClick={() => removeItem(product.slug)}
+                  onClick={() => removeItem(lineId)}
                   type="button"
                 >
                   ×

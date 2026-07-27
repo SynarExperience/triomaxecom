@@ -1,9 +1,17 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
-import { formatBRL, isSoldOut, type Product } from "@/data/catalog";
+import {
+  formatBRL,
+  installment,
+  isSoldOut,
+  isVariantSoldOut,
+  variantPrice,
+  type Product,
+  type ProductVariant,
+} from "@/data/catalog";
 import { useCart } from "./CartProvider";
-import { CartIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
+import { CardIcon, CartIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
 import { cepValido, cotarFrete, mascaraCep, previsaoEntrega } from "@/lib/checkout";
 import type { OpcaoFrete } from "@/types/checkout";
 import pageStyles from "./pages.module.css";
@@ -106,6 +114,20 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
   const { addItem } = useCart();
   const esgotado = isSoldOut(product);
 
+  /* Com variações, a compra é da variação: começa na primeira disponível e o
+     preço exibido acompanha a escolha. Sem variações, nada disso existe e o
+     fluxo é o de sempre. */
+  const [variacao, setVariacao] = useState<ProductVariant | null>(
+    () => product.variants.find((v) => !isVariantSoldOut(v)) ?? product.variants[0] ?? null,
+  );
+
+  const precoAtual = variacao ? variantPrice(product, variacao) : product.price;
+  /* O valor cheio riscado é do produto; numa variação com preço próprio ele
+     deixa de fazer sentido (o desconto foi calculado sobre o preço base). */
+  const compareAtual = variacao && variacao.price !== null ? undefined : product.compareAt;
+  const descontoAtual = compareAtual ? Math.round((1 - precoAtual / compareAtual) * 100) : 0;
+  const variacaoEsgotada = variacao ? isVariantSoldOut(variacao) : false;
+
   /* Cotação de frete na PDP: reusa a mesma rota do checkout, com este produto
      na quantidade escolhida. */
   const [cep, setCep] = useState("");
@@ -140,6 +162,59 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
       <div>
         {infoTop}
 
+        {/* O preço mora aqui (e não no bloco estático do servidor) porque ele
+            reage à variação escolhida. Sem variações, mostra o do produto —
+            visualmente idêntico ao que era. */}
+        <div className={pageStyles.priceBox}>
+          {compareAtual ? (
+            <s className={pageStyles.priceCompare}>{formatBRL(compareAtual)}</s>
+          ) : null}
+          <div className={pageStyles.priceMain}>
+            <strong>{formatBRL(precoAtual)}</strong>
+            {descontoAtual > 0 ? (
+              <span className={pageStyles.priceOff}>{descontoAtual}% OFF</span>
+            ) : null}
+          </div>
+          {/* Detalhes de pagamento recolhidos, como o "Ver mais detalhes" da
+              referência — nativo em <details>, abre sem JS. */}
+          <details className={pageStyles.priceDetails}>
+            <summary>
+              <CardIcon />
+              Ver mais detalhes
+            </summary>
+            <p className={pageStyles.priceInstallments}>
+              12 x de {formatBRL(installment(precoAtual))} sem juros
+            </p>
+          </details>
+        </div>
+
+        {product.variants.length > 0 && !esgotado ? (
+          <div aria-label="Escolha a opção" className={pageStyles.variantRow} role="group">
+            {product.variants.map((v) => {
+              const semEstoque = isVariantSoldOut(v);
+              const ativa = variacao?.id === v.id;
+              return (
+                <button
+                  aria-pressed={ativa}
+                  className={[
+                    pageStyles.variantPill,
+                    ativa ? pageStyles.variantPillActive : "",
+                    semEstoque ? pageStyles.variantPillSoldOut : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  key={v.id}
+                  onClick={() => setVariacao(v)}
+                  type="button"
+                >
+                  {v.name}
+                  {semEstoque ? <span> · esgotado</span> : null}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+
         {/* Stepper e botão dividem a linha, como na referência: quantidade à
             esquerda, ação de compra ocupando o resto. Esgotado some com os
             dois: escolher quantidade de algo que não dá para comprar é convite
@@ -171,11 +246,12 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
             </div>
             <button
               className={pageStyles.buyButton}
-              onClick={() => addItem(product, quantity)}
+              disabled={variacaoEsgotada}
+              onClick={() => addItem(product, quantity, variacao ?? undefined)}
               type="button"
             >
               <CartIcon />
-              Adicionar ao carrinho
+              {variacaoEsgotada ? "Opção esgotada" : "Adicionar ao carrinho"}
             </button>
           </div>
         )}

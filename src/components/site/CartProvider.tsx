@@ -9,16 +9,29 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { type Product } from "@/data/catalog";
+import { variantPrice, type Product, type ProductVariant } from "@/data/catalog";
 
 const STORAGE_KEY = "triomax:sacola";
 const MAX_QUANTITY = 9;
 
-/** Só o slug e a quantidade são persistidos: preço e imagem vêm sempre do
-    catálogo, então uma sacola velha no localStorage nunca mostra preço antigo. */
-type StoredItem = { slug: string; quantity: number };
+/** Só slug, variação e quantidade são persistidos: preço e imagem vêm sempre
+    do catálogo, então uma sacola velha no localStorage nunca mostra preço
+    antigo. `variacao` é o id em `variacoes`; ausente = produto simples. */
+type StoredItem = { slug: string; quantity: number; variacao?: string };
 
-export type CartLine = { product: Product; quantity: number; total: number };
+/** Identidade de uma linha: produto + variação. É a chave das operações da
+    sacola — o mesmo produto em duas variações são duas linhas. */
+const lineIdDe = (slug: string, variacao?: string) => `${slug}::${variacao ?? ""}`;
+
+export type CartLine = {
+  lineId: string;
+  product: Product;
+  /** Nulo em produto simples. */
+  variant: ProductVariant | null;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+};
 
 /** Último item adicionado, para a notificação flutuante. O `id` cresce a cada
     adição para que somar o mesmo produto duas vezes reative o aviso. */
@@ -30,9 +43,9 @@ type CartContextValue = {
   subtotal: number;
   isOpen: boolean;
   ultimaAdicao: UltimaAdicao | null;
-  addItem: (product: Product, quantity?: number) => void;
-  setQuantity: (slug: string, quantity: number) => void;
-  removeItem: (slug: string) => void;
+  addItem: (product: Product, quantity?: number, variant?: ProductVariant) => void;
+  setQuantity: (lineId: string, quantity: number) => void;
+  removeItem: (lineId: string) => void;
   openCart: () => void;
   closeCart: () => void;
 };
@@ -42,7 +55,29 @@ const CartContext = createContext<CartContextValue | null>(null);
 const clamp = (quantity: number) =>
   Math.min(MAX_QUANTITY, Math.max(1, Math.trunc(quantity)));
 
-function readStorage(existe: (slug: string) => boolean): StoredItem[] {
+/**
+ * Valida um item salvo contra o catálogo atual. Produto que ganhou variações
+ * depois de a sacola ser gravada derruba o item antigo (sem variação não há
+ * como saber qual cobrar); variação que deixou de existir idem.
+ */
+function validarItem(
+  item: StoredItem,
+  porSlug: Map<string, Product>,
+): StoredItem | null {
+  const product = porSlug.get(item.slug);
+  if (!product) return null;
+
+  if (product.variants.length === 0) {
+    /* Produto simples: variação salva (de um catálogo antigo) é descartada. */
+    return { slug: item.slug, quantity: clamp(item.quantity) };
+  }
+
+  const variante = product.variants.find((v) => v.id === item.variacao);
+  if (!variante) return null;
+  return { slug: item.slug, quantity: clamp(item.quantity), variacao: variante.id };
+}
+
+function readStorage(porSlug: Map<string, Product>): StoredItem[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
@@ -57,8 +92,8 @@ function readStorage(existe: (slug: string) => boolean): StoredItem[] {
           typeof (item as StoredItem).slug === "string" &&
           Number.isFinite((item as StoredItem).quantity),
       )
-      .filter((item) => existe(item.slug))
-      .map((item) => ({ slug: item.slug, quantity: clamp(item.quantity) }));
+      .map((item) => validarItem(item, porSlug))
+      .filter((item): item is StoredItem => item !== null);
   } catch {
     return [];
   }
@@ -87,7 +122,7 @@ export function CartProvider({
   );
 
   useEffect(() => {
-    setItems(readStorage((slug) => porSlug.has(slug)));
+    setItems(readStorage(porSlug));
     setHydrated(true);
   }, [porSlug]);
 
@@ -100,35 +135,49 @@ export function CartProvider({
     }
   }, [hydrated, items]);
 
-  const addItem = useCallback((product: Product, quantity = 1) => {
-    setItems((current) => {
-      const existing = current.find((item) => item.slug === product.slug);
-      if (!existing) return [...current, { slug: product.slug, quantity: clamp(quantity) }];
+  const addItem = useCallback(
+    (product: Product, quantity = 1, variant?: ProductVariant) => {
+      /* Produto com variações exige a escolha — a PDP sempre manda uma. O
+         atalho do card não chega aqui para esses produtos (vira link). */
+      if (product.variants.length > 0 && !variant) return;
 
-      return current.map((item) =>
-        item.slug === product.slug
-          ? { ...item, quantity: clamp(item.quantity + quantity) }
-          : item,
-      );
-    });
-    /* Adicionar não abre a sacola: interromper a navegação com um painel de tela
-       cheia atrapalha quem está montando um pedido de várias cores. O aviso é a
-       notificação flutuante, como na loja de referência. */
-    setUltimaAdicao((atual) => ({ id: (atual?.id ?? 0) + 1, product }));
-  }, []);
+      const variacao = variant?.id;
+      setItems((current) => {
+        const existing = current.find(
+          (item) => item.slug === product.slug && item.variacao === variacao,
+        );
+        if (!existing) {
+          return [...current, { slug: product.slug, quantity: clamp(quantity), ...(variacao ? { variacao } : {}) }];
+        }
 
-  const setQuantity = useCallback((slug: string, quantity: number) => {
+        return current.map((item) =>
+          item.slug === product.slug && item.variacao === variacao
+            ? { ...item, quantity: clamp(item.quantity + quantity) }
+            : item,
+        );
+      });
+      /* Adicionar não abre a sacola: interromper a navegação com um painel de tela
+         cheia atrapalha quem está montando um pedido de várias cores. O aviso é a
+         notificação flutuante, como na loja de referência. */
+      setUltimaAdicao((atual) => ({ id: (atual?.id ?? 0) + 1, product }));
+    },
+    [],
+  );
+
+  const setQuantity = useCallback((lineId: string, quantity: number) => {
     setItems((current) =>
       quantity < 1
-        ? current.filter((item) => item.slug !== slug)
+        ? current.filter((item) => lineIdDe(item.slug, item.variacao) !== lineId)
         : current.map((item) =>
-            item.slug === slug ? { ...item, quantity: clamp(quantity) } : item,
+            lineIdDe(item.slug, item.variacao) === lineId
+              ? { ...item, quantity: clamp(quantity) }
+              : item,
           ),
     );
   }, []);
 
-  const removeItem = useCallback((slug: string) => {
-    setItems((current) => current.filter((item) => item.slug !== slug));
+  const removeItem = useCallback((lineId: string) => {
+    setItems((current) => current.filter((item) => lineIdDe(item.slug, item.variacao) !== lineId));
   }, []);
 
   const openCart = useCallback(() => setIsOpen(true), []);
@@ -138,7 +187,24 @@ export function CartProvider({
     const lines = items.flatMap<CartLine>((item) => {
       const product = porSlug.get(item.slug);
       if (!product) return [];
-      return [{ product, quantity: item.quantity, total: product.price * item.quantity }];
+
+      const variant = item.variacao
+        ? product.variants.find((v) => v.id === item.variacao) ?? null
+        : null;
+      /* Item de variação que sumiu do catálogo não vira linha fantasma. */
+      if (item.variacao && !variant) return [];
+
+      const unitPrice = variant ? variantPrice(product, variant) : product.price;
+      return [
+        {
+          lineId: lineIdDe(item.slug, item.variacao),
+          product,
+          variant,
+          quantity: item.quantity,
+          unitPrice,
+          total: unitPrice * item.quantity,
+        },
+      ];
     });
 
     const subtotal = lines.reduce((sum, line) => sum + line.total, 0);

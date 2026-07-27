@@ -26,6 +26,9 @@ export function statusDoMercadoPago(status: string): StatusPagamento {
 
 export type ItemDoPedido = {
   nome: string;
+  /** Nome da variação escolhida ("1 kg"), ou nulo em produto simples. Vai para
+      `itens_pedido.variacao_nome` — o painel já exibe. */
+  variacao: string | null;
   sku: string | null;
   quantidade: number;
   precoUnitario: number;
@@ -130,6 +133,7 @@ export async function criarPedido(dados: DadosPedido): Promise<PedidoCriado | nu
     const itens = dados.itens.map((item) => ({
       pedido_id: pedido.id as string,
       nome_produto: item.nome,
+      variacao_nome: item.variacao,
       sku: item.sku,
       quantidade: item.quantidade,
       preco_unitario: item.precoUnitario,

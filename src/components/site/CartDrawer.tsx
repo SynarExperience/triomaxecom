@@ -63,7 +63,8 @@ export function CartDrawer() {
 
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     ["Olá! Quero fechar este pedido:", ...lines.map(
-      (line) => `• ${line.quantity}x ${line.product.name} — ${formatBRL(line.total)}`,
+      (line) =>
+        `• ${line.quantity}x ${line.product.name}${line.variant ? ` (${line.variant.name})` : ""} — ${formatBRL(line.total)}`,
     ), `Total: ${formatBRL(subtotal)}`].join("\n"),
   )}`;
 
@@ -90,11 +91,11 @@ export function CartDrawer() {
 
     /* Itens congelados: nome e preço do momento da compra, para o carrinho
        gravado não mudar se o catálogo mudar depois. */
-    const itens = lines.map(({ product, quantity }) => ({
-      nome: product.name,
-      sku: product.slug,
+    const itens = lines.map(({ product, variant, quantity, unitPrice }) => ({
+      nome: variant ? `${product.name} (${variant.name})` : product.name,
+      sku: variant?.sku || product.slug,
       quantidade: quantity,
-      precoUnitario: product.price,
+      precoUnitario: unitPrice,
     }));
 
     try {
@@ -181,22 +182,23 @@ export function CartDrawer() {
         ) : (
           <>
             <ul className={styles.list}>
-              {lines.map(({ product, quantity, total }) => (
-                <li className={styles.line} key={product.slug}>
+              {lines.map(({ lineId, product, variant, quantity, unitPrice, total }) => (
+                <li className={styles.line} key={lineId}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img alt="" className={styles.lineImage} src={product.image} />
 
                   <div className={styles.lineBody}>
                     <a className={styles.lineName} href={`/produto/${product.slug}`} onClick={closeCart}>
                       {product.name}
+                      {variant ? ` · ${variant.name}` : ""}
                     </a>
-                    <span className={styles.lineUnit}>{formatBRL(product.price)} cada</span>
+                    <span className={styles.lineUnit}>{formatBRL(unitPrice)} cada</span>
 
                     <div className={styles.lineControls}>
                       <div aria-label={`Quantidade de ${product.name}`} className={styles.qty}>
                         <button
                           aria-label="Diminuir quantidade"
-                          onClick={() => setQuantity(product.slug, quantity - 1)}
+                          onClick={() => setQuantity(lineId, quantity - 1)}
                           type="button"
                         >
                           −
@@ -204,7 +206,7 @@ export function CartDrawer() {
                         <span aria-live="polite">{quantity}</span>
                         <button
                           aria-label="Aumentar quantidade"
-                          onClick={() => setQuantity(product.slug, quantity + 1)}
+                          onClick={() => setQuantity(lineId, quantity + 1)}
                           type="button"
                         >
                           +
@@ -212,7 +214,7 @@ export function CartDrawer() {
                       </div>
                       <button
                         className={styles.remove}
-                        onClick={() => removeItem(product.slug)}
+                        onClick={() => removeItem(lineId)}
                         type="button"
                       >
                         Remover

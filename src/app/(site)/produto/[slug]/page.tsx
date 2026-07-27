@@ -9,7 +9,6 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import {
   BoxIcon,
-  CardIcon,
   ChevronDownIcon,
   RefreshIcon,
   StarIcon,
@@ -17,7 +16,6 @@ import {
 } from "@/components/site/icons";
 import pageStyles from "@/components/site/pages.module.css";
 import storeStyles from "@/components/site/store.module.css";
-import { formatBRL, installment } from "@/data/catalog";
 import { buscarProduto, listarProdutos, produtosRelacionados } from "@/lib/produtos";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -44,11 +42,8 @@ export default async function ProductPage({ params }: PageProps) {
 
   const related = await produtosRelacionados(slug);
 
-  // Desconto do preço cheio — só existe quando há `compareAt`, e vem dos dados.
-  const discount = product.compareAt
-    ? Math.round((1 - product.price / product.compareAt) * 100)
-    : 0;
-
+  /* O bloco de preço não fica mais aqui: ele mora no ProductView (client),
+     porque com variações o valor exibido acompanha a escolhida. */
   const infoTop = (
     <>
       <p className={pageStyles.pdpCategory}>{product.line}</p>
@@ -62,27 +57,6 @@ export default async function ProductPage({ params }: PageProps) {
         <span>4,9 · 132 avaliações</span>
       </div>
       <p className={pageStyles.pdpShort}>{product.short}</p>
-
-      <div className={pageStyles.priceBox}>
-        {product.compareAt ? (
-          <s className={pageStyles.priceCompare}>{formatBRL(product.compareAt)}</s>
-        ) : null}
-        <div className={pageStyles.priceMain}>
-          <strong>{formatBRL(product.price)}</strong>
-          {discount > 0 ? <span className={pageStyles.priceOff}>{discount}% OFF</span> : null}
-        </div>
-        {/* Detalhes de pagamento recolhidos, como o "Ver mais detalhes" da
-            referência — nativo em <details>, abre sem JS. */}
-        <details className={pageStyles.priceDetails}>
-          <summary>
-            <CardIcon />
-            Ver mais detalhes
-          </summary>
-          <p className={pageStyles.priceInstallments}>
-            12 x de {formatBRL(installment(product.price))} sem juros
-          </p>
-        </details>
-      </div>
     </>
   );
 

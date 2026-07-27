@@ -85,14 +85,26 @@ export function ProductCard({ product }: { product: Product }) {
               <a className={styles.cardAction} href={`/produto/${product.slug}`}>
                 Comprar
               </a>
-              <button
-                aria-label={`Adicionar ${product.name} ao carrinho`}
-                className={styles.cardActionIcon}
-                onClick={() => addItem(product)}
-                type="button"
-              >
-                <CartIcon />
-              </button>
+              {product.variants.length > 0 ? (
+                /* Com variações não há o que "adicionar direto": a escolha é na
+                   página do produto, então o quadrado vira o mesmo link. */
+                <a
+                  aria-label={`Escolher opções de ${product.name}`}
+                  className={styles.cardActionIcon}
+                  href={`/produto/${product.slug}`}
+                >
+                  <CartIcon />
+                </a>
+              ) : (
+                <button
+                  aria-label={`Adicionar ${product.name} ao carrinho`}
+                  className={styles.cardActionIcon}
+                  onClick={() => addItem(product)}
+                  type="button"
+                >
+                  <CartIcon />
+                </button>
+              )}
             </>
           )}
         </div>

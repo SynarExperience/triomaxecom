@@ -198,7 +198,12 @@ export function CheckoutFlow() {
   const pedidoBase = useMemo<PedidoBase | null>(() => {
     if (!freteEscolhido || !endereco) return null;
     return {
-      itens: lines.map(({ product, quantity }) => ({ slug: product.slug, quantidade: quantity })),
+      itens: lines.map(({ product, variant, quantity }) => ({
+        slug: product.slug,
+        quantidade: quantity,
+        /* O servidor confere a variação e cobra o preço DELA — nunca o daqui. */
+        ...(variant ? { variacao: variant.id } : {}),
+      })),
       frete: freteEscolhido,
       contato: { email: contato.email.trim() },
       entrega,
@@ -217,8 +222,8 @@ export function CheckoutFlow() {
          painel. Só cai no gerado localmente se a gravação tiver falhado. */
       numero: numeroPedido ? `#${numeroPedido}` : gerarNumeroPedido(),
       email: contato.email.trim(),
-      itens: lines.map(({ product, quantity, total: totalLinha }) => ({
-        nome: product.name,
+      itens: lines.map(({ product, variant, quantity, total: totalLinha }) => ({
+        nome: variant ? `${product.name} · ${variant.name}` : product.name,
         quantidade: quantity,
         total: totalLinha,
       })),

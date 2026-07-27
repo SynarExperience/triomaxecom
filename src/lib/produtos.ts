@@ -15,14 +15,19 @@ import type { Product } from "@/data/catalog";
 const COLUNAS =
   "slug, nome, categoria, linha, cor, cor_hex, selo, preco, preco_comparativo, imagem, resumo, descricao, especificacoes, seo_titulo, seo_descricao, estoque(quantidade)";
 
+/* Variações do produto (a RLS da anon key só entrega as ativas). O estoque de
+   cada uma vem aninhado da mesma `estoque` que o produto usa — lá a linha tem
+   `variacao_id` em vez de `produto_id`. */
+const EMBED_VARIACOES = "variacoes(id, nome, sku, preco, estoque(quantidade))";
+
 /* As categorias vêm no mesmo embed da listagem porque é ela que filtra por
    elas — buscar depois, produto a produto, seria uma consulta por card. A
    galeria entra junto porque o card troca para a segunda foto no hover; só as
    duas primeiras interessam ali, mas o custo de trazer as demais é irrisório. */
-const COLUNAS_COM_CATEGORIAS = `${COLUNAS}, produtos_categorias(categorias(slug)), fotos_produto(url, alt, posicao)`;
+const COLUNAS_COM_CATEGORIAS = `${COLUNAS}, produtos_categorias(categorias(slug)), fotos_produto(url, alt, posicao), ${EMBED_VARIACOES}`;
 
 /* A PDP monta a tira de miniaturas com a galeria inteira. */
-const COLUNAS_COM_FOTOS = `${COLUNAS}, fotos_produto(url, alt, posicao)`;
+const COLUNAS_COM_FOTOS = `${COLUNAS}, fotos_produto(url, alt, posicao), ${EMBED_VARIACOES}`;
 
 /**
  * Erros que o PostgREST devolve quando a tabela embutida ainda não existe —
@@ -64,6 +69,16 @@ type LinhaProduto = {
   fotos_produto?: LinhaFoto[] | null;
   /** Ausente nas consultas sem embed e nos produtos sem categoria. */
   produtos_categorias?: { categorias: { slug: string } | null }[] | null;
+  /** Ausente nas consultas sem o embed (relacionados e fallbacks). */
+  variacoes?:
+    | {
+        id: string;
+        nome: string;
+        sku: string | null;
+        preco: number | null;
+        estoque?: { quantidade: number }[] | null;
+      }[]
+    | null;
 };
 
 function paraProduto(l: LinhaProduto): Product {
@@ -103,6 +118,16 @@ function paraProduto(l: LinhaProduto): Product {
     /* Produto sem linha de estoque fica `null` — "não controlado", e não
        "esgotado". Ver `isSoldOut` em `@/data/catalog`. */
     stock: l.estoque?.[0] ? Number(l.estoque[0].quantidade) : null,
+    /* Consulta sem o embed (relacionados/fallback) vira lista vazia — o
+       produto se comporta como simples ali, e a PDP, que tem o embed, é quem
+       manda na escolha da variação. */
+    variants: (l.variacoes ?? []).map((v) => ({
+      id: v.id,
+      name: v.nome,
+      sku: v.sku ?? null,
+      price: v.preco != null ? Number(v.preco) : null,
+      stock: v.estoque?.[0] ? Number(v.estoque[0].quantidade) : null,
+    })),
   };
 }
 

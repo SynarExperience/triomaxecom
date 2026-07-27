@@ -3,6 +3,18 @@ export type ProductImage = {
   alt: string;
 };
 
+/** Variação vendável (ex.: "1 kg", "500 g"). Só as ativas chegam à vitrine —
+    a RLS do banco já filtra. */
+export type ProductVariant = {
+  id: string;
+  name: string;
+  sku: string | null;
+  /** Nulo herda o preço do produto — ver `variantPrice`. */
+  price: number | null;
+  /** Mesma semântica do estoque do produto: nulo = não controlado, 0 = esgotada. */
+  stock: number | null;
+};
+
 export type Product = {
   slug: string;
   name: string;
@@ -46,10 +58,27 @@ export type Product = {
    * um cadastro incompleto tiraria o item de venda sem ninguém pedir.
    */
   stock: number | null;
+  /**
+   * Variações do produto. Vazia = produto simples, comportamento idêntico ao
+   * de sempre. Com itens, a PDP obriga a escolha de uma, o carrinho identifica
+   * o item por produto+variação e o estoque conta por variação.
+   */
+  variants: ProductVariant[];
 };
 
-/** Produto sem unidade disponível: a loja troca as ações de compra por "Esgotado". */
-export const isSoldOut = (product: Product) => product.stock === 0;
+/** Preço efetivo de uma variação: o dela ou, se nulo, o do produto. */
+export const variantPrice = (product: Product, variant: ProductVariant) =>
+  variant.price ?? product.price;
+
+export const isVariantSoldOut = (variant: ProductVariant) => variant.stock === 0;
+
+/** Produto sem unidade disponível: a loja troca as ações de compra por "Esgotado".
+    Com variações, esgotado é quando TODAS esgotaram — o estoque do produto em si
+    deixa de valer. */
+export const isSoldOut = (product: Product) =>
+  product.variants.length > 0
+    ? product.variants.every(isVariantSoldOut)
+    : product.stock === 0;
 
 export const formatBRL = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

@@ -1,6 +1,7 @@
 import "server-only";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { listarProdutos } from "@/lib/produtos";
+import { variantPrice } from "@/data/catalog";
 import { digitos } from "@/lib/checkout";
 import { criarPedido, statusDoMercadoPago } from "@/lib/pedidos";
 import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
@@ -21,8 +22,9 @@ if (!accessToken) {
 
 const client = new MercadoPagoConfig({ accessToken });
 
-/** O que o cliente envia do carrinho: o preço NUNCA vem daqui. */
-export type ItemCarrinho = { slug: string; quantidade: number };
+/** O que o cliente envia do carrinho: o preço NUNCA vem daqui. `variacao` é o
+    id em `variacoes` quando o produto tem variações. */
+export type ItemCarrinho = { slug: string; quantidade: number; variacao?: string };
 
 type DadosBase = {
   itens: ItemCarrinho[];
@@ -61,24 +63,36 @@ export type ResultadoPagamento = {
 /**
  * Relê o carrinho pelo slug e devolve itens, total e dados do pagador. O valor
  * cobrado é sempre o do catálogo — o que o cliente manda é ignorado, senão
- * bastaria adulterar o request para pagar centavos.
+ * bastaria adulterar o request para pagar centavos. Vale também para variação:
+ * o id precisa existir no produto, e o preço usado é o dela (ou o herdado).
  */
 async function montarPedido(dados: DadosBase) {
   const catalogo = await listarProdutos();
   const porSlug = new Map(catalogo.map((produto) => [produto.slug, produto]));
 
   const linhas = dados.itens
-    .map(({ slug, quantidade }) => {
+    .map(({ slug, quantidade, variacao }) => {
       const produto = porSlug.get(slug);
       if (!produto) return null;
+
+      /* Produto com variações exige uma variação válida; sem isso não dá para
+         saber o preço nem o que separar — o item cai fora, como um slug
+         inexistente cairia. Produto simples ignora variação perdida. */
+      let variante = null;
+      if (produto.variants.length > 0) {
+        variante = produto.variants.find((v) => v.id === variacao) ?? null;
+        if (!variante) return null;
+      }
+
       const qtd = Math.max(1, Math.min(9, Math.trunc(quantidade)));
-      return { produto, quantidade: qtd };
+      const precoUnitario = variante ? variantPrice(produto, variante) : produto.price;
+      return { produto, variante, quantidade: qtd, precoUnitario };
     })
     .filter((linha): linha is NonNullable<typeof linha> => linha !== null);
 
   if (linhas.length === 0) throw new Error("Nenhum item válido no carrinho.");
 
-  const subtotal = linhas.reduce((soma, l) => soma + l.produto.price * l.quantidade, 0);
+  const subtotal = linhas.reduce((soma, l) => soma + l.precoUnitario * l.quantidade, 0);
   // Centavos redondos: o Mercado Pago rejeita transaction_amount com dízima.
   const total = Math.round((subtotal + dados.frete.preco) * 100) / 100;
 
@@ -130,9 +144,10 @@ async function gravarPedido(
   const pedido = await criarPedido({
     itens: montado.linhas.map((linha) => ({
       nome: linha.produto.name,
-      sku: linha.produto.slug,
+      variacao: linha.variante?.name ?? null,
+      sku: linha.variante?.sku || linha.produto.slug,
       quantidade: linha.quantidade,
-      precoUnitario: linha.produto.price,
+      precoUnitario: linha.precoUnitario,
     })),
     subtotal: montado.subtotal,
     total: montado.total,

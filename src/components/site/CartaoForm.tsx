@@ -10,7 +10,8 @@ import styles from "./checkout.module.css";
 
 /** Dados do pedido que o pagamento precisa — os mesmos para Pix e cartão. */
 export type PedidoBase = {
-  itens: { slug: string; quantidade: number }[];
+  /** `variacao` é o id em `variacoes` quando o produto tem variações. */
+  itens: { slug: string; quantidade: number; variacao?: string }[];
   frete: OpcaoFrete;
   contato: { email: string };
   entrega: DadosEntrega;
