@@ -166,9 +166,22 @@ export function previsaoEntrega(prazoDias: number, hoje = new Date()) {
 
 /* ------------------------------------------------------------------ pagamento */
 
-/* Parcelas e eventual desconto não são mais calculados aqui: no Checkout
-   Transparente é o Mercado Pago que devolve as parcelas reais (com juros) e
-   cobra o valor certo. Ver `src/lib/mercadopago.ts`. */
+/* Parcelas 2×–12× são do Mercado Pago (ele devolve os valores reais). O 1× no
+   cartão é a exceção: o MP não repassa a taxa da venda à vista para o cliente,
+   então repassamos aqui. */
+
+/** Taxa de cartão de crédito à vista da conta (recebimento na hora). */
+export const TAXA_CARTAO_AVISTA = 0.0498;
+
+/**
+ * Valor a cobrar no cartão à vista para o lojista receber o preço cheio. É um
+ * "gross-up": divide por (1 − taxa), em vez de somar a taxa — somar deixaria a
+ * taxa incidir sobre o valor já maior e faltaria o troco. Arredonda ao centavo,
+ * que o Mercado Pago exige.
+ */
+export function totalCartaoAvista(base: number) {
+  return Math.round((base / (1 - TAXA_CARTAO_AVISTA)) * 100) / 100;
+}
 
 /** Número do pedido derivado do relógio: legível e único o bastante na demo. */
 export function gerarNumeroPedido(agora = new Date()) {

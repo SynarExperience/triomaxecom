@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CheckoutCampo } from "./CheckoutCampo";
 import { obterMercadoPago, type MercadoPagoInstance } from "@/lib/mercadopago-cliente";
-import { digitos } from "@/lib/checkout";
+import { digitos, TAXA_CARTAO_AVISTA, totalCartaoAvista } from "@/lib/checkout";
 import { formatBRL } from "@/data/catalog";
 import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 import styles from "./checkout.module.css";
@@ -41,7 +41,7 @@ export function CartaoForm({
   pedido: PedidoBase;
   total: number;
   /** Chamado com o id do pagamento quando aprovado. */
-  onAprovado: (paymentId: number, numeroPedido: number | null) => void;
+  onAprovado: (paymentId: number, numeroPedido: number | null, totalCobrado: number) => void;
   onErro: (mensagem: string) => void;
 }) {
   const [numero, setNumero] = useState("");
@@ -87,9 +87,17 @@ export function CartaoForm({
           bin,
           paymentTypeId: "credit_card",
         });
+        /* O 1× tem a taxa da venda à vista repassada, então mostramos o valor
+           com a taxa — não o que o MP devolve (que é o preço cheio). As demais
+           parcelas seguem o valor do próprio MP. */
+        const rotulo1x = `1x de ${formatBRL(totalCartaoAvista(total))} (taxa ${(TAXA_CARTAO_AVISTA * 100).toFixed(2).replace(".", ",")}%)`;
         const opcoes = (cotacao[0]?.payer_costs ?? [])
           .filter((c) => c.installments <= 12)
-          .map<Parcela>((c) => ({ numero: c.installments, rotulo: c.recommended_message }));
+          .map<Parcela>((c) =>
+            c.installments === 1
+              ? { numero: 1, rotulo: rotulo1x }
+              : { numero: c.installments, rotulo: c.recommended_message },
+          );
 
         if (cancelado) return;
         setErroBin(null);
@@ -97,7 +105,7 @@ export function CartaoForm({
           paymentMethodId: primeiro.id,
           issuerId: cotacao[0]?.issuer?.id ?? primeiro.issuer?.id?.toString(),
         });
-        setParcelas(opcoes.length > 0 ? opcoes : [{ numero: 1, rotulo: `1x de ${formatBRL(total)}` }]);
+        setParcelas(opcoes.length > 0 ? opcoes : [{ numero: 1, rotulo: rotulo1x }]);
         setParcela(1);
       } catch {
         if (!cancelado) setErroBin("Não foi possível consultar as parcelas.");
@@ -145,7 +153,8 @@ export function CartaoForm({
       if (!resposta.ok) { onErro(dados.erro ?? "Falha ao processar o cartão."); return; }
 
       if (dados.status === "approved") {
-        onAprovado(dados.id, dados.numeroPedido ?? null);
+        // `dados.total` já é o valor cobrado (com a taxa, quando 1×).
+        onAprovado(dados.id, dados.numeroPedido ?? null, dados.total ?? total);
       } else if (dados.status === "in_process" || dados.status === "pending") {
         onErro("Pagamento em análise. Você receberá a confirmação por e-mail.");
       } else {
@@ -210,7 +219,9 @@ export function CartaoForm({
         style={{ marginTop: 20 }}
         type="button"
       >
-        {processando ? "Processando…" : `Pagar ${formatBRL(total)}`}
+        {processando
+          ? "Processando…"
+          : `Pagar ${formatBRL(parcela === 1 ? totalCartaoAvista(total) : total)}`}
       </button>
     </div>
   );

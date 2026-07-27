@@ -27,7 +27,7 @@ export function PixPanel({
 }: {
   pedido: PedidoBase;
   total: number;
-  onAprovado: (paymentId: number, numeroPedido: number | null) => void;
+  onAprovado: (paymentId: number, numeroPedido: number | null, totalCobrado: number) => void;
   onErro: (mensagem: string) => void;
 }) {
   const [pix, setPix] = useState<PixGerado | null>(null);
@@ -68,14 +68,15 @@ export function PixPanel({
         if (dados.status === "approved" && !jaAprovou.current) {
           jaAprovou.current = true;
           window.clearInterval(relogio);
-          onAprovado(pix.id, pix.numeroPedido);
+          // Pix não tem taxa repassada: o total cobrado é o próprio total base.
+          onAprovado(pix.id, pix.numeroPedido, total);
         }
       } catch {
         /* Falha de rede numa checagem não interrompe: a próxima tenta de novo. */
       }
     }, INTERVALO_MS);
     return () => window.clearInterval(relogio);
-  }, [pix, onAprovado]);
+  }, [pix, onAprovado, total]);
 
   const copiar = async () => {
     if (!pix) return;

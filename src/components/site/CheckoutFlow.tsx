@@ -214,7 +214,9 @@ export function CheckoutFlow() {
   /* Chamado pelos painéis de cartão/Pix quando o Mercado Pago aprova. Guarda o
      pedido para a confirmação e navega. O id do pagamento vai junto para a tela
      poder reconferir o status pela API. */
-  const aoAprovar = (paymentId: number, numeroPedido: number | null) => {
+  /* `totalCobrado` é o valor que o Mercado Pago efetivamente cobrou — no cartão
+     1× traz a taxa repassada, então difere do `total` base da tela. */
+  const aoAprovar = (paymentId: number, numeroPedido: number | null, totalCobrado: number) => {
     if (!pagamento || !freteEscolhido || !endereco) return;
 
     const pedido: PedidoConfirmado = {
@@ -229,7 +231,7 @@ export function CheckoutFlow() {
       })),
       subtotal,
       frete: freteEscolhido,
-      total,
+      total: totalCobrado,
       pagamento,
       endereco,
       entrega,
@@ -575,7 +577,7 @@ function SecaoPagamento({
   observacoes: string;
   onObservacoes: (valor: string) => void;
   onPagamento: (forma: FormaPagamento) => void;
-  onAprovado: (paymentId: number, numeroPedido: number | null) => void;
+  onAprovado: (paymentId: number, numeroPedido: number | null, totalCobrado: number) => void;
   onErro: (mensagem: string) => void;
   pagamento: FormaPagamento | null;
   pedido: PedidoBase;

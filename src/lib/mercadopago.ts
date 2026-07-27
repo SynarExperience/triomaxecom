@@ -2,7 +2,7 @@ import "server-only";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { listarProdutos } from "@/lib/produtos";
 import { variantPrice } from "@/data/catalog";
-import { digitos } from "@/lib/checkout";
+import { digitos, totalCartaoAvista } from "@/lib/checkout";
 import { criarPedido, statusDoMercadoPago } from "@/lib/pedidos";
 import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 
@@ -140,6 +140,8 @@ async function gravarPedido(
   pagamentoId: number,
   status: string,
   meioPagamento: "pix" | "cartao",
+  /** Total efetivamente cobrado — no cartão 1× inclui a taxa repassada. */
+  totalCobrado: number = montado.total,
 ): Promise<number | null> {
   const pedido = await criarPedido({
     itens: montado.linhas.map((linha) => ({
@@ -150,7 +152,7 @@ async function gravarPedido(
       precoUnitario: linha.precoUnitario,
     })),
     subtotal: montado.subtotal,
-    total: montado.total,
+    total: totalCobrado,
     frete: dados.frete,
     contato: dados.contato,
     entrega: dados.entrega,
@@ -215,13 +217,18 @@ export async function criarPagamentoCartao(dados: DadosCartao): Promise<Resultad
   const { total, descricao, payer } = montado;
   const payment = new Payment(client);
 
+  const parcelas = Math.max(1, Math.min(12, Math.trunc(dados.parcelas)));
+  /* Só o 1× repassa a taxa da venda à vista; 2×–12× seguem o valor do MP, que
+     já aplica o custo de parcelamento conforme a config da conta. */
+  const totalCobrado = parcelas === 1 ? totalCartaoAvista(total) : total;
+
   const resultado = await payment.create({
     body: {
-      transaction_amount: total,
+      transaction_amount: totalCobrado,
       token: dados.token,
       description: descricao,
       statement_descriptor: "SITE TRIOMAX",
-      installments: Math.max(1, Math.min(12, Math.trunc(dados.parcelas))),
+      installments: parcelas,
       payment_method_id: dados.paymentMethodId,
       // O SDK tipa issuer_id como número; o cliente manda string.
       issuer_id: dados.issuerId ? Number(dados.issuerId) : undefined,
@@ -239,13 +246,14 @@ export async function criarPagamentoCartao(dados: DadosCartao): Promise<Resultad
     resultado.id!,
     resultado.status ?? "pending",
     "cartao",
+    totalCobrado,
   );
 
   return {
     id: resultado.id!,
     status: resultado.status ?? "desconhecido",
     statusDetail: resultado.status_detail ?? "",
-    total,
+    total: totalCobrado,
     numeroPedido,
   };
 }
