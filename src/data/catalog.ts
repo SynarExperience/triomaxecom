@@ -16,6 +16,8 @@ export type ProductVariant = {
 };
 
 export type Product = {
+  /** id da linha em `produtos` — o pedido grava para a baixa de estoque. */
+  id: string;
   slug: string;
   name: string;
   /**

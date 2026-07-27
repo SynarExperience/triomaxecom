@@ -1,5 +1,6 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { listarProdutos } from "@/lib/produtos";
 import { digitos } from "@/lib/checkout";
 import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 
@@ -96,6 +97,69 @@ function enderecoEmLinha(entrega: DadosEntrega, endereco: Endereco): string {
 export type PedidoCriado = { id: string; numero: number };
 
 /**
+ * Baixa o estoque de um pedido pago — a função no banco é atômica e
+ * idempotente (o webhook repete avisos; só a primeira chamada baixa). Nunca
+ * lança: o pagamento já aconteceu, e um estoque que não baixou é problema
+ * MENOR que um checkout derrubado; fica no log para acerto manual.
+ */
+async function baixarEstoque(pedidoId: string) {
+  const { error } = await supabaseAdmin.rpc("baixar_estoque_do_pedido", {
+    p_pedido: pedidoId,
+  });
+  if (error) {
+    console.error(`[pedidos] falha ao baixar estoque do pedido ${pedidoId}:`, error.message);
+  }
+}
+
+/**
+ * Reencontra produto e variação de cada item para gravar os vínculos que a
+ * baixa de estoque usa. A âncora é o `sku` do item: para produto simples ele é
+ * o slug; para variação é o SKU dela (único no catálogo inteiro) ou, sem SKU,
+ * o slug do produto + o nome da variação. Item que não resolver (produto
+ * removido/desativado no meio do caminho) fica sem vínculo — a baixa pula.
+ */
+async function resolverVinculos(
+  itens: ItemDoPedido[],
+): Promise<Map<ItemDoPedido, { produtoId: string; variacaoId: string | null }>> {
+  const vinculos = new Map<ItemDoPedido, { produtoId: string; variacaoId: string | null }>();
+  try {
+    const catalogo = await listarProdutos();
+    const porSlug = new Map(catalogo.map((p) => [p.slug, p]));
+
+    for (const item of itens) {
+      if (!item.sku) continue;
+
+      if (!item.variacao) {
+        const produto = porSlug.get(item.sku);
+        if (produto) vinculos.set(item, { produtoId: produto.id, variacaoId: null });
+        continue;
+      }
+
+      /* Com variação: ou o sku é o da variação (único global), ou é o slug do
+         produto e o nome fecha a busca. */
+      let achado: { produtoId: string; variacaoId: string } | null = null;
+      for (const produto of catalogo) {
+        const porSku = produto.variants.find((v) => v.sku && v.sku === item.sku);
+        if (porSku) {
+          achado = { produtoId: produto.id, variacaoId: porSku.id };
+          break;
+        }
+      }
+      if (!achado) {
+        const produto = porSlug.get(item.sku);
+        const porNome = produto?.variants.find((v) => v.name === item.variacao);
+        if (produto && porNome) achado = { produtoId: produto.id, variacaoId: porNome.id };
+      }
+      if (achado) vinculos.set(item, achado);
+    }
+  } catch (erro) {
+    /* Sem vínculo não há baixa, mas o pedido precisa nascer mesmo assim. */
+    console.error("[pedidos] falha ao resolver vínculos dos itens:", erro);
+  }
+  return vinculos;
+}
+
+/**
  * Cria o pedido, seus itens e (se preciso) o cliente. Devolve `null` em falha —
  * o pagamento já foi criado no Mercado Pago e não pode ser desfeito por causa
  * de um erro de gravação, então o checkout segue e o erro fica no log.
@@ -130,18 +194,30 @@ export async function criarPedido(dados: DadosPedido): Promise<PedidoCriado | nu
       return null;
     }
 
-    const itens = dados.itens.map((item) => ({
-      pedido_id: pedido.id as string,
-      nome_produto: item.nome,
-      variacao_nome: item.variacao,
-      sku: item.sku,
-      quantidade: item.quantidade,
-      preco_unitario: item.precoUnitario,
-    }));
+    const vinculos = await resolverVinculos(dados.itens);
+    const itens = dados.itens.map((item) => {
+      const vinculo = vinculos.get(item);
+      return {
+        pedido_id: pedido.id as string,
+        produto_id: vinculo?.produtoId ?? null,
+        variacao_id: vinculo?.variacaoId ?? null,
+        nome_produto: item.nome,
+        variacao_nome: item.variacao,
+        sku: item.sku,
+        quantidade: item.quantidade,
+        preco_unitario: item.precoUnitario,
+      };
+    });
 
     const { error: erroItens } = await supabaseAdmin.from("itens_pedido").insert(itens);
     if (erroItens) {
       console.error("[pedidos] pedido gravado, mas os itens falharam:", erroItens.message);
+    }
+
+    /* Cartão aprovado na hora já nasce pago — o estoque baixa aqui mesmo. O
+       Pix nasce pendente e baixa quando o webhook confirmar. */
+    if (dados.statusPagamento === "recebido" && !erroItens) {
+      await baixarEstoque(pedido.id as string);
     }
 
     return { id: pedido.id as string, numero: pedido.numero as number };
@@ -163,11 +239,21 @@ export async function atualizarPagamento(
     .from("pedidos")
     .update({ status_pagamento: status, atualizado_em: new Date().toISOString() })
     .eq("pagamento_id", pagamentoId)
-    .select("numero");
+    .select("id, numero");
 
   if (error) {
     console.error("[pedidos] falha ao atualizar o pagamento:", error.message);
     return false;
   }
+
+  /* Pagamento confirmado (o Pix chega por aqui) baixa o estoque. A função no
+     banco é idempotente, então os avisos repetidos do webhook não baixam duas
+     vezes. */
+  if (status === "recebido") {
+    for (const pedido of data ?? []) {
+      await baixarEstoque(pedido.id as string);
+    }
+  }
+
   return (data?.length ?? 0) > 0;
 }

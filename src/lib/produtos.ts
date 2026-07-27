@@ -13,7 +13,7 @@ import type { Product } from "@/data/catalog";
    do tratamento de "tabela ausente" que a galeria e as categorias exigem. */
 /** Colunas que compõem um `Product`. Explícitas para não trafegar campo à toa. */
 const COLUNAS =
-  "slug, nome, categoria, linha, cor, cor_hex, selo, preco, preco_comparativo, imagem, resumo, descricao, especificacoes, seo_titulo, seo_descricao, estoque(quantidade)";
+  "id, slug, nome, categoria, linha, cor, cor_hex, selo, preco, preco_comparativo, imagem, resumo, descricao, especificacoes, seo_titulo, seo_descricao, estoque(quantidade)";
 
 /* Variações do produto (a RLS da anon key só entrega as ativas). O estoque de
    cada uma vem aninhado da mesma `estoque` que o produto usa — lá a linha tem
@@ -47,6 +47,7 @@ type LinhaFoto = {
 };
 
 type LinhaProduto = {
+  id: string;
   slug: string;
   nome: string;
   categoria: string;
@@ -92,6 +93,7 @@ function paraProduto(l: LinhaProduto): Product {
   const unica = l.imagem ? [{ url: l.imagem, alt: l.nome }] : [];
 
   return {
+    id: l.id,
     slug: l.slug,
     name: l.nome,
     category: l.categoria as Product["category"],
