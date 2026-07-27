@@ -42,6 +42,12 @@ export type BannerHero = {
  */
 const BANNERS_PADRAO: BannerHero[] = [
   {
+    name: "banner-grupo-vip",
+    alt: "Banner Triomax: entre no Grupo VIP no WhatsApp e acompanhe as promoções",
+    label: "Entrar no Grupo VIP do WhatsApp",
+    link: "https://chat.whatsapp.com/DIZ9zYlQHIi8jh1KxhZmGl?s=sw&p=i&ilr=0",
+  },
+  {
     name: "banner-pla-petg-novo",
     alt: "Banner Triomax: carretéis de filamento laranja, verde, azul, amarelo e preto empilhados sobre fundo bege — PLA e PETG sem pedido mínimo",
     label: "Ver banner de PLA e PETG sem pedido mínimo",
@@ -201,6 +207,9 @@ export function HeroSection({ banners: doBanco }: { banners?: BannerHero[] }) {
 
       {banners.map((banner, index) => {
         const active = slide === index + 1;
+        /* Link para fora da loja (ex.: grupo do WhatsApp) abre em nova aba, para
+           não tirar a pessoa da vitrine; link interno navega na própria aba. */
+        const externo = /^https?:\/\//.test(banner.link);
         return (
           <a
             aria-hidden={!active}
@@ -209,7 +218,9 @@ export function HeroSection({ banners: doBanco }: { banners?: BannerHero[] }) {
             }`}
             href={banner.link}
             key={banner.name}
+            rel={externo ? "noreferrer" : undefined}
             tabIndex={active ? 0 : -1}
+            target={externo ? "_blank" : undefined}
           >
             <picture>
               <source
