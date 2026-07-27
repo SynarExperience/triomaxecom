@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductView } from "@/components/site/BuyPanel";
+import DescricaoRica from "@/components/site/DescricaoRica";
 import { AnnouncementMarquee } from "@/components/site/Marquee";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
@@ -118,9 +119,7 @@ export default async function ProductPage({ params }: PageProps) {
             <ChevronDownIcon />
           </summary>
           <div className={pageStyles.accordionBody}>
-            {product.description.map((paragraph) => (
-              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
-            ))}
+            <DescricaoRica blocos={product.description} />
           </div>
         </details>
 

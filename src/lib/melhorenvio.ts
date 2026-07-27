@@ -157,11 +157,12 @@ export async function calcularFrete(
   return [retirarNaLoja(), ...opcoes];
 }
 
-/** Só Correios (PAC/SEDEX) e Jadlog entram na lista mostrada ao cliente. */
+/** Só Correios PAC/SEDEX e a Jadlog .Package entram na lista do cliente
+    (fora as demais variantes da Jadlog: .Com, .Package Centralizado etc.). */
 function transportadoraPermitida(s: ServicoME): boolean {
   const empresa = (s.company?.name ?? "").toLowerCase();
-  const servico = (s.name ?? "").toLowerCase();
-  if (empresa.includes("jadlog")) return true;
+  const servico = (s.name ?? "").trim().toLowerCase();
+  if (empresa.includes("jadlog")) return servico === ".package";
   if (empresa.includes("correios") && (servico.includes("pac") || servico.includes("sedex"))) {
     return true;
   }

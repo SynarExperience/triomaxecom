@@ -1107,6 +1107,35 @@
   margin-bottom: 0;
 }
 
+/* Blocos da descrição rica (subtítulo, listas e links vindos do painel). */
+.accordionBody h3 {
+  margin: 16px 0 8px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.accordionBody h3:first-child {
+  margin-top: 0;
+}
+
+.accordionBody ul,
+.accordionBody ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.accordionBody li {
+  margin: 4px 0;
+}
+
+/* O dourado escuro é o único da paleta aprovado para texto (AA sobre branco). */
+.accordionBody a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .specTable {
   width: 100%;
   border-collapse: collapse;
