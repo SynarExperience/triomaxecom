@@ -255,5 +255,19 @@ export async function atualizarPagamento(
     }
   }
 
+  /* Estorno/chargeback devolve o que a venda baixou. O guarda no banco é o
+     mesmo flag, invertido: só repõe pedido que baixou — recusado que nunca
+     foi pago sai sem efeito, e um re-aprovado depois baixa de novo. */
+  if (status === "recusado") {
+    for (const pedido of data ?? []) {
+      const { error: erroRepor } = await supabaseAdmin.rpc("repor_estoque_do_pedido", {
+        p_pedido: pedido.id as string,
+      });
+      if (erroRepor) {
+        console.error(`[pedidos] falha ao repor estoque do pedido ${pedido.id}:`, erroRepor.message);
+      }
+    }
+  }
+
   return (data?.length ?? 0) > 0;
 }
