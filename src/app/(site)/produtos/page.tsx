@@ -161,6 +161,30 @@ type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
+/**
+ * <head> da listagem filtrada por UMA categoria: usa o Título/Descrição SEO
+ * definidos no painel (colunas da migração 0012) e cai no nome da categoria
+ * quando não preenchidos. Com zero ou várias categorias, herda o padrão do
+ * layout — não há um "assunto" único para descrever.
+ */
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const bruto = params["categoria"];
+  const escolhidas = (Array.isArray(bruto) ? bruto : bruto ? [bruto] : []).filter(Boolean);
+  if (escolhidas.length !== 1) return {};
+
+  const categorias = await listarCategorias();
+  const categoria = categorias.find((c) => c.slug === escolhidas[0]);
+  if (!categoria) return {};
+
+  return {
+    title: categoria.seoTitulo || `${categoria.nome} | Triomax`,
+    description:
+      categoria.seoDescricao ||
+      `${categoria.nome} para impressão 3D na Triomax — envio rápido e compra segura.`,
+  };
+}
+
 export default async function ProductsPage({ searchParams }: PageProps) {
   const [products, filtros, categorias, busca] = await Promise.all([
     listarProdutos(),

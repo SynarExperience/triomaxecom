@@ -24,6 +24,10 @@ export interface Categoria {
    * nesse caso ela não aparece na tira da home (só no menu e nos filtros).
    */
   imagem: string;
+  /** Título/descrição para o <head> da listagem filtrada (definidos no
+      painel). Vazios, a página cai no nome da categoria. */
+  seoTitulo: string;
+  seoDescricao: string;
 }
 
 type LinhaCategoria = {
@@ -33,6 +37,8 @@ type LinhaCategoria = {
   pai_id: string | null;
   posicao: number;
   imagem: string | null;
+  seo_titulo: string | null;
+  seo_descricao: string | null;
 };
 
 /**
@@ -45,7 +51,7 @@ const ERROS_SEM_CATEGORIAS = ["PGRST200", "PGRST205", "42P01"];
 export async function listarCategorias(): Promise<Categoria[]> {
   const { data, error } = await supabase
     .from("categorias")
-    .select("id, nome, slug, pai_id, posicao, imagem");
+    .select("id, nome, slug, pai_id, posicao, imagem, seo_titulo, seo_descricao");
 
   if (error) {
     if (ERROS_SEM_CATEGORIAS.includes(error.code)) return [];
@@ -73,7 +79,15 @@ export async function listarCategorias(): Promise<Categoria[]> {
     for (const c of filhasDe.get(paiId) ?? []) {
       if (vistos.has(c.id)) continue;
       const caminho = prefixo ? `${prefixo}/${c.nome}` : c.nome;
-      lista.push({ slug: c.slug, nome: c.nome, caminho, nivel, imagem: c.imagem ?? "" });
+      lista.push({
+        slug: c.slug,
+        nome: c.nome,
+        caminho,
+        nivel,
+        imagem: c.imagem ?? "",
+        seoTitulo: c.seo_titulo ?? "",
+        seoDescricao: c.seo_descricao ?? "",
+      });
       percorrer(c.id, nivel + 1, caminho, new Set(vistos).add(c.id));
     }
   };
