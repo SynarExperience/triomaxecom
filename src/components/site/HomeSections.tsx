@@ -39,15 +39,17 @@ export async function FeaturedProducts() {
 
 /*
  * Grid de destaques no lugar dos tiles de categoria:
- *   ┌──────────────┬────────┐
- *   │  Sobre nós   │        │
- *   ├──────────────┤ aberto │   (a terceira célula é um placeholder até a
- *   │ Frete grátis │        │    arte definitiva — as medidas saem no admin
- *   └──────────────┴────────┘    e no comentário abaixo)
+ *   ┌──────────────┬──────────┐
+ *   │  Sobre nós   │          │
+ *   ├──────────────┤ PLA/PETG │
+ *   │  Mais força  │          │
+ *   └──────────────┴──────────┘
  *
  * As duas células da esquerda têm proporção 21/9; a da direita herda a altura
- * das duas somadas. Frete usa `object-fit: cover`, então a arte 3:1 atual é
- * cortada no preview — a arte final deve vir no tamanho reportado.
+ * das duas somadas. "Mais força" tem 1270×543, que é 21/9 na medida — entra em
+ * `cover` sem corte nenhum, ao contrário da arte 3:1 que ocupava a célula antes.
+ * Essa célula de baixo anunciava a promoção de frete grátis; a arte nova não
+ * promete oferta, mostra o produto.
  */
 export function FeatureGrid() {
   return (
@@ -67,15 +69,15 @@ export function FeatureGrid() {
               />
             </a>
 
-            {/* Frete grátis */}
+            {/* Mais força em cada peça */}
             <a className={`${styles.featureCell} ${styles.featureWideBottom}`} href="/produtos">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                alt="Frete grátis acima de 15 unidades"
+                alt="Mais força em cada peça — filamento PETG Masterprint"
                 loading="lazy"
                 sizes="(max-width: 767px) 100vw, 832px"
-                src="/banners/destaque-frete-1664.webp"
-                srcSet="/banners/destaque-frete-780.webp 780w, /banners/destaque-frete-1664.webp 1664w"
+                src="/banners/destaque-mais-forca-1270.webp"
+                srcSet="/banners/destaque-mais-forca-780.webp 780w, /banners/destaque-mais-forca-1270.webp 1270w"
               />
             </a>
 

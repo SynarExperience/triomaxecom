@@ -44,6 +44,14 @@ function backup(file) {
 const widthRules = [
   { match: /banners\/mobile\/banner-/, widths: [780, 1170] }, // hero mobile, 390 CSS em telas 2x e 3x
   { match: /banners\/banner-/, widths: [1920, 2560, 3840] }, // hero desktop, exibido a 100vw
+  /*
+   * Célula larga do grid de destaques: 832 CSS no desktop e 100vw no celular. O
+   * master tem 1270 px, então 1270 cobre o desktop e 780 é a medida exata de um
+   * celular de 390 @2x. Não há saída maior de propósito — num desktop Retina a
+   * célula pediria 1664, e o arquivo que existia nessa largura era upscale do
+   * mesmo 1270: o mesmo detalhe cobrando mais banda.
+   */
+  { match: /banners\/destaque-mais-forca/, widths: [780, 1270] },
   // Tiles de categoria: renderizam a 485 CSS, ou seja 970 px em tela 2x. Os 780
   // que havia antes vinham de uma medição errada e deixavam o tile ampliado.
   { match: /banners\/categories\//, widths: [512, 1024] },
