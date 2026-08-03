@@ -79,17 +79,18 @@ export function FeatureGrid() {
               />
             </a>
 
-            {/* Impressoras com desconto (banner alto). A arte é 543×1270 (0,43:1),
-                mais estreita que a célula (~0,57:1), então object-fit corta topo
-                e base — ver se agrada antes do upscale. */}
+            {/* PLA x PETG (banner alto). A arte é 543×1270 (0,43:1), mais estreita
+                que a célula (~0,57:1), então object-fit corta topo e base.
+                Servida em tamanho único: o master tem 543 px e as variações que
+                havia antes eram upscale dele — mesmo detalhe, mais bytes. Num
+                desktop Retina a célula pede 832 px e a arte sobe ~1,5x, o que só
+                some com um master maior. */}
             <a className={`${styles.featureCell} ${styles.featureTall}`} href="/produtos">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                alt="Impressoras 3D com desconto"
+                alt="Qual é a diferença do PLA e PETG"
                 loading="lazy"
-                sizes="(max-width: 767px) 33vw, 416px"
-                src="/banners/destaque-impressoras-832.webp"
-                srcSet="/banners/destaque-impressoras-480.webp 480w, /banners/destaque-impressoras-832.webp 832w"
+                src="/banners/destaque-pla-petg.webp"
               />
             </a>
           </div>

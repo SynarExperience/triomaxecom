@@ -706,7 +706,7 @@
 }
 
 /* No banner alto a imagem preenche a célula sem empurrar a altura, ancorada no
-   topo: o corte cai na base, preservando o título "IMPRESSORAS COM DESCONTO".
+   topo: o corte cai na base, preservando a chamada que a arte traz no topo.
    Com a arte final na proporção certa (≈9:16) não há corte nenhum. */
 .featureTall img {
   position: absolute;
