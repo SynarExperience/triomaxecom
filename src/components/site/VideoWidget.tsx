@@ -156,7 +156,10 @@ export function VideoWidget() {
 
   return (
     <>
-      <div className={styles.widget}>
+      {/* Com o player aberto o card sai de cena: deixá-lo tocando no canto, atrás
+          do véu, é o mesmo vídeo duas vezes na tela. Some por CSS, e não
+          desmontando, para o preview não ter de baixar tudo de novo ao fechar. */}
+      <div className={`${styles.widget} ${aberto ? styles.widgetOculto : ""}`}>
         {/* Fica antes do card na ordem do DOM só para o z-index: pintado
             depois, o dourado passaria por cima da borda branca. */}
         <span

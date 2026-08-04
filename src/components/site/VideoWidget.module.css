@@ -11,6 +11,13 @@
   display: block;
 }
 
+.widgetOculto {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 160ms ease, visibility 0s 160ms;
+}
+
 .card {
   position: relative;
   /* z-index positivo para o rótulo (z-index 0) sair de trás do card. */
