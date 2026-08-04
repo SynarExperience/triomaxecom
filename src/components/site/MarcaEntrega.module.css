@@ -13,10 +13,12 @@
 /* Altura fixa e largura automática: Correios e Jadlog têm proporções bem
    diferentes (4,8:1 contra 3:1) e uma largura comum esmagaria uma das duas. As
    medidas vão também nos atributos da tag, para a linha não pular enquanto a
-   imagem carrega. */
+   imagem carrega.
+
+   Sem margem à direita: o logotipo é o único conteúdo da linha do nome — o
+   serviço aparece embaixo, junto do prazo. */
 .logo {
   height: 20px;
   width: auto;
-  margin-right: 8px;
   vertical-align: -5px;
 }

@@ -8,7 +8,7 @@ import { CheckoutCampo } from "./CheckoutCampo";
 import { CheckoutStepper } from "./CheckoutStepper";
 import { PixPanel } from "./PixPanel";
 import { ResumoPedido } from "./ResumoPedido";
-import { IconeDaEntrega, MarcaDaEntrega } from "./MarcaEntrega";
+import { IconeDaEntrega, logotipoDaEntrega, MarcaDaEntrega } from "./MarcaEntrega";
 import {
   CardIcon,
   CheckIcon,
@@ -422,7 +422,14 @@ function SecaoEntrega({
                     ? "Retire na loja em até 24h úteis"
                     : opcao.motoboy
                       ? "Sai hoje, direto da loja até você"
-                      : `Chega em ${opcao.prazoDias} ${opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}`}
+                      : /* Com logotipo, o nome do serviço vem para cá: sem ele,
+                           PAC e SEDEX ficariam duas linhas iguais. */
+                        [
+                          logotipoDaEntrega(opcao) ? opcao.servico : null,
+                          `Chega em ${opcao.prazoDias} ${opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}`,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
                 </span>
               </span>
               <span className={[styles.fretePreco, opcao.preco === 0 ? styles.freteGratis : ""].join(" ")}>

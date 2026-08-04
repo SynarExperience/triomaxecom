@@ -10,7 +10,7 @@ import {
   type ProductVariant,
 } from "@/data/catalog";
 import { useCart } from "./CartProvider";
-import { MarcaDaEntrega } from "./MarcaEntrega";
+import { logotipoDaEntrega, MarcaDaEntrega } from "./MarcaEntrega";
 import { CardIcon, CartIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
 import { cepValido, cotarFrete, mascaraCep, previsaoEntrega } from "@/lib/checkout";
 import type { OpcaoFrete } from "@/types/checkout";
@@ -323,7 +323,14 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
                           ? "Pronto para retirada em até 24h úteis"
                           : opcao.motoboy
                             ? "Sai hoje, direto da loja até você"
-                            : `Chega ${previsaoEntrega(opcao.prazoDias)}`}
+                            : /* Com logotipo, o nome do serviço vem para cá: sem
+                                 ele, PAC e SEDEX ficariam duas linhas iguais. */
+                              [
+                                logotipoDaEntrega(opcao) ? opcao.servico : null,
+                                `Chega ${previsaoEntrega(opcao.prazoDias)}`,
+                              ]
+                                .filter(Boolean)
+                                .join(" · ")}
                       </span>
                     </div>
                     <span

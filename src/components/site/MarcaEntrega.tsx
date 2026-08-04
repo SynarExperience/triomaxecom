@@ -46,13 +46,26 @@ export function IconeDaEntrega({ opcao, classe }: { opcao: OpcaoFrete; classe?: 
   return <TruckIcon className={classe} />;
 }
 
+/** O logotipo desta transportadora, se houver arquivo dela. Exposto porque quem
+    desenha a linha precisa saber: com logotipo, o nome do serviço desce para o
+    prazo em vez de ficar encostado na marca. */
+export function logotipoDaEntrega(opcao: OpcaoFrete) {
+  if (opcao.retirada || opcao.motoboy) return undefined;
+  const marca = opcao.transportadora.toLowerCase();
+  return LOGOS.find((l) => marca.includes(l.chave));
+}
+
 /**
- * Identificação da entrega: o logotipo da transportadora quando existe (aí o
- * nome dela sai do texto, senão apareceria duas vezes), e ícone + nome escrito
+ * Identificação da entrega: só o logotipo quando existe, e ícone + nome escrito
  * quando não existe.
  *
- * `separador` é o que vai entre transportadora e serviço — o checkout usa
- * ": " e o painel do produto um espaço.
+ * Com logotipo a linha fica só com a marca — nome da transportadora seria
+ * repetição, e o do serviço encostava na imagem. O serviço não some: vai para a
+ * linha do prazo, e precisa ir, porque a mesma cotação costuma devolver PAC e
+ * SEDEX, que sem essa palavra virariam duas linhas idênticas.
+ *
+ * `separador` é o que vai entre transportadora e serviço quando não há
+ * logotipo — o checkout usa ": " e o painel do produto um espaço.
  */
 export function MarcaDaEntrega({
   opcao,
@@ -61,23 +74,18 @@ export function MarcaDaEntrega({
   opcao: OpcaoFrete;
   separador?: string;
 }) {
-  const marca = opcao.transportadora.toLowerCase();
-  const logo =
-    opcao.retirada || opcao.motoboy ? undefined : LOGOS.find((l) => marca.includes(l.chave));
+  const logo = logotipoDaEntrega(opcao);
 
   if (logo) {
     return (
-      <>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt={logo.nome}
-          className={styles.logo}
-          height={logo.altura}
-          src={logo.src}
-          width={logo.largura}
-        />
-        {opcao.servico}
-      </>
+      /* eslint-disable-next-line @next/next/no-img-element */
+      <img
+        alt={logo.nome}
+        className={styles.logo}
+        height={logo.altura}
+        src={logo.src}
+        width={logo.largura}
+      />
     );
   }
 
