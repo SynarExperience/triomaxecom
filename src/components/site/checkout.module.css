@@ -375,27 +375,6 @@
   font-weight: 600;
 }
 
-/* Ícone da entrega. Fica inline dentro do nome (que segue `display: block`) de
-   propósito: virar o nome em flex quebraria o espaçamento entre
-   "Transportadora" e ": Serviço", que são nós de texto separados. */
-.freteIcone {
-  width: 16px;
-  height: 16px;
-  margin-right: 6px;
-  vertical-align: -3px;
-}
-
-/* Logotipo da transportadora, quando existe, no lugar do nome dela. Altura fixa
-   e largura automática: Correios e Jadlog têm proporções bem diferentes (4,8:1
-   contra 3:1) e uma largura comum esmagaria uma das duas. As medidas vão também
-   nos atributos da tag, para a linha não pular enquanto a imagem carrega. */
-.freteLogo {
-  height: 20px;
-  width: auto;
-  margin-right: 8px;
-  vertical-align: -5px;
-}
-
 .fretePrazo {
   display: block;
   color: var(--muted);

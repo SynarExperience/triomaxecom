@@ -10,6 +10,7 @@ import {
   type ProductVariant,
 } from "@/data/catalog";
 import { useCart } from "./CartProvider";
+import { MarcaDaEntrega } from "./MarcaEntrega";
 import { CardIcon, CartIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
 import { cepValido, cotarFrete, mascaraCep, previsaoEntrega } from "@/lib/checkout";
 import type { OpcaoFrete } from "@/types/checkout";
@@ -315,12 +316,14 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
                   <li key={opcao.id} className={pageStyles.shippingOption}>
                     <div>
                       <span className={pageStyles.shippingOptionName}>
-                        {opcao.transportadora} {opcao.servico}
+                        <MarcaDaEntrega opcao={opcao} separador=" " />
                       </span>
                       <span className={pageStyles.shippingOptionEta}>
                         {opcao.retirada
                           ? "Pronto para retirada em até 24h úteis"
-                          : `Chega ${previsaoEntrega(opcao.prazoDias)}`}
+                          : opcao.motoboy
+                            ? "Sai hoje, direto da loja até você"
+                            : `Chega ${previsaoEntrega(opcao.prazoDias)}`}
                       </span>
                     </div>
                     <span

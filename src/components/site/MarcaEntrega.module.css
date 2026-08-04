@@ -1,0 +1,22 @@
+/* Ícone/logotipo da forma de entrega. Ficam inline, dentro do nome da opção
+   (que é `display: block` nas duas listas que usam isto) de propósito: virar o
+   nome em flex quebraria o espaçamento entre "Transportadora" e ": Serviço",
+   que são nós de texto separados. */
+
+.icone {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: -3px;
+}
+
+/* Altura fixa e largura automática: Correios e Jadlog têm proporções bem
+   diferentes (4,8:1 contra 3:1) e uma largura comum esmagaria uma das duas. As
+   medidas vão também nos atributos da tag, para a linha não pular enquanto a
+   imagem carrega. */
+.logo {
+  height: 20px;
+  width: auto;
+  margin-right: 8px;
+  vertical-align: -5px;
+}
