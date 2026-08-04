@@ -1,5 +1,6 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { empurrarMovimentosDoPedido } from "@/lib/integracao-estoque";
 import { listarProdutos } from "@/lib/produtos";
 import { digitos } from "@/lib/checkout";
 import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
@@ -108,7 +109,12 @@ async function baixarEstoque(pedidoId: string) {
   });
   if (error) {
     console.error(`[pedidos] falha ao baixar estoque do pedido ${pedidoId}:`, error.message);
+    return;
   }
+
+  /* A mesma baixa precisa descer no gerenciador, que é quem manda no estoque —
+     senão o próximo aviso vindo de lá repõe o que esta venda acabou de tirar. */
+  await empurrarMovimentosDoPedido(pedidoId);
 }
 
 /**
@@ -265,7 +271,12 @@ export async function atualizarPagamento(
       });
       if (erroRepor) {
         console.error(`[pedidos] falha ao repor estoque do pedido ${pedido.id}:`, erroRepor.message);
+        continue;
       }
+
+      /* A reposição também é um movimento, e o gerenciador precisa dela pelo
+         mesmo motivo da baixa. */
+      await empurrarMovimentosDoPedido(pedido.id as string);
     }
   }
 
