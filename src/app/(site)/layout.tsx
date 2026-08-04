@@ -2,6 +2,7 @@ import { CartDrawer } from "@/components/site/CartDrawer";
 import { CartProvider } from "@/components/site/CartProvider";
 import { CartToast } from "@/components/site/CartToast";
 import { PontePreviaEditor } from "@/components/site/PontePreviaEditor";
+import { VideoWidget } from "@/components/site/VideoWidget";
 import { listarProdutos } from "@/lib/produtos";
 import "../globals.css";
 
@@ -19,6 +20,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <CartDrawer />
       {/* Adicionar ao carrinho avisa por aqui, em vez de abrir a gaveta. */}
       <CartToast />
+      {/* Card de vídeo flutuante; ele mesmo se esconde no checkout e na sacola. */}
+      <VideoWidget />
       {/* Só age quando a loja está dentro do iframe da prévia do painel. */}
       <PontePreviaEditor />
     </CartProvider>

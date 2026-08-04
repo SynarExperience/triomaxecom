@@ -46,10 +46,13 @@ export async function FeaturedProducts() {
  *   └──────────────┴──────────┘
  *
  * As duas células da esquerda têm proporção 21/9; a da direita herda a altura
- * das duas somadas. "Mais força" tem 1270×543, que é 21/9 na medida — entra em
- * `cover` sem corte nenhum, ao contrário da arte 3:1 que ocupava a célula antes.
- * Essa célula de baixo anunciava a promoção de frete grátis; a arte nova não
- * promete oferta, mostra o produto.
+ * das duas somadas.
+ *
+ * Já se tentou deixar "Sobre nós" ocupando as duas linhas sozinho, com a célula
+ * em 21/18. Não funciona: a arte é 21/9, e `cover` numa célula quase quadrada
+ * amplia o dobro e corta as laterais — sobra rosto cortado. Enquanto a arte for
+ * 21/9, a célula precisa ser 21/9. Para voltar a uma célula só, é preciso antes
+ * um master mais quadrado.
  */
 export function FeatureGrid() {
   return (
@@ -69,7 +72,8 @@ export function FeatureGrid() {
               />
             </a>
 
-            {/* Mais força em cada peça */}
+            {/* Mais força em cada peça. A arte tem 1270×543, que é 21/9 na
+                medida — entra em `cover` sem corte nenhum. */}
             <a className={`${styles.featureCell} ${styles.featureWideBottom}`} href="/produtos">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -176,49 +180,6 @@ export function CategoryStrip({ categorias }: { categorias: Categoria[] }) {
           ))}
         </div>
       </div>
-    </section>
-  );
-}
-
-/*
- * O bloco inteiro é a arte, de ponta a ponta da tela — mesmo tratamento do hero.
- * Fica fora de `.container` de propósito: assim a largura total vem do próprio
- * fluxo do documento, sem `100vw`, que em desktop conta a barra de rolagem junto
- * e criaria rolagem horizontal.
- *
- * O `alt` carrega a oferta porque ela só existe dentro do pixel: sem ele, quem
- * usa leitor de tela e o próprio Google não teriam como saber o que o banner
- * anuncia.
- */
-export function PromoBanner() {
-  return (
-    <section className={styles.promoSection}>
-      <Reveal>
-        <a className={styles.promoImageLink} href="/produtos">
-          <picture>
-            <source
-              media="(max-width: 767px)"
-              sizes="100vw"
-              srcSet="/promo/frete-gratis-mobile-780.webp 780w, /promo/frete-gratis-mobile-1170.webp 1170w"
-              width={1170}
-              height={1170}
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt="Frete grátis acima de 15 unidades — filamento Masterprint branco e peças impressas em 3D"
-              className={styles.promoImage}
-              height={1280}
-              loading="lazy"
-              /* `sizes="100vw"` porque o bloco vai de ponta a ponta: o navegador
-                 cruza a largura da janela com o DPR e baixa uma versão só. */
-              sizes="100vw"
-              src="/promo/frete-gratis-desktop-1920.webp"
-              srcSet="/promo/frete-gratis-desktop-1440.webp 1440w, /promo/frete-gratis-desktop-1920.webp 1920w, /promo/frete-gratis-desktop-2560.webp 2560w, /promo/frete-gratis-desktop-3840.webp 3840w"
-              width={3840}
-            />
-          </picture>
-        </a>
-      </Reveal>
     </section>
   );
 }

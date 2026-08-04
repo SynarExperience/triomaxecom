@@ -80,9 +80,12 @@
   background: var(--paper);
 }
 
+/* `auto-fit` em vez de um 4 fixo: a faixa é alimentada pelo painel, então o
+   número de benefícios varia. Com a contagem travada em 4, desativar um deixava
+   uma coluna vazia à direita. */
 .benefitsGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
   padding-block: 30px;
 }
@@ -646,11 +649,10 @@
  * bloco full-bleed existe para eliminar.
  */
 /*
- * Grid de destaques no lugar dos tiles de categoria: à esquerda dois banners
- * empilhados (Sobre nós + Frete grátis), à direita um banner alto que ocupa a
- * altura das duas linhas. Proporções seguem o mockup: coluna esquerda ~2/3,
- * direita ~1/3. As células esquerdas têm proporção fixa (21/9) para os dois
- * banners baterem; a direita herda a altura somada das duas linhas.
+ * Grid de destaques no lugar dos tiles de categoria: à esquerda o banner de
+ * "Sobre nós", à direita um banner alto da mesma altura. Proporções seguem o
+ * mockup: coluna esquerda ~2/3, direita ~1/3. A esquerda tem proporção fixa e
+ * dita a altura da linha; a direita acompanha.
  */
 .featureGrid {
   display: grid;
@@ -689,7 +691,8 @@
   border-color: var(--ink);
 }
 
-/* Células esquerdas: proporção fixa, arte preenche cortando o excedente. */
+/* Células esquerdas: a proporção acompanha a das artes (21/9), senão o `cover`
+   amplia e corta as laterais. */
 .featureWideTop,
 .featureWideBottom {
   aspect-ratio: 21 / 9;
@@ -758,38 +761,6 @@
   .featureWideTop,
   .featureWideBottom {
     aspect-ratio: 16 / 9;
-  }
-}
-
-.promoSection {
-  background: var(--paper);
-}
-
-.promoImageLink {
-  display: block;
-  overflow: hidden;
-  /* Sem borda nem cantos arredondados: num bloco que vai de ponta a ponta, os
-     dois viram uma linha solta cortando a arte. */
-}
-
-/* Um bloco que ocupa a tela toda não tem para onde subir no hover sem descolar
-   das seções vizinhas — o realce fica no brilho, não no deslocamento. */
-.promoImageLink:hover .promoImage {
-  filter: brightness(1.04);
-}
-
-.promoImage {
-  display: block;
-  width: 100%;
-  height: auto;
-  transition: filter 400ms var(--ease-out);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .promoImageLink,
-  .promoImageLink:hover {
-    transform: none;
-    transition: none;
   }
 }
 
