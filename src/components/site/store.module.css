@@ -440,8 +440,13 @@
 }
 
 /*
- * Pílula de atacado, igual à do PDP. O verde do WhatsApp não vira dourado: ele
- * identifica o canal, não a marca.
+ * Pílula do WhatsApp, igual à do PDP. O verde não vira dourado: ele identifica
+ * o canal, não a marca.
+ *
+ * Fonte 12 e respiro curto porque "Compre pelo WhatsApp" é mais longo do que o
+ * rótulo anterior: a 13px sobrava 151px de linha para 156px de texto, e a
+ * pílula quebrava em duas linhas no grid de 4 colunas. Abaixo de ~1120px a
+ * coluna aperta e o texto quebra de qualquer jeito — já era assim antes.
  */
 .cardWholesale {
   position: relative;
@@ -449,15 +454,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   min-height: 38px;
   margin-top: 8px;
-  padding: 8px 10px;
+  padding: 8px;
   border: 1px solid #25d366;
   border-radius: 30px;
   background: var(--paper);
   color: #3bc983;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 16px;
   text-decoration: none;
   transition: background 240ms ease;

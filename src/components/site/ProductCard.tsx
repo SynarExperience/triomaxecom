@@ -1,6 +1,6 @@
 "use client";
 
-import { formatBRL, installment, isSoldOut, type Product } from "@/data/catalog";
+import { formatBRL, isSoldOut, type Product } from "@/data/catalog";
 import { useCart } from "./CartProvider";
 import { CardIcon, CartIcon, WhatsAppIcon } from "./icons";
 import styles from "./store.module.css";
@@ -66,9 +66,13 @@ export function ProductCard({ product }: { product: Product }) {
           <strong className={styles.cardPrice}>{formatBRL(product.price)}</strong>
         </span>
 
+        {/* Só a condição, sem o valor da parcela: na vitrine o que informa é
+            poder parcelar, e o número quebrado ("12 x de R$ 7,49") competia com
+            o preço logo acima. A parcela com valor continua no PDP, onde a
+            pessoa já está decidindo. */}
         <span className={styles.cardInstallments}>
           <CardIcon />
-          {INSTALLMENTS} x de {formatBRL(installment(product.price, INSTALLMENTS))}
+          em {INSTALLMENTS}x no cartão
         </span>
 
         {/* Divisão do card do voolt3d: "Comprar" é um link que leva à página do
@@ -118,7 +122,7 @@ export function ProductCard({ product }: { product: Product }) {
           target="_blank"
         >
           <WhatsAppIcon />
-          Compre por atacado
+          Compre pelo WhatsApp
         </a>
       </div>
     </article>

@@ -265,7 +265,7 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
           target="_blank"
         >
           <WhatsAppIcon />
-          Compre por atacado
+          Compre pelo WhatsApp
         </a>
 
         {/* "Meios de envio" retrátil, como na referência — aberto por padrão. */}
