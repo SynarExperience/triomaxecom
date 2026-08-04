@@ -24,6 +24,10 @@ export type OpcaoFrete = {
   prazoDias: number;
   /** Retirada na loja: sem entrega, o cliente busca no balcão. */
   retirada?: boolean;
+  /** Entrega por motoboy no mesmo dia (só nas UFs atendidas). Muda o texto do
+      prazo — "hoje" não cabe na contagem de dias úteis — e é o que faz o pedido
+      pago acionar a praça de entregas. */
+  motoboy?: boolean;
 };
 
 /* Boleto ficou de fora da integração com o Mercado Pago — só Pix e cartão. */

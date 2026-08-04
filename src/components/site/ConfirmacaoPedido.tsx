@@ -86,6 +86,16 @@ export function ConfirmacaoPedido() {
             <strong>Retirada na loja</strong> ({pedido.frete.servico}) — disponível em até 24h
             úteis. Avisamos por e-mail quando estiver pronto.
           </p>
+        ) : pedido.frete.motoboy ? (
+          /* Sem hora marcada: o motoboy é acionado no pagamento, mas quem dá o
+             horário é a praça quando um entregador aceita a corrida. Prometer
+             "em 40 minutos" seria prometer o que não está na nossa mão. */
+          <p style={{ marginBottom: 0 }}>
+            <strong>Um motoboy já foi acionado</strong> e vai buscar seu pedido na loja. A entrega é
+            hoje, em {pedido.endereco.logradouro}
+            {pedido.entrega.semNumero ? ", s/n" : `, ${pedido.entrega.numero}`} —{" "}
+            {pedido.endereco.cidade}/{pedido.endereco.uf}.
+          </p>
         ) : (
           <p style={{ marginBottom: 0 }}>
             Entrega prevista para <strong>{previsaoEntrega(pedido.frete.prazoDias)}</strong>, em{" "}

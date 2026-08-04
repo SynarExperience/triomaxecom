@@ -103,6 +103,43 @@ export function TruckIcon(props: IconProps) {
   );
 }
 
+/** Lucide `motorbike` — a entrega por motoboy. */
+export function MotorbikeIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="m18 14-1-3" />
+      <path d="m3 9 6 2a2 2 0 0 1 2-2h2a2 2 0 0 1 1.99 1.81" />
+      <path d="M8 17h3a1 1 0 0 0 1-1 6 6 0 0 1 6-6 1 1 0 0 0 1-1v-.75A5 5 0 0 0 17 5" />
+      <circle cx="19" cy="17" r="3" />
+      <circle cx="5" cy="17" r="3" />
+    </svg>
+  );
+}
+
+/** Lucide `mailbox` — os Correios. */
+export function MailboxIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z" />
+      <polyline points="15,9 18,9 18,11" />
+      <path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2" />
+      <line x1="6" x2="7" y1="10" y2="10" />
+    </svg>
+  );
+}
+
+/** Lucide `package` — transportadora de encomenda. */
+export function PackageIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+      <path d="M12 22V12" />
+      <polyline points="3.29 7 12 12 20.71 7" />
+      <path d="m7.5 4.27 9 5.15" />
+    </svg>
+  );
+}
+
 /** Lucide `store` */
 export function StoreIcon(props: IconProps) {
   return (
@@ -360,6 +397,15 @@ export function VolumeIcon({ muted, ...props }: IconProps & { muted: boolean }) 
           <path d="M19.364 18.364a9 9 0 0 0 0-12.728" />
         </>
       )}
+    </svg>
+  );
+}
+
+/** Lucide `play`, preenchido: aparece sobre o vídeo pausado, onde o traço some. */
+export function PlayIcon(props: IconProps) {
+  return (
+    <svg {...outline} fill="currentColor" stroke="none" {...props}>
+      <path d="M6.746 3.5a1 1 0 0 0-1.5.866v15.268a1 1 0 0 0 1.5.866l13.104-7.634a1 1 0 0 0 0-1.732z" />
     </svg>
   );
 }

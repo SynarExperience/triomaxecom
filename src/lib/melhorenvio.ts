@@ -1,6 +1,7 @@
 import "server-only";
 import { listarProdutos } from "@/lib/produtos";
-import { digitos, FRETE_GRATIS_A_PARTIR_DE } from "@/lib/checkout";
+import { cotarMotoboy } from "@/lib/motoboy";
+import { digitos } from "@/lib/checkout";
 import type { OpcaoFrete } from "@/types/checkout";
 
 /*
@@ -8,6 +9,10 @@ import type { OpcaoFrete } from "@/types/checkout";
  * token pessoal — igual ao Access Token do Mercado Pago, ele nunca chega ao
  * navegador. O `server-only` derruba o build se este módulo for importado num
  * componente client.
+ *
+ * `calcularFrete` monta a lista inteira de entrega, não só o que vem do Melhor
+ * Envio: a retirada no balcão e o motoboy (`lib/motoboy.ts`) entram aqui porque
+ * é este o ponto onde o carrinho já está relido e pesado.
  *
  * O catálogo não guarda peso nem dimensões, então usamos uma caixa padrão
  * (MELHORENVIO_BOX_*) para todos os itens. O valor declarado (insurance_value)
@@ -113,6 +118,12 @@ export async function calcularFrete(
   const subtotal = linhas.reduce((s, l) => s + l.produto.price * l.qtd, 0);
   const volumes = montarVolumes(totalProdutos);
 
+  /* Motoboy e Melhor Envio são serviços independentes: disparar antes e aguardar
+     no fim faz as duas latências correrem juntas, em vez de somadas na espera do
+     cliente. `cotarMotoboy` já engole os próprios erros; o `catch` aqui é só
+     para uma falha dele nunca derrubar a cotação inteira. */
+  const motoboy = cotarMotoboy(destino, totalProdutos * pesoProduto).catch(() => null);
+
   const resposta = await fetch(`${BASE}/api/v2/me/shipment/calculate`, {
     method: "POST",
     headers: {
@@ -147,14 +158,17 @@ export async function calcularFrete(
     }))
     .sort((a, b) => a.preco - b.preco);
 
-  // Mesma régua da sacola: acima do piso, a opção mais barata sai de graça (a
-  // loja absorve o custo). Mantém a promessa de frete grátis já anunciada.
-  if (subtotal >= FRETE_GRATIS_A_PARTIR_DE && opcoes.length > 0) {
-    opcoes[0] = { ...opcoes[0], preco: 0 };
-  }
-
-  // Retirada na loja: sempre disponível e grátis, no topo da lista.
-  return [retirarNaLoja(), ...opcoes];
+  // Toda opção de entrega é cobrada pelo preço cotado — a loja não absorve mais
+  // o frete acima de um piso. A única linha sem custo é a retirada no balcão,
+  // que é grátis por não haver envio, e não por promoção.
+  //
+  // Retirada na loja: sempre disponível e grátis, no topo da lista. O motoboy
+  // vem logo abaixo, fora da ordenação por preço: ele quase nunca é o mais
+  // barato, mas é o único que entrega hoje, e enterrá-lo no fim da lista
+  // esconderia justamente o que ele tem de diferente. `null` quando o CEP está
+  // fora de área — aí a lista fica como era antes.
+  const expresso = await motoboy;
+  return [retirarNaLoja(), ...(expresso ? [expresso] : []), ...opcoes];
 }
 
 /** Só Correios PAC/SEDEX e a Jadlog .Package entram na lista do cliente

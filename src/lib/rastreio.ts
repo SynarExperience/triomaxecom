@@ -1,6 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { rastrearMelhorEnvio } from "@/lib/melhorenvio";
+import { idDoCodigo, rastrearMotoboy } from "@/lib/motoboy";
 
 /*
  * Rastreio voltado ao cliente: ele cola o código, achamos o pedido no banco
@@ -14,10 +15,11 @@ import { rastrearMelhorEnvio } from "@/lib/melhorenvio";
 
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
-/** "2026-07-21 17:12:21" -> "21 jul, 17:12". */
+/** "2026-07-21 17:12:21" -> "21 jul, 17:12". Aceita também o ISO com "T" que a
+    praça de motoboy devolve ("2026-08-04T14:36:46.000000Z"). */
 function formatar(iso: string | null): string | null {
   if (!iso) return null;
-  const [dia, hora] = iso.split(" ");
+  const [dia, hora] = iso.replace("T", " ").split(" ");
   const partes = dia.split("-");
   if (partes.length !== 3) return null;
   const hhmm = (hora ?? "").slice(0, 5);
@@ -41,6 +43,50 @@ export type RastreioPedido = {
   urlCompleto: string;
 };
 
+/**
+ * Mesma linha do tempo, com os marcos que existem numa entrega de motoboy: ela
+ * não passa por triagem nem centro de distribuição, então as etapas são o
+ * entregador aceitando a corrida, retirando na loja e entregando.
+ */
+async function rastrearEntregaMotoboy(
+  id: number,
+  pedido: { numero: unknown; transportadora: unknown; rastreio: unknown },
+): Promise<RastreioPedido | null> {
+  const r = await rastrearMotoboy(id);
+  if (!r) return null;
+
+  const etapas: EtapaRastreio[] = [
+    { titulo: "Pedido confirmado", data: formatar(r.criadoEm), concluida: Boolean(r.criadoEm) },
+    { titulo: "Entregador a caminho da loja", data: formatar(r.aceitoEm), concluida: Boolean(r.aceitoEm) },
+    { titulo: "Saiu para entrega", data: formatar(r.coletadoEm), concluida: Boolean(r.coletadoEm) },
+    { titulo: "Entregue", data: formatar(r.entregueEm), concluida: Boolean(r.entregue) },
+  ];
+
+  const status = r.cancelado
+    ? "Entrega cancelada"
+    : r.entregue
+      ? "Entregue"
+      : r.coletadoEm
+        ? "Saiu para entrega"
+        : r.aceitoEm
+          ? "Entregador a caminho da loja"
+          : "Pedido confirmado";
+
+  return {
+    numero: Number(pedido.numero),
+    codigo: `EE${id}`,
+    transportadora: (pedido.transportadora as string) ?? "Motoboy",
+    status,
+    entregue: r.entregue,
+    cancelado: r.cancelado,
+    etapas,
+    /* A praça publica uma página com o entregador no mapa; é melhor que
+       qualquer coisa que a gente montasse. Se ela não vier, a coluna `rastreio`
+       guarda o link gravado no despacho. */
+    urlCompleto: r.trackingUrl ?? String(pedido.rastreio ?? ""),
+  };
+}
+
 export async function rastrearPorCodigo(codigoBruto: string): Promise<RastreioPedido | null> {
   const codigo = (codigoBruto ?? "").trim().toUpperCase();
   // Só letras e números: além de ser o formato dos códigos, evita injeção no
@@ -53,7 +99,17 @@ export async function rastrearPorCodigo(codigoBruto: string): Promise<RastreioPe
     .or(`rastreio.eq.${codigo},codigo_rastreio.eq.${codigo}`)
     .maybeSingle();
 
-  if (error || !data?.melhorenvio_order_id) return null;
+  if (error || !data) return null;
+
+  /* Pedido de motoboy: o código é "EE" + id na praça, e o ciclo de vida vem de
+     lá, não do Melhor Envio. Vem antes porque esse pedido nunca tem
+     `melhorenvio_order_id` — sem este desvio ele cairia no `return null`. */
+  const idMotoboy = idDoCodigo(String(data.codigo_rastreio ?? ""));
+  if (idMotoboy) {
+    return await rastrearEntregaMotoboy(idMotoboy, data);
+  }
+
+  if (!data.melhorenvio_order_id) return null;
 
   const r = await rastrearMelhorEnvio(data.melhorenvio_order_id as string);
   if (!r) return null;

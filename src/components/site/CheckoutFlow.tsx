@@ -14,9 +14,13 @@ import {
   ChevronDownIcon,
   HelpIcon,
   MailIcon,
+  MailboxIcon,
+  MotorbikeIcon,
   NoteIcon,
+  PackageIcon,
   PinIcon,
   PixIcon,
+  StoreIcon,
   TruckIcon,
 } from "./icons";
 import { formatBRL } from "@/data/catalog";
@@ -368,6 +372,82 @@ export function CheckoutFlow() {
 
 /* ==================================================================== */
 
+/**
+ * Ícone de cada forma de entrega.
+ *
+ * São ícones de interface (Lucide), não os logotipos das transportadoras: os
+ * Correios só têm vetor público da marca antiga, num lockup horizontal que fica
+ * ilegível a 16px, e a Jadlog não tem vetor público nenhum. Um logo de verdade
+ * ao lado de dois genéricos ficaria pior do que o conjunto coerente.
+ *
+ * As duas primeiras linhas vêm de campos do próprio pedido; as transportadoras
+ * são reconhecidas pelo nome, com o caminhão cobrindo qualquer uma que apareça
+ * na cotação amanhã.
+ *
+ * `classe` fica a cargo de quem chama: na lista o ícone é inline no meio do
+ * texto (16px), na revisão ele é uma coluna à esquerda (20px, pelo
+ * `.revisaoLinha > svg`), e as duas medidas não cabem numa regra só.
+ */
+function IconeDaEntrega({ opcao, classe }: { opcao: OpcaoFrete; classe?: string }) {
+  if (opcao.retirada) return <StoreIcon className={classe} />;
+  if (opcao.motoboy) return <MotorbikeIcon className={classe} />;
+
+  const marca = opcao.transportadora.toLowerCase();
+  if (marca.includes("correios")) return <MailboxIcon className={classe} />;
+  if (marca.includes("jadlog")) return <PackageIcon className={classe} />;
+  return <TruckIcon className={classe} />;
+}
+
+/*
+ * Logotipos das transportadoras. Exibir a marca de quem entrega é uso
+ * nominativo padrão de e-commerce — o mesmo critério das bandeiras de cartão em
+ * `PaymentBrands`.
+ *
+ * As medidas são a proporção real de cada arquivo a 20px de altura; esticar
+ * qualquer uma delas deformaria a marca. Transportadora sem arquivo aqui cai no
+ * ícone genérico, com o nome escrito — é o caso da Sr Express (motoboy) e de
+ * qualquer uma que a cotação traga amanhã.
+ */
+const LOGOS_TRANSPORTADORA = [
+  { chave: "correios", nome: "Correios", src: "/logos/correios.png", largura: 96, altura: 20 },
+  { chave: "jadlog", nome: "Jadlog", src: "/logos/jadlog.svg", largura: 59, altura: 20 },
+];
+
+/**
+ * Identificação da entrega: o logotipo da transportadora quando existe (aí o
+ * nome dela sai do texto, senão apareceria duas vezes), e ícone + nome escrito
+ * quando não existe.
+ */
+function MarcaDaEntrega({ opcao }: { opcao: OpcaoFrete }) {
+  const marca = opcao.transportadora.toLowerCase();
+  const logo = opcao.retirada || opcao.motoboy
+    ? undefined
+    : LOGOS_TRANSPORTADORA.find((l) => marca.includes(l.chave));
+
+  if (logo) {
+    return (
+      <>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          alt={logo.nome}
+          className={styles.freteLogo}
+          height={logo.altura}
+          src={logo.src}
+          width={logo.largura}
+        />
+        {opcao.servico}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <IconeDaEntrega classe={styles.freteIcone} opcao={opcao} />
+      {opcao.transportadora}: {opcao.servico}
+    </>
+  );
+}
+
 function SecaoEntrega({
   cotando,
   endereco,
@@ -415,12 +495,14 @@ function SecaoEntrega({
               <span className={styles.freteMarca}>{opcao.id === freteId ? <CheckIcon /> : null}</span>
               <span className={styles.freteCorpo}>
                 <span className={styles.freteNome}>
-                  {opcao.transportadora}: {opcao.servico}
+                  <MarcaDaEntrega opcao={opcao} />
                 </span>
                 <span className={styles.fretePrazo}>
                   {opcao.retirada
                     ? "Retire na loja em até 24h úteis"
-                    : `Chega em ${opcao.prazoDias} ${opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}`}
+                    : opcao.motoboy
+                      ? "Sai hoje, direto da loja até você"
+                      : `Chega em ${opcao.prazoDias} ${opcao.prazoDias === 1 ? "dia útil" : "dias úteis"}`}
                 </span>
               </span>
               <span className={[styles.fretePreco, opcao.preco === 0 ? styles.freteGratis : ""].join(" ")}>
@@ -612,7 +694,7 @@ function SecaoPagamento({
         </div>
 
         <div className={styles.revisaoLinha}>
-          <TruckIcon />
+          <IconeDaEntrega opcao={frete} />
           <div className={styles.revisaoCorpo}>
             <strong>
               {frete.transportadora}: {frete.servico} ·{" "}
@@ -621,7 +703,9 @@ function SecaoPagamento({
             <br />
             {frete.retirada
               ? "Retire na loja em até 24h úteis"
-              : `Chega ${previsaoEntrega(frete.prazoDias)}`}
+              : frete.motoboy
+                ? "Sai hoje, direto da loja até você"
+                : `Chega ${previsaoEntrega(frete.prazoDias)}`}
           </div>
         </div>
 

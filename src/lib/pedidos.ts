@@ -2,6 +2,13 @@ import "server-only";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { empurrarMovimentosDoPedido } from "@/lib/integracao-estoque";
 import { listarProdutos } from "@/lib/produtos";
+import {
+  cancelarMotoboy,
+  despacharMotoboy,
+  idDoCodigo,
+  motoboyAtivo,
+  TRANSPORTADORA_MOTOBOY,
+} from "@/lib/motoboy";
 import { digitos } from "@/lib/checkout";
 import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 
@@ -18,6 +25,42 @@ import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 
 /** Status de pagamento aceitos pelo enum do banco. */
 export type StatusPagamento = "pendente" | "recebido" | "recusado";
+
+/** Status de envio aceitos pelo enum do banco — os mesmos que o painel exibe. */
+export type StatusEnvio = "por-embalar" | "por-enviar" | "enviada" | "entregue";
+
+/**
+ * Traduz o ciclo de vida da praça de motoboy para o nosso enum de envio.
+ *
+ * O vocabulário de lá é mais fino que o nosso (dez estados contra quatro), então
+ * vários caem no mesmo lugar. O corte que importa é `collected`: até ele o
+ * pacote ainda está na loja; a partir dele está com o entregador.
+ *
+ * `cancelled` volta para "por-embalar" porque é exatamente onde o pedido fica —
+ * a corrida caiu e o pacote continua no balcão, esperando ser chamado de novo.
+ */
+export function statusEnvioDoMotoboy(orderStatus: string): StatusEnvio | null {
+  switch (orderStatus) {
+    case "waiting":
+    case "scheduled":
+    case "preparing":
+    case "pending":
+    case "cancelled":
+      return "por-embalar";
+    case "accepted":
+    case "arrived_pickup_location":
+      // Entregador a caminho ou já na porta: o pacote precisa estar na mão.
+      return "por-enviar";
+    case "collected":
+      return "enviada";
+    case "delivered":
+    case "completed":
+      return "entregue";
+    default:
+      // Status novo que a praça inventar não deve sobrescrever o que já existe.
+      return null;
+  }
+}
 
 /** Traduz o status do Mercado Pago para o nosso enum. */
 export function statusDoMercadoPago(status: string): StatusPagamento {
@@ -115,6 +158,117 @@ async function baixarEstoque(pedidoId: string) {
   /* A mesma baixa precisa descer no gerenciador, que é quem manda no estoque —
      senão o próximo aviso vindo de lá repõe o que esta venda acabou de tirar. */
   await empurrarMovimentosDoPedido(pedidoId);
+}
+
+/* Marca temporária que reserva o pedido para quem vai despachar. O hífen a
+   mantém fora do formato de código rastreável (`^[A-Z0-9]{6,}$`), então uma
+   consulta de rastreio nunca casa com ela. */
+const RESERVA_MOTOBOY = "EE-DESPACHANDO";
+
+/**
+ * Chama o motoboy de um pedido pago. Não faz nada em pedido que não é de
+ * motoboy nem em pedido já despachado — e nunca lança: o pagamento já entrou, e
+ * uma falha aqui é um entregador a chamar na mão, não um checkout a derrubar.
+ *
+ * Idempotência importa mais aqui do que na baixa de estoque: o webhook do
+ * Mercado Pago repete os avisos e pode entregar dois em paralelo, e cada
+ * despacho a mais é um entregador a mais na rua, cobrado da loja. Por isso a
+ * reserva vem ANTES da chamada — o UPDATE condicional em `codigo_rastreio is
+ * null` é atômico no banco e só devolve linha para quem chegar primeiro; o
+ * segundo aviso sai sem fazer nada. Se a chamada falhar depois de reservar, a
+ * marca é desfeita para o próximo aviso poder tentar de novo.
+ */
+async function chamarMotoboy(pedidoId: string) {
+  if (!motoboyAtivo()) return;
+
+  const { data: pedido } = await supabaseAdmin
+    .from("pedidos")
+    .select(
+      "numero, transportadora, codigo_rastreio, subtotal, cliente_id, entrega_endereco, entrega_bairro, entrega_cep, entrega_cidade, entrega_estado",
+    )
+    .eq("id", pedidoId)
+    .maybeSingle();
+
+  if (!pedido) return;
+  if (!String(pedido.transportadora ?? "").startsWith(TRANSPORTADORA_MOTOBOY)) return;
+  if (pedido.codigo_rastreio) return;
+
+  const { data: reservado } = await supabaseAdmin
+    .from("pedidos")
+    .update({ codigo_rastreio: RESERVA_MOTOBOY })
+    .eq("id", pedidoId)
+    .is("codigo_rastreio", null)
+    .select("id");
+
+  // Outro aviso do webhook chegou primeiro e já está despachando este pedido.
+  if (!reservado?.length) return;
+
+  /* `cliente_id` é nulo quando o cadastro falhou ao gravar o pedido. A entrega
+     não trava por isso: o endereço está no próprio pedido, e o entregador sai
+     com o número do pedido no lugar do nome — melhor que uma venda paga que
+     nunca é despachada. */
+  const { data: cliente } = pedido.cliente_id
+    ? await supabaseAdmin
+        .from("clientes")
+        .select("nome, telefone")
+        .eq("id", pedido.cliente_id as string)
+        .maybeSingle()
+    : { data: null };
+
+  const despacho = await despacharMotoboy({
+    numeroPedido: pedido.numero as number,
+    enderecoLinha: String(pedido.entrega_endereco ?? ""),
+    bairro: String(pedido.entrega_bairro ?? ""),
+    cidade: String(pedido.entrega_cidade ?? ""),
+    uf: String(pedido.entrega_estado ?? ""),
+    cep: String(pedido.entrega_cep ?? ""),
+    destinatario: String(cliente?.nome ?? "") || `Pedido ${pedido.numero}`,
+    telefone: String(cliente?.telefone ?? ""),
+    valorMercadoria: Number(pedido.subtotal ?? 0),
+  });
+
+  if (!despacho) {
+    /* Solta a reserva: sem isso o pedido ficaria marcado como despachado sem
+       nunca ter sido, e nenhuma tentativa futura passaria da guarda. */
+    await supabaseAdmin
+      .from("pedidos")
+      .update({ codigo_rastreio: null })
+      .eq("id", pedidoId)
+      .eq("codigo_rastreio", RESERVA_MOTOBOY);
+    console.error(`[pedidos] motoboy não aceitou o pedido ${pedido.numero}; chamar na mão.`);
+    return;
+  }
+
+  await supabaseAdmin
+    .from("pedidos")
+    .update({
+      codigo_rastreio: despacho.codigo,
+      rastreio: despacho.trackingUrl,
+      atualizado_em: new Date().toISOString(),
+    })
+    .eq("id", pedidoId);
+}
+
+/** Cancela a entrega de um pedido estornado. Sai calado em pedido que não é de
+    motoboy ou que nunca chegou a ser despachado. */
+async function cancelarMotoboyDoPedido(pedidoId: string) {
+  if (!motoboyAtivo()) return;
+
+  const { data: pedido } = await supabaseAdmin
+    .from("pedidos")
+    .select("numero, codigo_rastreio")
+    .eq("id", pedidoId)
+    .maybeSingle();
+
+  const id = idDoCodigo(String(pedido?.codigo_rastreio ?? ""));
+  if (!id) return;
+
+  const cancelou = await cancelarMotoboy(id);
+  if (!cancelou) {
+    console.error(
+      `[pedidos] pedido ${pedido?.numero} estornado, mas a entrega ${id} segue de pé; acertar com a praça.`,
+    );
+  }
 }
 
 /**
@@ -226,11 +380,53 @@ export async function criarPedido(dados: DadosPedido): Promise<PedidoCriado | nu
       await baixarEstoque(pedido.id as string);
     }
 
+    /* Motoboy é chamado no mesmo gatilho do estoque: pagamento confirmado. Não
+       depende de `erroItens` — item que não gravou é acerto no painel, e não
+       motivo para a entrega não sair. */
+    if (dados.statusPagamento === "recebido") {
+      await chamarMotoboy(pedido.id as string);
+    }
+
     return { id: pedido.id as string, numero: pedido.numero as number };
   } catch (erro) {
     console.error("[pedidos] erro inesperado ao gravar o pedido:", erro);
     return null;
   }
+}
+
+/**
+ * Anota o andamento de uma entrega de motoboy, a partir do webhook da praça.
+ * Casa pelo `codigo_rastreio` ("EE" + id lá), gravado no despacho.
+ *
+ * Devolve `false` quando nenhum pedido nosso corresponde — o que é esperado: o
+ * token é de administrador da praça, então a notificação chega para pedidos de
+ * outros lojistas também, e esses simplesmente não têm par aqui.
+ */
+export async function atualizarEntregaMotoboy(
+  motoboyOrderId: number,
+  orderStatus: string,
+  trackingUrl: string | null,
+): Promise<boolean> {
+  const statusEnvio = statusEnvioDoMotoboy(orderStatus);
+
+  const campos: Record<string, unknown> = { atualizado_em: new Date().toISOString() };
+  if (statusEnvio) campos.status_envio = statusEnvio;
+  /* O link só é sobrescrito quando vem preenchido: a praça manda o objeto
+     inteiro a cada evento, e um campo vazio não pode apagar o que já temos. */
+  if (trackingUrl) campos.rastreio = trackingUrl;
+
+  const { data, error } = await supabaseAdmin
+    .from("pedidos")
+    .update(campos)
+    .eq("codigo_rastreio", `EE${motoboyOrderId}`)
+    .select("id");
+
+  if (error) {
+    console.error("[pedidos] falha ao atualizar a entrega de motoboy:", error.message);
+    return false;
+  }
+
+  return (data?.length ?? 0) > 0;
 }
 
 /**
@@ -258,6 +454,8 @@ export async function atualizarPagamento(
   if (status === "recebido") {
     for (const pedido of data ?? []) {
       await baixarEstoque(pedido.id as string);
+      // É por aqui que o Pix aciona o motoboy — o cartão já acionou ao nascer.
+      await chamarMotoboy(pedido.id as string);
     }
   }
 
@@ -277,6 +475,11 @@ export async function atualizarPagamento(
       /* A reposição também é um movimento, e o gerenciador precisa dela pelo
          mesmo motivo da baixa. */
       await empurrarMovimentosDoPedido(pedido.id as string);
+
+      /* Venda desfeita não pode deixar motoboy na rua: a entrega é cancelada
+         junto. Só pega se a moto ainda não saiu — depois disso a praça recusa e
+         o acerto é com a Sr Express, então fica o aviso no log. */
+      await cancelarMotoboyDoPedido(pedido.id as string);
     }
   }
 
