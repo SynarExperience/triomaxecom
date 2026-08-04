@@ -330,13 +330,18 @@
 
 /* ---------- announcement marquee ---------- */
 
+/* Desloca exatamente uma cópia da lista e recomeça — daí a divisão pela
+   contagem, que o componente injeta em `--marquee-copias`. O -50% fixo que
+   havia aqui presumia duas cópias; com mais de duas ele pularia trecho, e com
+   duas estreitas demais abria vão. O 2 do fallback mantém o valor antigo caso
+   a variável não chegue. */
 @keyframes announcementMarquee {
   from {
     transform: translate3d(0, 0, 0);
   }
 
   to {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(calc(-100% / var(--marquee-copias, 2)), 0, 0);
   }
 }
 

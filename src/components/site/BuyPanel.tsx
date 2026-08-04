@@ -3,7 +3,6 @@
 import { useRef, useState, type ReactNode } from "react";
 import {
   formatBRL,
-  installment,
   isSoldOut,
   isVariantSoldOut,
   variantPrice,
@@ -182,9 +181,10 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
               <CardIcon />
               Ver mais detalhes
             </summary>
-            <p className={pageStyles.priceInstallments}>
-              12 x de {formatBRL(installment(precoAtual))} sem juros
-            </p>
+            {/* Só a condição, sem o valor da parcela — mesma leitura do card na
+                vitrine. O número exato de cada parcela quem dá é o checkout,
+                com as parcelas reais do Mercado Pago. */}
+            <p className={pageStyles.priceInstallments}>12x no cartão</p>
           </details>
         </div>
 
