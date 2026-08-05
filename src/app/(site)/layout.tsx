@@ -1,6 +1,7 @@
 import { CartDrawer } from "@/components/site/CartDrawer";
 import { CartProvider } from "@/components/site/CartProvider";
 import { CartToast } from "@/components/site/CartToast";
+import { FavoritosProvider } from "@/components/site/FavoritosProvider";
 import { PontePreviaEditor } from "@/components/site/PontePreviaEditor";
 import { VideoWidget } from "@/components/site/VideoWidget";
 import { listarProdutos } from "@/lib/produtos";
@@ -16,7 +17,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <CartProvider catalogo={catalogo}>
-      {children}
+      {/* Não busca nada sozinho: só quando existe um coração na tela. Páginas
+          sem favorito não pagam requisição nenhuma por ele. */}
+      <FavoritosProvider>{children}</FavoritosProvider>
       <CartDrawer />
       {/* Adicionar ao carrinho avisa por aqui, em vez de abrir a gaveta. */}
       <CartToast />

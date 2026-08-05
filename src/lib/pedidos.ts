@@ -79,6 +79,19 @@ export type ItemDoPedido = {
   precoUnitario: number;
 };
 
+/**
+ * Conta logada que está comprando. Vem sempre da sessão no servidor, nunca do
+ * corpo do request — senão bastaria mandar o id de outra pessoa para pendurar
+ * um pedido na conta dela.
+ */
+export type DonoDoPedido = {
+  /** `auth.users.id` — vai para `pedidos.conta_id` e é o que decide o que
+      aparece em "Meus pedidos". */
+  userId: string;
+  /** Cadastro do CRM já vinculado a essa conta. */
+  clienteId: string;
+};
+
 export type DadosPedido = {
   itens: ItemDoPedido[];
   subtotal: number;
@@ -90,7 +103,24 @@ export type DadosPedido = {
   meioPagamento: "pix" | "cartao";
   pagamentoId: string;
   statusPagamento: StatusPagamento;
+  /** Ausente só em pedido criado fora do checkout da loja; o checkout exige
+      login e sempre manda. */
+  dono?: DonoDoPedido;
 };
+
+/** Passa para o cadastro o que veio no checkout: telefone e documento mudam, e
+    o dado mais recente é o que vale para a nota e a etiqueta. */
+async function atualizarCadastroPelaCompra(clienteId: string, dados: DadosPedido) {
+  await supabaseAdmin
+    .from("clientes")
+    .update({
+      nome: `${dados.entrega.nome} ${dados.entrega.sobrenome}`.trim(),
+      telefone: digitos(dados.entrega.telefone),
+      documento: digitos(dados.entrega.documento),
+      atualizado_em: new Date().toISOString(),
+    })
+    .eq("id", clienteId);
+}
 
 /** Reaproveita o cliente pelo e-mail — senão cada compra criaria um cadastro
     novo e o histórico do cliente ficaria picotado. */
@@ -107,12 +137,7 @@ async function acharOuCriarCliente(dados: DadosPedido): Promise<string | null> {
     .maybeSingle();
 
   if (existente?.id) {
-    /* Atualiza o cadastro com o que veio agora: telefone e documento mudam, e
-       o dado mais recente é o que vale para a nota e a etiqueta. */
-    await supabaseAdmin
-      .from("clientes")
-      .update({ nome, telefone, documento, atualizado_em: new Date().toISOString() })
-      .eq("id", existente.id);
+    await atualizarCadastroPelaCompra(existente.id as string, dados);
     return existente.id as string;
   }
 
@@ -127,6 +152,41 @@ async function acharOuCriarCliente(dados: DadosPedido): Promise<string | null> {
     return null;
   }
   return novo?.id as string;
+}
+
+/**
+ * Guarda o endereço da compra na conta, para o próximo checkout já vir
+ * preenchido.
+ *
+ * Só age quando o cliente ainda não tem endereço salvo — a partir do segundo, a
+ * escolha é dele em "Meus endereços", e uma compra para a casa da mãe não pode
+ * virar o padrão sozinha. Nunca lança: o pagamento já entrou, e uma comodidade
+ * que falhou não pode derrubar o pedido.
+ */
+async function guardarEnderecoDaCompra(clienteId: string, dados: DadosPedido) {
+  try {
+    const { count } = await supabaseAdmin
+      .from("enderecos")
+      .select("id", { count: "exact", head: true })
+      .eq("cliente_id", clienteId);
+
+    if ((count ?? 0) > 0) return;
+
+    await supabaseAdmin.from("enderecos").insert({
+      cliente_id: clienteId,
+      destinatario: `${dados.entrega.nome} ${dados.entrega.sobrenome}`.trim(),
+      cep: dados.endereco.cep,
+      logradouro: dados.endereco.logradouro,
+      numero: dados.entrega.semNumero ? "S/N" : dados.entrega.numero.trim(),
+      complemento: dados.entrega.complemento.trim() || null,
+      bairro: dados.endereco.bairro,
+      cidade: dados.endereco.cidade,
+      estado: dados.endereco.uf,
+      padrao: true,
+    });
+  } catch (erro) {
+    console.error("[pedidos] não guardou o endereço da compra:", erro);
+  }
 }
 
 /** Endereço numa linha só, como o painel e a etiqueta esperam:
@@ -326,12 +386,27 @@ async function resolverVinculos(
  */
 export async function criarPedido(dados: DadosPedido): Promise<PedidoCriado | null> {
   try {
-    const clienteId = await acharOuCriarCliente(dados);
+    /* Com conta logada o cadastro já existe e está vinculado a ela — procurar
+       de novo pelo e-mail só arriscaria cair numa linha diferente da que a
+       conta enxerga. O `conta_id` é o que faz o pedido aparecer em "Meus
+       pedidos" assim que ele nasce. */
+    let clienteId: string | null;
+    if (dados.dono) {
+      clienteId = dados.dono.clienteId;
+      /* O cadastro não é reencontrado, mas continua sendo atualizado: quem
+         digitou o CPF só agora, no checkout, precisa dele salvo para a nota da
+         próxima compra. */
+      await atualizarCadastroPelaCompra(clienteId, dados);
+      await guardarEnderecoDaCompra(clienteId, dados);
+    } else {
+      clienteId = await acharOuCriarCliente(dados);
+    }
 
     const { data: pedido, error } = await supabaseAdmin
       .from("pedidos")
       .insert({
         cliente_id: clienteId,
+        conta_id: dados.dono?.userId ?? null,
         status_pagamento: dados.statusPagamento,
         meio_pagamento: dados.meioPagamento,
         pagamento_id: dados.pagamentoId,

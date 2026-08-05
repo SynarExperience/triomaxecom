@@ -54,27 +54,54 @@ export const PEDIDO_STORAGE_KEY = "triomax:pedido";
  */
 type Fase = "contato" | "entrega" | "pagamento";
 
-const CONTATO_VAZIO: DadosContato = { email: "", novidades: false };
-const ENTREGA_VAZIA: DadosEntrega = {
-  nome: "",
-  sobrenome: "",
-  telefone: "",
-  numero: "",
-  semNumero: false,
-  complemento: "",
-  documento: "",
+/**
+ * O que a conta logada já sabe sobre quem está comprando. Chega pronto do
+ * servidor — o checkout exige login, então nunca é nulo.
+ *
+ * O endereço vem do padrão salvo. Quando existe, o checkout abre direto no
+ * passo de entrega: pedir de novo o CEP de quem já o cadastrou é justamente o
+ * atrito que a conta deveria eliminar.
+ */
+export type DadosDaConta = {
+  email: string;
+  nome: string;
+  sobrenome: string;
+  telefone: string;
+  documento: string;
+  endereco: (Endereco & { numero: string; complemento: string }) | null;
 };
 
-export function CheckoutFlow() {
+export function CheckoutFlow({ conta }: { conta: DadosDaConta }) {
   const router = useRouter();
   const { lines, subtotal, count } = useCart();
 
-  const [fase, setFase] = useState<Fase>("contato");
-  const [contato, setContato] = useState<DadosContato>(CONTATO_VAZIO);
-  const [cep, setCep] = useState("");
-  const [endereco, setEndereco] = useState<Endereco | null>(null);
+  const [fase, setFase] = useState<Fase>(conta.endereco ? "entrega" : "contato");
+  const [contato, setContato] = useState<DadosContato>(() => ({
+    email: conta.email,
+    novidades: false,
+  }));
+  const [cep, setCep] = useState(() => (conta.endereco ? mascaraCep(conta.endereco.cep) : ""));
+  const [endereco, setEndereco] = useState<Endereco | null>(() =>
+    conta.endereco
+      ? {
+          cep: mascaraCep(conta.endereco.cep),
+          logradouro: conta.endereco.logradouro,
+          bairro: conta.endereco.bairro,
+          cidade: conta.endereco.cidade,
+          uf: conta.endereco.uf,
+        }
+      : null,
+  );
   const [buscandoCep, setBuscandoCep] = useState(false);
-  const [entrega, setEntrega] = useState<DadosEntrega>(ENTREGA_VAZIA);
+  const [entrega, setEntrega] = useState<DadosEntrega>(() => ({
+    nome: conta.nome,
+    sobrenome: conta.sobrenome,
+    telefone: mascaraTelefone(conta.telefone),
+    numero: conta.endereco?.numero ?? "",
+    semNumero: false,
+    complemento: conta.endereco?.complemento ?? "",
+    documento: mascaraDocumento(conta.documento),
+  }));
   const [freteId, setFreteId] = useState<string | null>(null);
   const [verTodosFretes, setVerTodosFretes] = useState(true);
   const [pagamento, setPagamento] = useState<FormaPagamento | null>(null);

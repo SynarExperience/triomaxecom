@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { contaAtual } from "@/lib/conta";
 import { criarPagamentoCartao, type DadosCartao } from "@/lib/mercadopago";
 
 export const runtime = "nodejs";
@@ -8,6 +9,14 @@ export const runtime = "nodejs";
  * e as parcelas — nunca o número do cartão, que não passa pelo nosso servidor.
  */
 export async function POST(request: Request) {
+  /* Mesma tranca do Pix: a página do checkout é protegida pelo middleware, mas
+     é esta rota que cobra — e ela precisa saber de quem é o pedido pela sessão,
+     não pelo que o navegador mandar. */
+  const conta = await contaAtual();
+  if (!conta) {
+    return NextResponse.json({ erro: "Entre na sua conta para finalizar." }, { status: 401 });
+  }
+
   let corpo: DadosCartao;
   try {
     corpo = (await request.json()) as DadosCartao;
@@ -26,7 +35,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    return NextResponse.json(await criarPagamentoCartao(corpo));
+    return NextResponse.json(
+      await criarPagamentoCartao(corpo, { userId: conta.userId, clienteId: conta.cliente.id }),
+    );
   } catch (erro) {
     console.error("[mercadopago cartao] falha:", erro);
     return NextResponse.json({ erro: "Não foi possível processar o cartão. Tente novamente." }, { status: 502 });

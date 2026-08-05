@@ -866,6 +866,20 @@
  * do WhatsApp. É a única cor que não vira dourada — ela sinaliza o canal, não a
  * marca, e é o que faz o botão ser lido como "fala com a gente no WhatsApp".
  */
+/* Favoritar: a pílula fica com a mesma largura e o mesmo raio do botão de
+   atacado logo abaixo. O botão em si vem de `conta.module.css` — aqui só se
+   define o lugar dele na coluna de compra. */
+.favoriteRow {
+  display: flex;
+  margin-bottom: 14px;
+}
+
+.favoriteRow > button {
+  flex: 1;
+  min-height: 46px;
+  border-radius: 30px;
+}
+
 .wholesaleButton {
   display: flex;
   align-items: center;

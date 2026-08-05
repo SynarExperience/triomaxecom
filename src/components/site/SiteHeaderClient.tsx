@@ -194,7 +194,11 @@ export function SiteHeaderClient({ itens }: { itens: ItemMenu[] }) {
             </button>
             <Wordmark />
             <div className={styles.customerActions}>
-              <a aria-label="Minha conta" className={styles.headerIconButton} href="#conta">
+              {/* Aponta sempre para /conta, logado ou não: o middleware manda
+                  quem não tem sessão para /entrar e volta depois. Ler a sessão
+                  aqui deixaria o cabeçalho dinâmico — e com ele todas as
+                  páginas de produto, que hoje são estáticas. */}
+              <a aria-label="Minha conta" className={styles.headerIconButton} href="/conta">
                 <AccountIcon />
               </a>
               <button
@@ -266,6 +270,12 @@ export function SiteHeaderClient({ itens }: { itens: ItemMenu[] }) {
           </div>
           {menuOpen ? (
             <nav aria-label="Categorias de produtos no celular" className={styles.mobileDrawer} id="mobile-category-drawer">
+              {/* No celular a barra superior não cabe o ícone da conta — este é
+                  o único caminho para ela. */}
+              <a href="/conta" onClick={() => setMenuOpen(false)}>
+                <AccountIcon />
+                <span>Minha conta</span>
+              </a>
               {navigation.map((item) => {
                 const Icon = iconePara(item.rotulo);
                 return (

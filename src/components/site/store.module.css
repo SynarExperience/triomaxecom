@@ -229,6 +229,18 @@
   }
 }
 
+/* Coração de favorito. Vai para BAIXO à direita porque os dois cantos de cima
+   já estão ocupados — selo/esgotado à esquerda, desconto à direita —, e ali ele
+   cobriria o "30% off" de quem está varrendo a vitrine. Só posiciona: a
+   aparência do botão vem de `conta.module.css`. */
+.cardFavorito {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 1;
+  display: inline-flex;
+}
+
 .cardBadge {
   position: absolute;
   top: 8px;

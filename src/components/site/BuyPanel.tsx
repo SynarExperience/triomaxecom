@@ -9,6 +9,7 @@ import {
   type Product,
   type ProductVariant,
 } from "@/data/catalog";
+import { BotaoFavorito } from "./BotaoFavorito";
 import { useCart } from "./CartProvider";
 import { logotipoDaEntrega, MarcaDaEntrega } from "./MarcaEntrega";
 import { CardIcon, CartIcon, ChevronDownIcon, TruckIcon, WhatsAppIcon } from "./icons";
@@ -256,6 +257,12 @@ export function ProductView({ product, infoTop, infoBottom }: ProductViewProps) 
             </button>
           </div>
         )}
+
+        {/* Fora do bloco acima para aparecer também no produto esgotado — é
+            justamente quem quer ser avisado da volta que salva o item. */}
+        <div className={pageStyles.favoriteRow}>
+          <BotaoFavorito comRotulo nome={product.name} produtoId={product.id} />
+        </div>
 
         <a
           className={pageStyles.wholesaleButton}

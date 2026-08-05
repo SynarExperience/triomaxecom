@@ -36,13 +36,21 @@ export function ConfirmacaoPedido() {
     return (
       <div className={styles.confirmacao}>
         <h1 className={styles.titulo}>Não encontramos este pedido</h1>
-        <p>O comprovante fica disponível apenas na sessão em que a compra foi feita.</p>
-        <Link className={styles.voltar} href="/produtos">
-          Voltar à loja
+        <p>
+          Este comprovante só existe na sessão em que a compra foi feita — mas o pedido está
+          guardado na sua conta.
+        </p>
+        <Link className={styles.voltar} href="/conta/pedidos">
+          Ver meus pedidos
         </Link>
       </div>
     );
   }
+
+  /* O número vem do banco como "#134"; só nesse formato existe página na conta.
+     O gerado localmente (fallback de gravação que falhou) não tem para onde
+     apontar. */
+  const numeroNaConta = /^#(\d+)$/.exec(pedido.numero)?.[1] ?? null;
 
   return (
     <div className={styles.confirmacao}>
@@ -105,6 +113,12 @@ export function ConfirmacaoPedido() {
           </p>
         )}
       </div>
+
+      {numeroNaConta && (
+        <Link className={styles.voltar} href={`/conta/pedidos/${numeroNaConta}`}>
+          Acompanhar na minha conta
+        </Link>
+      )}
 
       <Link className={styles.voltar} href="/produtos">
         Continuar comprando

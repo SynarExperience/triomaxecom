@@ -465,3 +465,45 @@ export function CartIcon(props: IconProps) {
     </svg>
   );
 }
+
+/** Lucide `heart` — favoritos. `preenchido` troca o traçado pelo sólido, que é
+    como o coração marca "já é seu favorito" sem depender de cor. */
+export function HeartIcon({ preenchido, ...props }: IconProps & { preenchido?: boolean }) {
+  return (
+    <svg {...outline} {...props} fill={preenchido ? "currentColor" : "none"}>
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+    </svg>
+  );
+}
+
+/** Lucide `map-pin-house` — endereços salvos. */
+export function HouseIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="M15 22a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1z" />
+      <path d="M20 15v-2.5a1 1 0 0 0-.4-.8l-4-3a1 1 0 0 0-1.2 0l-4 3a1 1 0 0 0-.4.8V15" />
+      <path d="M10.5 20.4A13 13 0 0 1 4 11a8 8 0 0 1 16 0" />
+    </svg>
+  );
+}
+
+/** Lucide `log-out` — sair da conta. */
+export function LogoutIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <path d="m16 17 5-5-5-5" />
+      <path d="M21 12H9" />
+    </svg>
+  );
+}
+
+/** Lucide `lock` — campos de senha. */
+export function LockIcon(props: IconProps) {
+  return (
+    <svg {...outline} {...props}>
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { formatBRL, isSoldOut, type Product } from "@/data/catalog";
+import { BotaoFavorito } from "./BotaoFavorito";
 import { useCart } from "./CartProvider";
 import { CardIcon, CartIcon, WhatsAppIcon } from "./icons";
 import styles from "./store.module.css";
@@ -23,6 +24,12 @@ export function ProductCard({ product }: { product: Product }) {
        PDP — nome e "Comprar" — são links próprios. */
     <article className={styles.card}>
       <div className={styles.cardMedia}>
+        {/* Canto de baixo: os dois de cima são do selo e do desconto. Aparece
+            mesmo em produto esgotado — guardar o que acabou é justamente como
+            se sabe quando ele voltar. */}
+        <span className={styles.cardFavorito}>
+          <BotaoFavorito nome={product.name} produtoId={product.id} redondo />
+        </span>
         {/* Esgotado toma o lugar do selo: os dois ficam no mesmo canto, e saber
             que acabou importa mais do que saber que é lançamento. */}
         {esgotado ? (

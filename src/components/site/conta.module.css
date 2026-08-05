@@ -1,0 +1,912 @@
+/*
+ * Conta do cliente: telas de acesso (entrar, criar conta, recuperar senha) e a
+ * área logada (pedidos, dados, endereços, favoritos).
+ *
+ * Mesma pele do checkout — fundo cinza, cartões brancos de canto reto, preto e
+ * dourado —, porque as duas são a parte "de serviço" da loja e trocar de
+ * linguagem no meio do caminho parece outro site.
+ */
+
+/* =========================================================== telas de acesso */
+
+.acessoPagina {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--surface);
+}
+
+.acessoCabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.acessoLogo {
+  display: inline-flex;
+}
+
+/* A logo preta é empilhada (890×564): a 30px de altura sairia estreita demais
+   para a faixa. 48px lhe dá o mesmo peso que ela tem no checkout. */
+.acessoLogoImg {
+  height: 48px;
+  width: auto;
+}
+
+.acessoConteudo {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 24px 80px;
+}
+
+.acessoCard {
+  width: min(460px, 100%);
+  padding: 36px 32px 32px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow: var(--shadow-card);
+}
+
+.acessoKicker {
+  margin: 0 0 6px;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.acessoTitulo {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.acessoTexto {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.acessoRodape {
+  margin: 22px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.acessoRodape a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid var(--gold-line);
+}
+
+.acessoRodape a:hover {
+  color: var(--gold);
+}
+
+.voltarLoja {
+  display: block;
+  margin: 24px auto 0;
+  width: min(460px, 100%);
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.voltarLoja:hover {
+  color: var(--ink);
+}
+
+/* ================================================================= formulário */
+
+.form {
+  display: grid;
+  gap: 16px;
+}
+
+.linhaDupla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.campo {
+  display: grid;
+  gap: 6px;
+}
+
+.rotulo {
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.opcional {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  /* 16px trava o zoom automático do iOS ao focar o campo. */
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.16s var(--ease-out);
+}
+
+.input:focus {
+  border-color: var(--ink);
+}
+
+.input:disabled {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.inputSenha {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+}
+
+.inputSenha:focus-within {
+  border-color: var(--ink);
+}
+
+.inputSenha .input {
+  border: none;
+  flex: 1;
+}
+
+.verSenha {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  height: 48px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.verSenha:hover {
+  color: var(--ink);
+}
+
+.ajuda {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--ink);
+  flex: none;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 24px;
+  border: none;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.16s var(--ease-out);
+}
+
+.botao:hover:not(:disabled) {
+  background: var(--gold);
+}
+
+.botao:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.botaoSecundario {
+  composes: botao;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+}
+
+.botaoSecundario:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.botaoPequeno {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 12px;
+}
+
+.linkBotao {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.linkBotao:hover {
+  color: var(--ink);
+}
+
+.aviso {
+  padding: 12px 14px;
+  border-left: 3px solid currentColor;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.avisoErro {
+  composes: aviso;
+  background: #fdf2f2;
+  color: #b42318;
+}
+
+.avisoOk {
+  composes: aviso;
+  background: #f0fdf4;
+  color: var(--price-pix-dark);
+}
+
+/* ============================================================= área da conta */
+
+.pagina {
+  background: var(--surface);
+  min-height: 60vh;
+}
+
+.migalhas {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.migalhas a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.migalhas a:hover {
+  color: var(--ink);
+}
+
+.cabecalhoConta {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 14px 24px 0;
+}
+
+.saudacao {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.emailConta {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.grade {
+  display: grid;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 26px 24px 80px;
+  gap: 26px;
+  grid-template-columns: 250px minmax(0, 1fr);
+  align-items: start;
+}
+
+/* -------------------------------------------------------------------- menu */
+
+.menu {
+  display: grid;
+  gap: 2px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 8px;
+  position: sticky;
+  top: 16px;
+}
+
+.menuLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.14s var(--ease-out);
+}
+
+.menuLink svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--muted);
+}
+
+.menuLink:hover {
+  background: var(--surface-2);
+}
+
+.menuLinkAtivo {
+  composes: menuLink;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.menuLinkAtivo svg {
+  color: var(--gold-light);
+}
+
+/* O "Sair" é um form (a ação é um POST, não um link). `display: contents` tira
+   o form do fluxo para o botão participar do grid como os outros itens. */
+.menu form {
+  display: contents;
+}
+
+.menuSair {
+  composes: menuLink;
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--line);
+  margin-top: 6px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ painel */
+
+.painel {
+  display: grid;
+  gap: 18px;
+}
+
+.cartao {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 24px;
+}
+
+.cartaoTitulo {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.cartaoTexto {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.cartaoTextoSolto {
+  composes: cartaoTexto;
+  margin-bottom: 0;
+}
+
+.secaoTopo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.secaoTopo .cartaoTitulo {
+  margin: 0;
+}
+
+.verTudo {
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.verTudo:hover {
+  color: var(--gold);
+}
+
+/* ------------------------------------------------------------- resumo/atalhos */
+
+.atalhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.atalho {
+  display: grid;
+  gap: 4px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 0.16s var(--ease-out);
+}
+
+.atalho:hover {
+  border-color: var(--ink);
+}
+
+.atalhoNumero {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.atalhoRotulo {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- pedidos */
+
+.listaPedidos {
+  display: grid;
+  gap: 14px;
+}
+
+.pedido {
+  display: block;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 18px 20px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.16s var(--ease-out);
+}
+
+a.pedido:hover {
+  border-color: var(--ink);
+}
+
+.pedidoTopo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pedidoNumero {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.pedidoData {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.selos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-soft);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.seloOk {
+  composes: selo;
+  border-color: var(--price-pix-dark);
+  color: var(--price-pix-dark);
+}
+
+.seloEspera {
+  composes: selo;
+  border-color: var(--gold-line);
+  color: var(--gold);
+}
+
+.seloRuim {
+  composes: selo;
+  border-color: #d92d20;
+  color: #b42318;
+}
+
+.pedidoItens {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.pedidoRodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.pedidoTotal {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------ detalhe do pedido */
+
+.detalheGrade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.blocoInfo {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+
+.blocoRotulo {
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.blocoValor {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.tabelaItens {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabelaItens th {
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.tabelaItens td {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.tabelaItens th:last-child,
+.tabelaItens td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.itemVariacao {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.totais {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  margin-left: auto;
+  width: min(320px, 100%);
+  font-size: 14px;
+}
+
+.linhaTotal {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+}
+
+.linhaTotalForte {
+  composes: linhaTotal;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------- endereços */
+
+.listaEnderecos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.enderecoCard {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.enderecoPadrao {
+  composes: enderecoCard;
+  border-color: var(--ink);
+}
+
+.enderecoApelido {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.marcaPadrao {
+  padding: 3px 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.enderecoTexto {
+  color: var(--muted);
+}
+
+.enderecoAcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* --------------------------------------------------------------- favoritos */
+
+.gradeFavoritos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+/* Coração do card de produto e da página do produto. */
+.favoritoBotao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: color 0.16s var(--ease-out), border-color 0.16s var(--ease-out);
+}
+
+.favoritoBotao svg {
+  width: 18px;
+  height: 18px;
+}
+
+.favoritoBotao:hover {
+  border-color: var(--gold-line);
+  color: var(--gold);
+}
+
+/* Modificador, não variante: entra JUNTO com `favoritoBotao` ou com
+   `favoritoLinha`, senão o coração salvo perderia o formato da variante. */
+.favoritoAtivo {
+  border-color: var(--gold-line);
+  color: var(--gold);
+}
+
+.favoritoBotao:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Variante redonda, usada no canto do card de produto — o card tem cantos de
+   12px e um quadrado seco ali dentro brigaria com a forma. */
+.favoritoRedondo {
+  border-radius: 999px;
+}
+
+/* Variante em linha, usada na página do produto ao lado do botão de comprar. */
+.favoritoLinha {
+  composes: favoritoBotao;
+  width: auto;
+  height: 44px;
+  gap: 8px;
+  padding: 0 16px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------------- vazio */
+
+.vazio {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 44px 24px;
+  text-align: center;
+}
+
+.vazio svg {
+  width: 34px;
+  height: 34px;
+  color: var(--muted);
+}
+
+.vazioTitulo {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.vazioTexto {
+  margin: 0;
+  max-width: 380px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* ------------------------------------------------------------------ celular */
+
+@media (max-width: 900px) {
+  .grade {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 20px 16px 60px;
+    gap: 18px;
+  }
+
+  .menu {
+    position: static;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    overflow-x: auto;
+    /* A barra some, mas o toque continua rolando: com quatro seções mais o
+       "sair", a fila não cabe na largura do celular. */
+    scrollbar-width: none;
+  }
+
+  .menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .menuSair {
+    border-top: none;
+    border-left: 1px solid var(--line);
+    margin-top: 0;
+    white-space: nowrap;
+  }
+
+  .menuLink {
+    white-space: nowrap;
+  }
+
+  .saudacao {
+    font-size: 26px;
+  }
+
+  .cabecalhoConta,
+  .migalhas {
+    padding-inline: 16px;
+  }
+
+  .cartao {
+    padding: 20px 16px;
+  }
+
+  .linhaDupla {
+    grid-template-columns: 1fr;
+  }
+
+  .acessoConteudo {
+    padding: 28px 16px 60px;
+  }
+
+  .acessoCard {
+    padding: 26px 20px 24px;
+  }
+}

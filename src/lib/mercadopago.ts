@@ -3,7 +3,7 @@ import { MercadoPagoConfig, Payment } from "mercadopago";
 import { listarProdutos } from "@/lib/produtos";
 import { variantPrice } from "@/data/catalog";
 import { digitos, totalCartaoAvista } from "@/lib/checkout";
-import { criarPedido, statusDoMercadoPago } from "@/lib/pedidos";
+import { criarPedido, statusDoMercadoPago, type DonoDoPedido } from "@/lib/pedidos";
 import type { DadosEntrega, Endereco, OpcaoFrete } from "@/types/checkout";
 
 /*
@@ -140,6 +140,8 @@ async function gravarPedido(
   pagamentoId: number,
   status: string,
   meioPagamento: "pix" | "cartao",
+  /** Conta logada, resolvida pela rota a partir do cookie de sessão. */
+  dono: DonoDoPedido | undefined,
   /** Total efetivamente cobrado — no cartão 1× inclui a taxa repassada. */
   totalCobrado: number = montado.total,
 ): Promise<number | null> {
@@ -160,13 +162,17 @@ async function gravarPedido(
     meioPagamento,
     pagamentoId: String(pagamentoId),
     statusPagamento: statusDoMercadoPago(status),
+    dono,
   });
   return pedido?.numero ?? null;
 }
 
 /** Cria um pagamento Pix. Volta `pending` com o QR; o dinheiro só se move
     quando o cliente paga o QR. */
-export async function criarPagamentoPix(dados: DadosPix): Promise<ResultadoPagamento> {
+export async function criarPagamentoPix(
+  dados: DadosPix,
+  dono?: DonoDoPedido,
+): Promise<ResultadoPagamento> {
   const montado = await montarPedido(dados);
   const { total, descricao, payer } = montado;
   const payment = new Payment(client);
@@ -192,6 +198,7 @@ export async function criarPagamentoPix(dados: DadosPix): Promise<ResultadoPagam
     resultado.id!,
     resultado.status ?? "pending",
     "pix",
+    dono,
   );
 
   const transacao = resultado.point_of_interaction?.transaction_data;
@@ -212,7 +219,10 @@ export async function criarPagamentoPix(dados: DadosPix): Promise<ResultadoPagam
 /** Cria um pagamento com cartão de crédito, já com o número de parcelas. Os
     juros, quando houver, são os do próprio Mercado Pago — o `transaction_amount`
     é o total à vista e o parcelamento é aplicado por ele. */
-export async function criarPagamentoCartao(dados: DadosCartao): Promise<ResultadoPagamento> {
+export async function criarPagamentoCartao(
+  dados: DadosCartao,
+  dono?: DonoDoPedido,
+): Promise<ResultadoPagamento> {
   const montado = await montarPedido(dados);
   const { total, descricao, payer } = montado;
   const payment = new Payment(client);
@@ -246,6 +256,7 @@ export async function criarPagamentoCartao(dados: DadosCartao): Promise<Resultad
     resultado.id!,
     resultado.status ?? "pending",
     "cartao",
+    dono,
     totalCobrado,
   );
 
