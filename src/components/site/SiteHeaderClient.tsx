@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import type { ItemMenu } from "@/lib/conteudo";
+import { carregarSessao, type SessaoConta } from "@/lib/sessao-cliente";
 import { useCart } from "./CartProvider";
+import { MenuConta } from "./MenuConta";
 import {
   AccountIcon,
   BagIcon,
+  BoxIcon,
   CloseIcon,
   FilamentIcon,
   FlameIcon,
@@ -106,7 +109,15 @@ const bagLabel = (count: number) => {
 export function SiteHeaderClient({ itens }: { itens: ItemMenu[] }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [sessao, setSessao] = useState<SessaoConta | null>(null);
   const { count, openCart } = useCart();
+
+  /* No celular não cabe o bonequinho na barra: a conta entra pela gaveta, e o
+     estado dela é buscado quando a gaveta abre. Mesma promessa em cache que o
+     menu do desktop usa, então abrir os dois não consulta duas vezes. */
+  useEffect(() => {
+    if (menuOpen) void carregarSessao().then(setSessao);
+  }, [menuOpen]);
 
   /* A barra é de um nível só; subitens ficam guardados no dado para quando
      houver dropdown, mas não entram nesta marcação. */
@@ -194,13 +205,10 @@ export function SiteHeaderClient({ itens }: { itens: ItemMenu[] }) {
             </button>
             <Wordmark />
             <div className={styles.customerActions}>
-              {/* Aponta sempre para /conta, logado ou não: o middleware manda
-                  quem não tem sessão para /entrar e volta depois. Ler a sessão
-                  aqui deixaria o cabeçalho dinâmico — e com ele todas as
-                  páginas de produto, que hoje são estáticas. */}
-              <a aria-label="Minha conta" className={styles.headerIconButton} href="/conta">
-                <AccountIcon />
-              </a>
+              {/* O menu resolve a sessão no navegador, no primeiro clique — o
+                  HTML do cabeçalho segue igual para todos, e as páginas de
+                  produto continuam estáticas. */}
+              <MenuConta />
               <button
                 aria-label={bagLabel(count)}
                 className={`${styles.headerIconButton} ${styles.bagLink}`}
@@ -270,12 +278,32 @@ export function SiteHeaderClient({ itens }: { itens: ItemMenu[] }) {
           </div>
           {menuOpen ? (
             <nav aria-label="Categorias de produtos no celular" className={styles.mobileDrawer} id="mobile-category-drawer">
-              {/* No celular a barra superior não cabe o ícone da conta — este é
-                  o único caminho para ela. */}
-              <a href="/conta" onClick={() => setMenuOpen(false)}>
-                <AccountIcon />
-                <span>Minha conta</span>
-              </a>
+              {/* Enquanto a sessão não responde, mostra o caminho de quem não
+                  está logado: é o estado mais provável, e "Entrar" serve para
+                  os dois casos — já logado, cai direto na conta. */}
+              {sessao?.logado ? (
+                <>
+                  <a href="/conta" onClick={() => setMenuOpen(false)}>
+                    <AccountIcon />
+                    <span>{sessao.nome ? `Olá, ${sessao.nome}` : "Minha conta"}</span>
+                  </a>
+                  <a href="/conta/pedidos" onClick={() => setMenuOpen(false)}>
+                    <BoxIcon />
+                    <span>Meus pedidos</span>
+                  </a>
+                </>
+              ) : (
+                <>
+                  <a href="/entrar" onClick={() => setMenuOpen(false)}>
+                    <AccountIcon />
+                    <span>Entrar</span>
+                  </a>
+                  <a href="/criar-conta" onClick={() => setMenuOpen(false)}>
+                    <TagIcon />
+                    <span>Criar conta</span>
+                  </a>
+                </>
+              )}
               {navigation.map((item) => {
                 const Icon = iconePara(item.rotulo);
                 return (
