@@ -16,8 +16,23 @@ const COMPLETO = "/video/institucional.mp4";
 const ROTULO = "Site oficial Triomax!";
 const DISPENSADO = "triomax:video-widget-dispensado";
 
-/* No checkout e na sacola o card só disputaria atenção com a compra. */
-const ROTAS_SEM_WIDGET = ["/checkout", "/carrinho"];
+/*
+ * Onde o card não aparece.
+ *
+ * No checkout e na sacola ele só disputaria atenção com a compra. As telas de
+ * conta entraram pelo mesmo motivo, agravado: desde que o login virou exigência
+ * para finalizar, entrar e cadastrar-se passaram a ser etapas da compra, não
+ * passeio pela loja.
+ */
+const ROTAS_SEM_WIDGET = [
+  "/checkout",
+  "/carrinho",
+  "/conta",
+  "/entrar",
+  "/criar-conta",
+  "/recuperar-senha",
+  "/nova-senha",
+];
 
 /* O rótulo sai de trás do card, espera e recolhe — quem ignorou na primeira
    vista não fica com uma tarja dourada permanente no canto da tela. */
